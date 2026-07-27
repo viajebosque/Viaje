@@ -35,6 +35,30 @@
     "modalAsk": "Do you want to enter this mission?",
     "enter": "Enter"
   },
+  "admin": {
+    "link": "Admin panel",
+    "title": "Admin panel",
+    "subtitle": "Mark who has paid and who hasn't.",
+    "searchPlaceholder": "Search by name or email…",
+    "sortLabel": "Sort by",
+    "sort": {
+      "name_asc": "Name (A → Z)",
+      "name_desc": "Name (Z → A)",
+      "created_desc": "Newest account",
+      "created_asc": "Oldest account"
+    },
+    "userCount_one": "{{count}} user",
+    "userCount_other": "{{count}} users",
+    "noName": "(no name)",
+    "roleAdmin": "admin",
+    "created": "Created",
+    "paid": "Paid",
+    "notPaid": "Not paid",
+    "markPaid": "Mark as paid",
+    "markNotPaid": "Mark as not paid",
+    "noResults": "No user matches your search.",
+    "empty": "No users registered yet."
+  },
   "mission": {
     "loading": "Loading mission…",
     "notAvailable": "This mission isn't available yet.",

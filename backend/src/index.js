@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { supabase } from './supabase.js';
+import { adminRouter } from './routes/admin.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,9 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({ service: 'Viaje_BackEnd', message: 'API viva' });
 });
+
+// Panel de administración (exige role='admin', ver middleware/requireAdmin.js).
+app.use('/api/admin', adminRouter);
 
 // Ejemplo: verifica conexión a Supabase.
 app.get('/api/ping-db', async (req, res) => {

@@ -4,7 +4,9 @@ import { useAuth } from './auth/AuthContext';
 import AuthPage from './pages/AuthPage';
 import Forest from './pages/Forest';
 import MissionPage from './pages/MissionPage';
+import AdminPage from './pages/AdminPage';
 import ProtectedRoute from './auth/ProtectedRoute';
+import AdminRoute from './auth/AdminRoute';
 import LangToggle from './i18n/LangToggle';
 
 export default function App() {
@@ -38,6 +40,15 @@ export default function App() {
           <ProtectedRoute>
             <MissionPage />
           </ProtectedRoute>
+        }
+      />
+      {/* Panel de admin: exige role='admin'; si no, al bosque. */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminPage />
+          </AdminRoute>
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />

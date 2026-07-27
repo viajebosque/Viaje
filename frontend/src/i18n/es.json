@@ -35,6 +35,30 @@
     "modalAsk": "¿Quieres ingresar a esta misión?",
     "enter": "Ingresar"
   },
+  "admin": {
+    "link": "Panel admin",
+    "title": "Panel de administración",
+    "subtitle": "Marca quién pagó y quién no.",
+    "searchPlaceholder": "Buscar por nombre o correo…",
+    "sortLabel": "Ordenar por",
+    "sort": {
+      "name_asc": "Nombre (A → Z)",
+      "name_desc": "Nombre (Z → A)",
+      "created_desc": "Cuenta más reciente",
+      "created_asc": "Cuenta más antigua"
+    },
+    "userCount_one": "{{count}} usuario",
+    "userCount_other": "{{count}} usuarios",
+    "noName": "(sin nombre)",
+    "roleAdmin": "admin",
+    "created": "Creada",
+    "paid": "Pagó",
+    "notPaid": "No pagó",
+    "markPaid": "Marcar como pagado",
+    "markNotPaid": "Marcar como no pagado",
+    "noResults": "Ningún usuario coincide con la búsqueda.",
+    "empty": "Todavía no hay usuarios registrados."
+  },
   "mission": {
     "loading": "Cargando misión…",
     "notAvailable": "Esta misión aún no está disponible.",

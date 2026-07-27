@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
+import { useRole } from '../auth/useRole';
 import { useLanguage } from '../i18n/useLanguage';
 import {
   getMissions,
@@ -11,6 +12,7 @@ import {
 
 export default function Forest() {
   const { user, signOut } = useAuth();
+  const { role } = useRole();
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const navigate = useNavigate();
@@ -47,6 +49,10 @@ export default function Forest() {
       <header className="forest-top">
         <span>{user?.email}</span>
         <div className="forest-top-actions">
+          {/* Atajo al panel: solo para admins. La ruta igual valida el rol. */}
+          {role === 'admin' && (
+            <button onClick={() => navigate('/admin')}>{t('admin.link')}</button>
+          )}
           <button onClick={handleSignOut}>{t('auth.signOut')}</button>
         </div>
       </header>
