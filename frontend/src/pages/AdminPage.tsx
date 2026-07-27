@@ -7,6 +7,7 @@ import {
   setUserPaid,
   USER_SORTS,
   DEFAULT_SORT,
+  PAGE_SIZE,
   type AdminUser,
   type UserSort,
 } from '../lib/admin';
@@ -21,28 +22,40 @@ export default function AdminPage() {
 
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<UserSort>(DEFAULT_SORT);
+  const [page, setPage] = useState(1);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   // Errores del backend: texto crudo, no traducible.
   const [errText, setErrText] = useState<string | null>(null);
 
-  // Re-lee la lista al cambiar búsqueda u orden. El filtrado y el orden los
-  // hace la base, no el navegador.
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  // Al cambiar búsqueda u orden se vuelve a la primera página: quedarse en la
+  // 4 con un filtro que devuelve 8 resultados mostraría una lista vacía.
+  useEffect(() => {
+    setPage(1);
+  }, [search, sort]);
+
+  // Re-lee la página al cambiar búsqueda, orden o página. El filtrado, el orden
+  // y el corte los hace la base: el navegador nunca recibe la tabla entera.
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(() => {
       setLoading(true);
-      listUsers(search, sort)
-        .then((rows) => {
+      listUsers(search, sort, page)
+        .then((res) => {
           if (!cancelled) {
-            setUsers(rows);
+            setUsers(res.users);
+            setTotal(res.total);
             setErrText(null);
           }
         })
         .catch((e: unknown) => {
           if (!cancelled) {
             setUsers([]);
+            setTotal(0);
             setErrText(e instanceof Error ? e.message : String(e));
           }
         })
@@ -55,7 +68,7 @@ export default function AdminPage() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [search, sort]);
+  }, [search, sort, page]);
 
   async function togglePaid(user: AdminUser) {
     setSavingId(user.id);
@@ -122,7 +135,8 @@ export default function AdminPage() {
       ) : (
         <>
           <p className="admin-count">
-            {t('admin.userCount', { count: users.length })}
+            {t('admin.userCount', { count: total })}
+            {totalPages > 1 && ` · ${t('admin.pageOf', { page, totalPages })}`}
           </p>
           <ul className="admin-list">
             {users.map((u) => (
@@ -163,6 +177,24 @@ export default function AdminPage() {
               </li>
             ))}
           </ul>
+
+          {totalPages > 1 && (
+            <nav className="admin-pager" aria-label={t('admin.pagination')}>
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+              >
+                {t('admin.prev')}
+              </button>
+              <span>{t('admin.pageOf', { page, totalPages })}</span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+              >
+                {t('admin.next')}
+              </button>
+            </nav>
+          )}
         </>
       )}
     </main>

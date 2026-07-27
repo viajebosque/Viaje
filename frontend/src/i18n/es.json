@@ -76,7 +76,11 @@
     "markPaid": "Marcar como pagado",
     "markNotPaid": "Marcar como no pagado",
     "noResults": "Ningún usuario coincide con la búsqueda.",
-    "empty": "Todavía no hay usuarios registrados."
+    "empty": "Todavía no hay usuarios registrados.",
+    "pagination": "Paginación",
+    "pageOf": "Página {{page}} de {{totalPages}}",
+    "prev": "← Anteriores",
+    "next": "Siguientes →"
   },
   "mission": {
     "loading": "Cargando misión…",

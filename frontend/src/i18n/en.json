@@ -76,7 +76,11 @@
     "markPaid": "Mark as paid",
     "markNotPaid": "Mark as not paid",
     "noResults": "No user matches your search.",
-    "empty": "No users registered yet."
+    "empty": "No users registered yet.",
+    "pagination": "Pagination",
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "prev": "← Previous",
+    "next": "Next →"
   },
   "mission": {
     "loading": "Loading mission…",

@@ -23,18 +23,30 @@ export const USER_SORTS = [
 export type UserSort = (typeof USER_SORTS)[number];
 export const DEFAULT_SORT: UserSort = 'created_desc';
 
-// Lista de usuarios, filtrada por nombre/correo y ordenada.
+// Tamaño de página: la base devuelve 10 filas por vez, no la tabla entera.
+export const PAGE_SIZE = 10;
+
+export type UsersPage = {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+// Una página de usuarios, filtrada por nombre/correo y ordenada.
 // Todo pasa por el backend: con la anon key el usuario solo ve su propia fila.
 export async function listUsers(
   search: string,
-  sort: UserSort
-): Promise<AdminUser[]> {
-  const params = new URLSearchParams({ sort });
+  sort: UserSort,
+  page: number
+): Promise<UsersPage> {
+  const params = new URLSearchParams({
+    sort,
+    page: String(page),
+    pageSize: String(PAGE_SIZE),
+  });
   if (search.trim()) params.set('search', search.trim());
-  const { users } = await apiAuthGet<{ users: AdminUser[] }>(
-    `/api/admin/users?${params.toString()}`
-  );
-  return users;
+  return apiAuthGet<UsersPage>(`/api/admin/users?${params.toString()}`);
 }
 
 // Marca a un usuario como pagado o no pagado.

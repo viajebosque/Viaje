@@ -382,6 +382,26 @@ body {
 .admin-unpay { background: #fff; color: #3a4a3a; border: 1px solid #cdd9cd; }
 .admin-pay:disabled, .admin-unpay:disabled { opacity: 0.6; cursor: default; }
 
+.admin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #5a6b5a;
+}
+.admin-pager button {
+  border: 1px solid #cdd9cd;
+  background: #fff;
+  color: #3a4a3a;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.admin-pager button:disabled { opacity: 0.45; cursor: default; }
+
 /* ---------- Mission ---------- */
 .mission { padding: 4.5rem 2rem 2rem; max-width: 720px; margin: 0 auto; }
 .mission-top {

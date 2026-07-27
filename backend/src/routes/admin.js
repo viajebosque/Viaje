@@ -21,7 +21,16 @@ const SORTS = {
   created_asc: { column: 'created_at', ascending: true },
 };
 const DEFAULT_SORT = 'created_desc';
-const MAX_ROWS = 500;
+
+// Paginado: la base devuelve solo la página pedida, no la tabla entera.
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 50;
+
+function positiveInt(raw, fallback, max) {
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 1) return fallback;
+  return max ? Math.min(n, max) : n;
+}
 
 // El texto de búsqueda se inserta en un filtro `or` de PostgREST, donde la coma,
 // los paréntesis y el asterisco son sintaxis. Se limpian para que una búsqueda
@@ -46,26 +55,42 @@ function handle(fn) {
   };
 }
 
-// GET /api/admin/users?search=texto&sort=name_asc
-// Devuelve los perfiles, filtrados por nombre/correo y ordenados.
+// GET /api/admin/users?search=texto&sort=name_asc&page=1&pageSize=10
+// Devuelve UNA página de perfiles, filtrada y ordenada, más el total para
+// poder armar el paginador.
 adminRouter.get('/users', handle(async (req, res) => {
   const sort = SORTS[req.query.sort] ?? SORTS[DEFAULT_SORT];
   const search = cleanSearch(req.query.search);
+  const page = positiveInt(req.query.page, 1);
+  const pageSize = positiveInt(req.query.pageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
+  const from = (page - 1) * pageSize;
 
+  // count: 'exact' devuelve cuántas filas hay en total con ese filtro, sin
+  // traerlas. range() hace que la base mande solo esta página.
   let query = supabase
     .from('profiles')
-    .select('id, full_name, email, role, is_paid, lang, created_at')
+    .select('id, full_name, email, role, is_paid, lang, created_at', {
+      count: 'exact',
+    })
     .order(sort.column, { ascending: sort.ascending, nullsFirst: false })
-    .limit(MAX_ROWS);
+    // Desempate estable: sin esto, dos filas con el mismo nombre (o la misma
+    // fecha) pueden cambiar de orden entre páginas y una se ve dos veces.
+    .order('id', { ascending: true })
+    .range(from, from + pageSize - 1);
 
   if (search) {
     query = query.or(`full_name.ilike.*${search}*,email.ilike.*${search}*`);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
 
-  res.json({ users: data ?? [], limit: MAX_ROWS });
+  res.json({
+    users: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize,
+  });
 }));
 
 // PATCH /api/admin/users/:id/paid   body: { is_paid: true | false }
