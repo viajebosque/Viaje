@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage';
 import Forest from './pages/Forest';
 import MissionPage from './pages/MissionPage';
 import ProtectedRoute from './auth/ProtectedRoute';
+import LangToggle from './i18n/LangToggle';
 
 export default function App() {
   const { session, loading } = useAuth();
@@ -13,7 +14,11 @@ export default function App() {
   if (loading) return <div className="auth-loading">{t('common.loading')}</div>;
 
   return (
-    <Routes>
+    <>
+      <div className="platform-lang-toggle">
+        <LangToggle />
+      </div>
+      <Routes>
       {/* Raíz: si ya hay sesión, al bosque; si no, login/registro. */}
       <Route
         path="/"
@@ -36,6 +41,7 @@ export default function App() {
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      </Routes>
+    </>
   );
 }

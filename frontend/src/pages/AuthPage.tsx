@@ -6,7 +6,6 @@ import {
   signUpWithEmail,
   signInWithGoogle,
 } from '../auth/auth';
-import LangToggle from '../i18n/LangToggle';
 
 type Mode = 'login' | 'signup';
 
@@ -57,10 +56,7 @@ export default function AuthPage() {
   return (
     <div className="auth-wrap">
       <form className="auth-card" onSubmit={handleSubmit}>
-        <div className="auth-head">
-          <h1 className="auth-title">{t('auth.title')}</h1>
-          <LangToggle />
-        </div>
+        <h1 className="auth-title">{t('auth.title')}</h1>
 
         <div className="auth-tabs">
           <button

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
-import LangToggle from '../i18n/LangToggle';
 import { useLanguage } from '../i18n/useLanguage';
 import {
   getMissionByNumero,
@@ -130,7 +129,6 @@ export default function MissionPage() {
         <button className="mission-back" onClick={() => navigate('/forest')}>
           {t('common.backToMapArrow')}
         </button>
-        <LangToggle />
       </div>
 
       <h1 className="mission-title">
