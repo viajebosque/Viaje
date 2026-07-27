@@ -20,12 +20,13 @@ export type Question = {
   orden: number;
 };
 
-// El contenido traducible vive en columnas por idioma (titulo_es / titulo_en).
-// Elige la del idioma activo; si esa misión aún no está traducida cae al español.
+// El contenido traducible vive SOLO en columnas por idioma (titulo_es /
+// titulo_en). Elige la del idioma activo; si esa misión aún no está traducida
+// cae al español, que es obligatorio en la BD.
 type Row = Record<string, unknown>;
 
 function pick(row: Row, base: string, lang: Lang): string {
-  const candidates = [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`, base];
+  const candidates = [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`];
   for (const key of candidates) {
     const v = row[key];
     if (typeof v === 'string' && v.length > 0) return v;

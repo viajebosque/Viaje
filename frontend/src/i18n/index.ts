@@ -27,6 +27,14 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
+// <html lang="..."> sigue al idioma activo (accesibilidad / lectores de
+// pantalla / traductores del navegador).
+function syncHtmlLang(lng: string) {
+  document.documentElement.lang = isLang(lng) ? lng : DEFAULT_LANG;
+}
+syncHtmlLang(i18n.resolvedLanguage ?? i18n.language);
+i18n.on('languageChanged', syncHtmlLang);
+
 // Idioma activo, siempre 'es' | 'en' (nunca undefined ni 'es-EC').
 export function currentLang(): Lang {
   const l = i18n.resolvedLanguage ?? i18n.language;
