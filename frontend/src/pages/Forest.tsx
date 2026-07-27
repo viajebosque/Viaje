@@ -49,6 +49,7 @@ export default function Forest() {
       <header className="forest-top">
         <span>{user?.email}</span>
         <div className="forest-top-actions">
+          <button onClick={() => navigate('/profile')}>{t('profile.link')}</button>
           {/* Atajo al panel: solo para admins. La ruta igual valida el rol. */}
           {role === 'admin' && (
             <button onClick={() => navigate('/admin')}>{t('admin.link')}</button>

@@ -35,6 +35,25 @@
     "modalAsk": "Do you want to enter this mission?",
     "enter": "Enter"
   },
+  "profile": {
+    "link": "My profile",
+    "title": "My profile",
+    "statusPaid": "Paid account ✓",
+    "statusFree": "Free account",
+    "nameSection": "Name",
+    "nameEmpty": "Your name can't be empty.",
+    "emailSection": "Email",
+    "emailHint": "We'll send a message to the new address. The change applies once you confirm it; until then you sign in with your current email.",
+    "emailSame": "Enter an email different from your current one.",
+    "emailConfirmSent": "Done. Check your new inbox and confirm the change.",
+    "passwordSection": "Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "passwordTooShort": "The new password must be at least 6 characters.",
+    "wrongPassword": "Your current password isn't correct.",
+    "passwordChanged": "Password updated ✓",
+    "googleOnly": "You sign in with Google, so there's no password to change here. It's managed from your Google account."
+  },
   "admin": {
     "link": "Admin panel",
     "title": "Admin panel",

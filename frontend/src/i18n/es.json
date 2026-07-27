@@ -35,6 +35,25 @@
     "modalAsk": "¿Quieres ingresar a esta misión?",
     "enter": "Ingresar"
   },
+  "profile": {
+    "link": "Mi perfil",
+    "title": "Mi perfil",
+    "statusPaid": "Cuenta de pago ✓",
+    "statusFree": "Cuenta gratuita",
+    "nameSection": "Nombre",
+    "nameEmpty": "El nombre no puede quedar vacío.",
+    "emailSection": "Correo",
+    "emailHint": "Te enviaremos un correo al nuevo buzón. El cambio se aplica cuando lo confirmes; hasta entonces entras con el correo actual.",
+    "emailSame": "Escribe un correo distinto al actual.",
+    "emailConfirmSent": "Listo. Revisa tu correo nuevo y confirma el cambio.",
+    "passwordSection": "Contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Contraseña nueva",
+    "passwordTooShort": "La contraseña nueva debe tener al menos 6 caracteres.",
+    "wrongPassword": "La contraseña actual no es correcta.",
+    "passwordChanged": "Contraseña actualizada ✓",
+    "googleOnly": "Entras con Google, así que no hay contraseña que cambiar acá. Se administra desde tu cuenta de Google."
+  },
   "admin": {
     "link": "Panel admin",
     "title": "Panel de administración",

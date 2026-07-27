@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage';
 import Forest from './pages/Forest';
 import MissionPage from './pages/MissionPage';
 import AdminPage from './pages/AdminPage';
+import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
 import LangToggle from './i18n/LangToggle';
@@ -39,6 +40,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <MissionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
