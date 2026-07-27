@@ -6,3 +6,7 @@ npm-debug.log*
 *.log
 .DS_Store
 .vercel
+
+# Config del MCP de Supabase: lleva el access token en claro.
+# NO se commitea. Se pasa a mano a cada dev del proyecto.
+.mcp.json
