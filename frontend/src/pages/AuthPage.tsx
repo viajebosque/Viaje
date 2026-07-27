@@ -1,14 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   signInWithEmail,
   signUpWithEmail,
   signInWithGoogle,
 } from '../auth/auth';
+import LangToggle from '../i18n/LangToggle';
 
 type Mode = 'login' | 'signup';
 
 export default function AuthPage() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('login');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -29,9 +32,7 @@ export default function AuthPage() {
       if (isSignup) {
         await signUpWithEmail(fullName, email, password);
         // Si la confirmación de email está activa en Supabase, no hay sesión aún.
-        setInfo(
-          'Cuenta creada. Revisa tu correo si se pide confirmación, luego inicia sesión.'
-        );
+        setInfo(t('auth.signupDone'));
         setMode('login');
       } else {
         await signInWithEmail(email, password);
@@ -56,7 +57,10 @@ export default function AuthPage() {
   return (
     <div className="auth-wrap">
       <form className="auth-card" onSubmit={handleSubmit}>
-        <h1 className="auth-title">Un Viaje por el Bosque</h1>
+        <div className="auth-head">
+          <h1 className="auth-title">{t('auth.title')}</h1>
+          <LangToggle />
+        </div>
 
         <div className="auth-tabs">
           <button
@@ -64,25 +68,25 @@ export default function AuthPage() {
             className={!isSignup ? 'active' : ''}
             onClick={() => setMode('login')}
           >
-            Iniciar sesión
+            {t('auth.login')}
           </button>
           <button
             type="button"
             className={isSignup ? 'active' : ''}
             onClick={() => setMode('signup')}
           >
-            Crear cuenta
+            {t('auth.signup')}
           </button>
         </div>
 
         {isSignup && (
           <label className="auth-field">
-            <span>Nombre</span>
+            <span>{t('auth.name')}</span>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Tu nombre"
+              placeholder={t('auth.namePlaceholder')}
               required
               autoComplete="name"
             />
@@ -90,19 +94,19 @@ export default function AuthPage() {
         )}
 
         <label className="auth-field">
-          <span>Correo</span>
+          <span>{t('auth.email')}</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="tucorreo@ejemplo.com"
+            placeholder={t('auth.emailPlaceholder')}
             required
             autoComplete="email"
           />
         </label>
 
         <label className="auth-field">
-          <span>Contraseña</span>
+          <span>{t('auth.password')}</span>
           <input
             type="password"
             value={password}
@@ -119,13 +123,15 @@ export default function AuthPage() {
 
         <button className="auth-primary" type="submit" disabled={busy}>
           {busy
-            ? 'Procesando…'
+            ? t('auth.processing')
             : isSignup
-              ? 'Crear cuenta'
-              : 'Iniciar sesión'}
+              ? t('auth.signup')
+              : t('auth.login')}
         </button>
 
-        <div className="auth-divider"><span>o</span></div>
+        <div className="auth-divider">
+          <span>{t('common.or')}</span>
+        </div>
 
         <button
           className="auth-google"
@@ -133,7 +139,7 @@ export default function AuthPage() {
           onClick={handleGoogle}
           disabled={busy}
         >
-          Continuar con Google
+          {t('auth.google')}
         </button>
       </form>
     </div>

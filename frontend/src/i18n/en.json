@@ -1,0 +1,54 @@
+{
+  "lang": {
+    "es": "ES",
+    "en": "EN",
+    "switch": "Change language"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved ✓",
+    "backToMap": "Back to map",
+    "backToMapArrow": "← Back to map",
+    "or": "or"
+  },
+  "auth": {
+    "title": "A Journey Through the Forest",
+    "login": "Sign in",
+    "signup": "Create account",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "processing": "Processing…",
+    "google": "Continue with Google",
+    "signupDone": "Account created. Check your email if confirmation is required, then sign in.",
+    "signOut": "Sign out"
+  },
+  "forest": {
+    "title": "The Forest Map 🌲",
+    "subtitle": "Choose a mission to begin.",
+    "comingSoon": "Coming soon",
+    "modalTitle": "Mission {{numero}}",
+    "modalAsk": "Do you want to enter this mission?",
+    "enter": "Enter"
+  },
+  "mission": {
+    "loading": "Loading mission…",
+    "notAvailable": "This mission isn't available yet.",
+    "heading": "Mission {{numero}}: {{titulo}}",
+    "answerPlaceholder": "Write your answer…",
+    "getToken": "Get my token",
+    "validating": "Validating…",
+    "tokenWon": "Token earned! 🪙",
+    "tokenWonBadge": "🪙 Token earned",
+    "missingAnswers": "Some questions still need answers before you can get the token.",
+    "blocks": {
+      "iniciacion": "Opening Questions",
+      "actividad": "Mini-Action",
+      "reflexion": "Reflection Questions"
+    }
+  }
+}

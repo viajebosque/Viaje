@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
+import LangToggle from '../i18n/LangToggle';
+import { useLanguage } from '../i18n/useLanguage';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -9,6 +12,8 @@ import {
 
 export default function Forest() {
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
+  const { lang } = useLanguage();
   const navigate = useNavigate();
 
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -17,9 +22,17 @@ export default function Forest() {
     null
   );
 
+  // Re-lee las misiones al cambiar el idioma: los títulos vienen de la BD.
   useEffect(() => {
-    getMissions().then(setMissions).catch(() => setMissions([]));
-    getCompletedMissionIds().then(setCompleted).catch(() => {});
+    getMissions(lang)
+      .then(setMissions)
+      .catch(() => setMissions([]));
+  }, [lang]);
+
+  useEffect(() => {
+    getCompletedMissionIds()
+      .then(setCompleted)
+      .catch(() => {});
   }, []);
 
   // mapa numero -> misión (para saber título / si existe contenido)
@@ -34,11 +47,14 @@ export default function Forest() {
     <main className="forest">
       <header className="forest-top">
         <span>{user?.email}</span>
-        <button onClick={handleSignOut}>Cerrar sesión</button>
+        <div className="forest-top-actions">
+          <LangToggle />
+          <button onClick={handleSignOut}>{t('auth.signOut')}</button>
+        </div>
       </header>
 
-      <h1 className="forest-title">El Mapa del Bosque 🌲</h1>
-      <p className="forest-sub">Elige una misión para comenzar.</p>
+      <h1 className="forest-title">{t('forest.title')}</h1>
+      <p className="forest-sub">{t('forest.subtitle')}</p>
 
       <div className="mission-grid">
         {Array.from({ length: 9 }, (_, i) => i + 1).map((n) => {
@@ -52,7 +68,7 @@ export default function Forest() {
             >
               <span className="mission-node-num">{n}</span>
               <span className="mission-node-title">
-                {m?.titulo ?? 'Próximamente'}
+                {m?.titulo || t('forest.comingSoon')}
               </span>
               {isDone && <span className="mission-node-token">🪙</span>}
             </button>
@@ -63,18 +79,20 @@ export default function Forest() {
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Misión {selected.numero}</h2>
-            {selected.titulo && <p className="modal-mission-title">{selected.titulo}</p>}
-            <p>¿Quieres ingresar a esta misión?</p>
+            <h2>{t('forest.modalTitle', { numero: selected.numero })}</h2>
+            {selected.titulo && (
+              <p className="modal-mission-title">{selected.titulo}</p>
+            )}
+            <p>{t('forest.modalAsk')}</p>
             <div className="modal-actions">
               <button
                 className="modal-primary"
                 onClick={() => navigate(`/mission/${selected.numero}`)}
               >
-                Ingresar
+                {t('forest.enter')}
               </button>
               <button className="modal-ghost" onClick={() => setSelected(null)}>
-                Volver al mapa
+                {t('common.backToMap')}
               </button>
             </div>
           </div>

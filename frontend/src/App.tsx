@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from './auth/AuthContext';
 import AuthPage from './pages/AuthPage';
 import Forest from './pages/Forest';
@@ -7,8 +8,9 @@ import ProtectedRoute from './auth/ProtectedRoute';
 
 export default function App() {
   const { session, loading } = useAuth();
+  const { t } = useTranslation();
 
-  if (loading) return <div className="auth-loading">Cargando…</div>;
+  if (loading) return <div className="auth-loading">{t('common.loading')}</div>;
 
   return (
     <Routes>

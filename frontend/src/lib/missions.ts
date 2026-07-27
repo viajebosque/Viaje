@@ -1,7 +1,9 @@
 import { supabase } from './supabase';
+import { DEFAULT_LANG, type Lang } from '../i18n';
 
 export type Categoria = 'iniciacion' | 'actividad' | 'reflexion';
 
+// Lo que consume la UI: textos ya resueltos al idioma activo.
 export type Mission = {
   id: string;
   numero: number;
@@ -18,19 +20,53 @@ export type Question = {
   orden: number;
 };
 
+// El contenido traducible vive en columnas por idioma (titulo_es / titulo_en).
+// Elige la del idioma activo; si esa misión aún no está traducida cae al español.
+type Row = Record<string, unknown>;
+
+function pick(row: Row, base: string, lang: Lang): string {
+  const candidates = [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`, base];
+  for (const key of candidates) {
+    const v = row[key];
+    if (typeof v === 'string' && v.length > 0) return v;
+  }
+  return '';
+}
+
+function toMission(row: Row, lang: Lang): Mission {
+  return {
+    id: row.id as string,
+    numero: row.numero as number,
+    titulo: pick(row, 'titulo', lang),
+    descripcion: pick(row, 'descripcion', lang),
+    texto_final: pick(row, 'texto_final', lang),
+  };
+}
+
+function toQuestion(row: Row, lang: Lang): Question {
+  return {
+    id: row.id as string,
+    mission_id: row.mission_id as string,
+    categoria: row.categoria as Categoria,
+    enunciado: pick(row, 'enunciado', lang),
+    orden: row.orden as number,
+  };
+}
+
 // Todas las misiones (para el mapa). Ordenadas por numero.
-export async function getMissions(): Promise<Mission[]> {
+export async function getMissions(lang: Lang): Promise<Mission[]> {
   const { data, error } = await supabase
     .from('missions')
     .select('*')
     .order('numero');
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((row) => toMission(row, lang));
 }
 
 // Una misión por su numero (1..9).
 export async function getMissionByNumero(
-  numero: number
+  numero: number,
+  lang: Lang
 ): Promise<Mission | null> {
   const { data, error } = await supabase
     .from('missions')
@@ -38,22 +74,26 @@ export async function getMissionByNumero(
     .eq('numero', numero)
     .maybeSingle();
   if (error) throw error;
-  return data;
+  return data ? toMission(data, lang) : null;
 }
 
 // Preguntas de una misión, ordenadas.
-export async function getQuestions(missionId: string): Promise<Question[]> {
+export async function getQuestions(
+  missionId: string,
+  lang: Lang
+): Promise<Question[]> {
   const { data, error } = await supabase
     .from('questions')
     .select('*')
     .eq('mission_id', missionId)
     .order('orden');
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((row) => toQuestion(row, lang));
 }
 
 // Respuestas del usuario para un conjunto de preguntas.
 // Devuelve un mapa { question_id: respuesta }.
+// Las respuestas NO se traducen: son texto del usuario, se guardan tal cual.
 export async function getAnswers(
   questionIds: string[]
 ): Promise<Record<string, string>> {

@@ -1,0 +1,54 @@
+{
+  "lang": {
+    "es": "ES",
+    "en": "EN",
+    "switch": "Cambiar idioma"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado ✓",
+    "backToMap": "Volver al mapa",
+    "backToMapArrow": "← Volver al mapa",
+    "or": "o"
+  },
+  "auth": {
+    "title": "Un Viaje por el Bosque",
+    "login": "Iniciar sesión",
+    "signup": "Crear cuenta",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "email": "Correo",
+    "emailPlaceholder": "tucorreo@ejemplo.com",
+    "password": "Contraseña",
+    "processing": "Procesando…",
+    "google": "Continuar con Google",
+    "signupDone": "Cuenta creada. Revisa tu correo si se pide confirmación, luego inicia sesión.",
+    "signOut": "Cerrar sesión"
+  },
+  "forest": {
+    "title": "El Mapa del Bosque 🌲",
+    "subtitle": "Elige una misión para comenzar.",
+    "comingSoon": "Próximamente",
+    "modalTitle": "Misión {{numero}}",
+    "modalAsk": "¿Quieres ingresar a esta misión?",
+    "enter": "Ingresar"
+  },
+  "mission": {
+    "loading": "Cargando misión…",
+    "notAvailable": "Esta misión aún no está disponible.",
+    "heading": "Misión {{numero}}: {{titulo}}",
+    "answerPlaceholder": "Escribe tu respuesta…",
+    "getToken": "Obtener mi token",
+    "validating": "Validando…",
+    "tokenWon": "¡Token obtenido! 🪙",
+    "tokenWonBadge": "🪙 Token obtenido",
+    "missingAnswers": "Aún faltan preguntas por responder para obtener el token.",
+    "blocks": {
+      "iniciacion": "Preguntas Iniciales",
+      "actividad": "Mini-Acción",
+      "reflexion": "Preguntas de Reflexión"
+    }
+  }
+}

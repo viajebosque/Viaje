@@ -11,6 +11,32 @@ body {
   min-height: 100vh;
 }
 
+/* ---------- Toggle de idioma ---------- */
+.lang-toggle {
+  display: inline-flex;
+  gap: 2px;
+  background: #eef4ee;
+  padding: 3px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+.lang-toggle button {
+  border: 0;
+  background: transparent;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #5a6b5a;
+}
+.lang-toggle button.active {
+  background: #fff;
+  color: #2e5d34;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* ---------- Auth ---------- */
 .auth-wrap {
   min-height: 100vh;
@@ -31,9 +57,15 @@ body {
   gap: 1rem;
 }
 
+.auth-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .auth-title {
   margin: 0;
-  text-align: center;
+  flex: 1;
   font-size: 1.35rem;
   color: #2e5d34;
 }
@@ -142,7 +174,12 @@ body {
   align-items: center;
   gap: 1rem;
 }
-.forest-top button {
+.forest-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.forest-top-actions > button {
   border: 1px solid #cdd9cd;
   background: #fff;
   padding: 0.4rem 0.8rem;
@@ -213,6 +250,12 @@ body {
 
 /* ---------- Mission ---------- */
 .mission { padding: 2rem; max-width: 720px; margin: 0 auto; }
+.mission-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
 .mission-back {
   border: 1px solid #cdd9cd; background: #fff; color: #3a4a3a;
   padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer;
