@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 type AuthCtx = {
   session: Session | null;
@@ -27,6 +27,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
     // Sesión inicial (por si ya había login guardado).
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);

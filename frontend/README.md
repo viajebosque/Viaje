@@ -19,6 +19,12 @@ npm run build          # salida en dist/
 | `/` | Login / Crear cuenta | no |
 | `/forest` | Mapa del Bosque | sí |
 | `/mission/:numero` | Pantalla de Misión | sí |
+| `/profile` | Perfil del usuario | sí |
+| `/admin` | Panel de administración | sí, solo admin |
 
 Variables de entorno: ver `.env.example`. En Vercel se configuran por Environment
 (Production = `main`, Preview = `dev`). Solo la **anon** key, nunca `service_role`.
+
+Si no existe un `.env` local, la interfaz se abre en modo de vista previa para
+trabajar el diseño. En ese modo no hay sesión y las operaciones de autenticación
+no pueden completarse hasta configurar las credenciales de Supabase.
