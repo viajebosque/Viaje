@@ -67,12 +67,39 @@ body {
 }
 
 /* ---------- Forest ---------- */
-.forest { padding: 4.5rem 2rem 2rem; max-width: 900px; margin: 0 auto; }
+.forest {
+  min-height: 100svh;
+  overflow: hidden;
+  background: #70b947;
+}
 .forest-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  min-height: 7rem;
+  padding: 4.35rem clamp(1rem, 3vw, 3rem) 1rem;
+  padding-right: clamp(8rem, 13vw, 11rem);
+  background: rgba(255, 253, 244, 0.94);
+  border-bottom: 1px solid rgba(37, 74, 50, 0.18);
+  box-shadow: 0 8px 24px rgba(22, 67, 35, 0.12);
+  backdrop-filter: blur(12px);
+}
+.forest-heading { min-width: 0; }
+.forest-account {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.forest-email {
+  max-width: 24rem;
+  overflow: hidden;
+  color: #52705d;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .forest-top-actions {
   display: flex;
@@ -80,50 +107,133 @@ body {
   gap: 0.6rem;
 }
 .forest-top-actions > button {
-  border: 1px solid #cdd9cd;
-  background: #fff;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border: 1px solid rgba(37, 74, 50, 0.22);
+  background: rgba(255, 255, 255, 0.82);
+  color: #234c32;
+  padding: 0.48rem 0.85rem;
+  border-radius: 999px;
   cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
-.forest-title { color: #2e5d34; margin-bottom: 0.25rem; }
-.forest-sub { color: #5a6b5a; margin-top: 0; }
+.forest-top-actions > button:hover { background: #fff; border-color: #527e5b; }
+.forest-title {
+  margin: 0 0 0.2rem;
+  color: #205330;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+}
+.forest-sub { max-width: 46rem; margin: 0; color: #54705a; font-size: 0.92rem; }
 
-.mission-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-top: 1.5rem;
+.forest-map-viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: #2e743c #d8edc2;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.forest-map-viewport:focus-visible { outline: 3px solid #f5d878; outline-offset: -3px; }
+.forest-map {
+  position: relative;
+  width: 100%;
+  min-width: 1180px;
+  max-width: 1980px;
+  margin: 0 auto;
+  line-height: 0;
+}
+.forest-map > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
 }
 .mission-node {
-  position: relative;
+  position: absolute;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  padding: 1.25rem 0.75rem;
-  border: 1px solid #cdd9cd;
-  border-radius: 14px;
-  background: #fff;
-  cursor: pointer;
-  min-height: 110px;
   justify-content: center;
-  transition: transform 0.1s, box-shadow 0.1s;
+  gap: 0.18rem;
+  width: 7%;
+  aspect-ratio: 1;
+  padding: 0.35%;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 249, 220, 0.18);
+  color: #315a2f;
+  cursor: pointer;
+  line-height: 1.1;
+  transform: translate(-50%, -50%);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
-.mission-node:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(27,42,27,0.12); }
-.mission-node.done { border-color: #4c9a54; background: #f2f9f2; }
+.mission-node:hover,
+.mission-node:focus-visible {
+  background: rgba(255, 252, 226, 0.78);
+  box-shadow: 0 0 0 4px rgba(72, 128, 54, 0.34), 0 10px 24px rgba(24, 67, 27, 0.2);
+  outline: none;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+.mission-node.done { box-shadow: inset 0 0 0 4px rgba(48, 128, 55, 0.58); }
 .mission-node-num {
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  background: #2e7d38; color: #fff;
-  border-radius: 50%; font-weight: 700;
+  color: #285c2d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.78rem, 1.25vw, 1.5rem);
+  font-weight: 700;
 }
-.mission-node-title { font-size: 0.85rem; color: #3a4a3a; text-align: center; }
-.mission-node-token { position: absolute; top: 8px; right: 10px; }
+.mission-node-title {
+  display: -webkit-box;
+  max-width: 92%;
+  overflow: hidden;
+  color: #365738;
+  font-size: clamp(0.42rem, 0.58vw, 0.72rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.mission-node-token {
+  position: absolute;
+  top: 2%;
+  right: 3%;
+  font-size: clamp(0.55rem, 1vw, 1.2rem);
+  line-height: 1;
+}
+
+@media (min-width: 1180px) {
+  .forest-map { min-width: 0; }
+}
+
+@media (max-width: 760px) {
+  .forest-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-height: 0;
+    padding: 3.75rem 1rem 1rem;
+  }
+  .forest-account { align-items: flex-start; width: 100%; }
+  .forest-email { max-width: calc(100vw - 2rem); }
+  .forest-top-actions { flex-wrap: wrap; gap: 0.42rem; }
+  .forest-top-actions > button { padding: 0.42rem 0.72rem; font-size: 0.76rem; }
+  .forest-title { font-size: clamp(1.55rem, 8vw, 2.15rem); }
+  .forest-sub { padding-right: 3rem; font-size: 0.82rem; }
+  .forest-map { min-width: 980px; }
+}
+
+@media (max-width: 430px) {
+  .forest-map { min-width: 880px; }
+}
 
 /* ---------- Modal ---------- */
 .modal-backdrop {
   position: fixed; inset: 0;
+  z-index: 1100;
   background: rgba(20, 32, 20, 0.45);
   display: grid; place-items: center;
   padding: 1rem;
