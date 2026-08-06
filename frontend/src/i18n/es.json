@@ -11,7 +11,8 @@
     "saved": "Guardado ✓",
     "backToMap": "Volver al mapa",
     "backToMapArrow": "← Volver al mapa",
-    "or": "o"
+    "or": "o",
+    "close": "Cerrar"
   },
   "auth": {
     "title": "Un Viaje por el Bosque",
@@ -49,7 +50,13 @@
     "comingSoon": "Próximamente",
     "modalTitle": "Misión {{numero}}",
     "modalAsk": "¿Quieres ingresar a esta misión?",
-    "enter": "Ingresar"
+    "modalDuration": "10 minutos",
+    "modalMaterials": "Papel y lápiz",
+    "modalSteps": "{{current}} de {{total}} pasos",
+    "modalHint": "No hay respuestas correctas. Avanza a tu propio ritmo.",
+    "missionOnePreviewTitle": "Entrada al bosque",
+    "missionOnePreviewDescription": "Da el primer paso hacia este recorrido. Respira con calma, observa el sendero y elige una intención para comenzar.",
+    "enter": "Comenzar misión"
   },
   "profile": {
     "link": "Mi perfil",

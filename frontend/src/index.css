@@ -68,7 +68,9 @@ body {
 
 /* ---------- Forest ---------- */
 .forest {
-  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
   overflow: hidden;
   background: #70b947;
 }
@@ -77,8 +79,8 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  min-height: 7rem;
-  padding: 4.35rem clamp(1rem, 3vw, 3rem) 1rem;
+  min-height: 0;
+  padding: 0.9rem clamp(1rem, 3vw, 3rem);
   padding-right: clamp(8rem, 13vw, 11rem);
   background: rgba(255, 253, 244, 0.94);
   border-bottom: 1px solid rgba(37, 74, 50, 0.18);
@@ -90,7 +92,7 @@ body {
   display: flex;
   align-items: flex-end;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
   min-width: 0;
 }
 .forest-email {
@@ -104,16 +106,16 @@ body {
 .forest-top-actions {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.45rem;
 }
 .forest-top-actions > button {
   border: 1px solid rgba(37, 74, 50, 0.22);
   background: rgba(255, 255, 255, 0.82);
   color: #234c32;
-  padding: 0.48rem 0.85rem;
+  padding: 0.38rem 0.72rem;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 .forest-top-actions > button:hover { background: #fff; border-color: #527e5b; }
@@ -121,13 +123,16 @@ body {
   margin: 0 0 0.2rem;
   color: #205330;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-size: clamp(1.5rem, 2.2vw, 2.3rem);
   font-weight: 500;
   line-height: 1;
 }
-.forest-sub { max-width: 46rem; margin: 0; color: #54705a; font-size: 0.92rem; }
+.forest-sub { max-width: 46rem; margin: 0; color: #54705a; font-size: 0.82rem; }
 
 .forest-map-viewport {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -139,16 +144,19 @@ body {
 .forest-map-viewport:focus-visible { outline: 3px solid #f5d878; outline-offset: -3px; }
 .forest-map {
   position: relative;
-  width: 100%;
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
   min-width: 1180px;
-  max-width: 1980px;
+  max-width: none;
+  aspect-ratio: 1980 / 793;
   margin: 0 auto;
   line-height: 0;
 }
 .forest-map > img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   user-select: none;
 }
 .mission-node {
@@ -182,9 +190,9 @@ body {
 .mission-checkpoint {
   position: absolute;
   z-index: 1;
-  bottom: -25%;
+  bottom: 30%;
   left: 50%;
-  width: 115%;
+  width: 80%;
   max-width: none;
   pointer-events: none;
   filter: drop-shadow(0 7px 5px rgba(20, 55, 17, 0.3));
@@ -231,23 +239,28 @@ body {
 }
 
 @media (min-width: 1180px) {
-  .forest-map { min-width: 0; }
+  .forest-map {
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: auto;
+  }
 }
 
 @media (max-width: 760px) {
   .forest-top {
     align-items: flex-start;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.55rem;
     min-height: 0;
-    padding: 3.75rem 1rem 1rem;
+    padding: 0.65rem 1rem 0.75rem;
   }
+  .forest-heading { padding-right: 4rem; }
   .forest-account { align-items: flex-start; width: 100%; }
   .forest-email { max-width: calc(100vw - 2rem); }
   .forest-top-actions { flex-wrap: wrap; gap: 0.42rem; }
-  .forest-top-actions > button { padding: 0.42rem 0.72rem; font-size: 0.76rem; }
+  .forest-top-actions > button { padding: 0.32rem 0.62rem; font-size: 0.72rem; }
   .forest-title { font-size: clamp(1.55rem, 8vw, 2.15rem); }
-  .forest-sub { padding-right: 3rem; font-size: 0.82rem; }
+  .forest-sub { font-size: 0.78rem; }
   .forest-map { min-width: 980px; }
 }
 
@@ -259,9 +272,11 @@ body {
 .modal-backdrop {
   position: fixed; inset: 0;
   z-index: 1100;
-  background: rgba(20, 32, 20, 0.45);
+  background: rgba(16, 43, 27, 0.62);
   display: grid; place-items: center;
-  padding: 1rem;
+  padding: clamp(0.6rem, 2vw, 1.5rem);
+  overflow: hidden;
+  backdrop-filter: blur(7px) saturate(0.86);
 }
 .modal {
   background: #fff;
@@ -281,6 +296,246 @@ body {
 .modal-ghost {
   border: 1px solid #cdd9cd; background: #fff; color: #3a4a3a;
   padding: 0.7rem; border-radius: 8px; cursor: pointer;
+}
+
+/* ---------- Panel de entrada a la Misión 1 ---------- */
+.mission-entry-modal {
+  position: relative;
+  width: min(92vw, 1420px, calc((100svh - 2rem) * 1672 / 941));
+  max-height: calc(100svh - 2rem);
+  aspect-ratio: 1672 / 941;
+  flex: 0 0 auto;
+  color: #193d27;
+  filter: drop-shadow(0 25px 38px rgba(7, 28, 16, 0.42));
+}
+.mission-entry-background {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+.mission-entry-content {
+  position: absolute;
+  z-index: 2;
+  top: 18.5%;
+  right: 11.5%;
+  bottom: 13.5%;
+  left: 52.3%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.mission-entry-label {
+  margin: 0 0 clamp(0.3rem, 0.7vw, 0.75rem);
+  color: #234831;
+  font-size: clamp(0.72rem, 1.15vw, 1.25rem);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.mission-entry-modal h2 {
+  margin: 0;
+  overflow: visible;
+  color: #193d27;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 3.2vw, 4rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+.mission-entry-description {
+  display: -webkit-box;
+  margin: clamp(0.55rem, 1.6vw, 1.5rem) 0 0;
+  overflow: hidden;
+  color: #263c2c;
+  font-size: clamp(0.8rem, 1.38vw, 1.48rem);
+  line-height: 1.55;
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+.mission-entry-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.35rem, 0.85vw, 0.9rem);
+  margin-top: auto;
+}
+.mission-entry-fact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.25rem, 0.6vw, 0.65rem);
+  min-width: 0;
+  min-height: clamp(2.7rem, 5vw, 4.6rem);
+  padding: 0.55rem clamp(0.35rem, 0.8vw, 0.8rem);
+  border: 1px solid rgba(81, 100, 57, 0.36);
+  border-radius: clamp(0.55rem, 1vw, 0.9rem);
+  background: rgba(247, 241, 218, 0.42);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.4);
+  color: #294b34;
+  font-size: clamp(0.62rem, 1.05vw, 1.12rem);
+  line-height: 1.15;
+  text-align: center;
+}
+.mission-entry-fact svg {
+  width: clamp(1.2rem, 2.1vw, 2.1rem);
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+.mission-entry-fact:nth-child(3) svg { fill: currentColor; stroke: none; }
+.mission-entry-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.45rem, 1vw, 1rem);
+  min-height: clamp(3rem, 6vw, 5.5rem);
+  margin-top: clamp(0.55rem, 1vw, 1rem);
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(81, 100, 57, 0.34);
+  border-radius: clamp(0.6rem, 1vw, 0.95rem);
+  background: rgba(221, 224, 190, 0.42);
+  color: #314b36;
+  font-size: clamp(0.68rem, 1.04vw, 1.12rem);
+  text-align: center;
+}
+.mission-entry-note svg {
+  width: clamp(1.8rem, 3vw, 3rem);
+  flex: 0 0 auto;
+  fill: none;
+  stroke: #728153;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+.mission-entry-actions {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.45rem, 0.8vw, 0.8rem);
+  margin-top: clamp(0.7rem, 1.3vw, 1.25rem);
+}
+.mission-entry-primary {
+  align-self: center;
+  width: 92%;
+  min-height: clamp(2.7rem, 4.2vw, 4.2rem);
+  border: 2px solid #596647;
+  border-radius: clamp(0.7rem, 1.2vw, 1.15rem);
+  background: #293f29;
+  color: #fffdf5;
+  font-size: clamp(0.9rem, 1.45vw, 1.45rem);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 2px rgba(216, 203, 157, 0.5),
+    0 7px 18px rgba(20, 61, 36, 0.2);
+  transition: filter 150ms ease, transform 150ms ease;
+}
+.mission-entry-primary:hover,
+.mission-entry-primary:focus-visible {
+  filter: brightness(1.1);
+  outline: 3px solid rgba(75, 115, 76, 0.28);
+  transform: translateY(-1px);
+}
+.mission-entry-back {
+  align-self: center;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: #254931;
+  padding: 0.1rem 0;
+  font-size: clamp(0.78rem, 1.15vw, 1.2rem);
+  cursor: pointer;
+}
+.mission-entry-close {
+  position: absolute;
+  z-index: 3;
+  top: 16.8%;
+  right: 11.5%;
+  display: grid;
+  width: clamp(1.9rem, 2.8vw, 3rem);
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 0;
+  border: 1.5px solid #31533b;
+  border-radius: 50%;
+  background: rgba(250, 242, 222, 0.82);
+  color: #274932;
+  cursor: pointer;
+}
+.mission-entry-close:hover,
+.mission-entry-close:focus-visible { background: #fff8e8; outline: 3px solid rgba(56, 93, 61, 0.22); }
+.mission-entry-close svg {
+  width: 52%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.9;
+}
+
+@media (max-width: 760px) {
+  .modal-backdrop { align-items: center; }
+  .mission-entry-modal {
+    width: min(94vw, 34rem);
+    height: min(88svh, 42rem);
+    min-height: 0;
+    max-height: calc(100svh - 1.2rem);
+    aspect-ratio: auto;
+    overflow: hidden;
+    border: 5px double #31533b;
+    border-radius: 1.7rem;
+    background: #fbf1df;
+    filter: drop-shadow(0 18px 28px rgba(7, 28, 16, 0.38));
+  }
+  .mission-entry-background {
+    top: 0;
+    left: -108%;
+    width: 229%;
+    height: 100%;
+    opacity: 0.34;
+  }
+  .mission-entry-content {
+    top: 3.8rem;
+    right: 1.15rem;
+    bottom: 1.1rem;
+    left: 1.15rem;
+  }
+  .mission-entry-label { margin-bottom: 0.45rem; font-size: 0.7rem; }
+  .mission-entry-modal h2 { font-size: clamp(2rem, 10vw, 3.2rem); white-space: normal; }
+  .mission-entry-description {
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    -webkit-line-clamp: 5;
+  }
+  .mission-entry-facts { gap: 0.35rem; }
+  .mission-entry-fact {
+    flex-direction: column;
+    gap: 0.2rem;
+    min-height: 4.2rem;
+    padding: 0.45rem 0.25rem;
+    font-size: 0.68rem;
+  }
+  .mission-entry-fact svg { width: 1.45rem; }
+  .mission-entry-note { min-height: 4rem; margin-top: 0.6rem; padding: 0.5rem 0.7rem; font-size: 0.75rem; }
+  .mission-entry-note svg { width: 2rem; }
+  .mission-entry-actions { margin-top: 0.7rem; }
+  .mission-entry-primary { min-height: 3.3rem; font-size: 1rem; }
+  .mission-entry-back { font-size: 0.86rem; }
+  .mission-entry-close {
+    top: 1rem;
+    right: 1rem;
+    width: 2.4rem;
+    background: rgba(250, 242, 222, 0.92);
+  }
 }
 
 /* ---------- Perfil ---------- */

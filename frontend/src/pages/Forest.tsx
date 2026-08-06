@@ -6,6 +6,7 @@ import { useRole } from '../auth/useRole';
 import { useLanguage } from '../i18n/useLanguage';
 import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
+import missionOnePanel from '../assets/forest/mission-one-panel.png';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -24,18 +25,71 @@ const missionPositions = [
   { left: 93.9, top: 64.3 },
 ] as const;
 
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m5 16-1 4 4-1L19 8l-3-3L5 16Z" />
+      <path d="m13.8 7.2 3 3M5 16l3 3" />
+    </svg>
+  );
+}
+
+function StepsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <ellipse cx="8" cy="8" rx="2.5" ry="4" transform="rotate(-18 8 8)" />
+      <ellipse cx="15.5" cy="15.5" rx="2.5" ry="4" transform="rotate(22 15.5 15.5)" />
+      <circle cx="6.4" cy="14.2" r="1.2" />
+      <circle cx="17" cy="9.5" r="1.2" />
+    </svg>
+  );
+}
+
+function SproutIcon() {
+  return (
+    <svg viewBox="0 0 38 38" aria-hidden="true">
+      <path d="M19 31V13" />
+      <path d="M19 19c-6 0-9-3-9-8 6 0 9 3 9 8ZM19 24c6 0 10-3 10-8-6 0-10 3-10 8Z" />
+      <path d="M8 32c6-3 16-3 22 0" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m7 7 10 10M17 7 7 17" />
+    </svg>
+  );
+}
+
 export default function Forest() {
   const { user, signOut } = useAuth();
   const { role } = useRole();
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const isDesignPreview =
+    import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).get('preview') === '1';
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
-  const [selected, setSelected] = useState<{ numero: number; titulo: string } | null>(
-    null
-  );
+  const [selected, setSelected] = useState<{
+    numero: number;
+    titulo: string;
+    descripcion: string;
+    isDone: boolean;
+  } | null>(null);
 
   // Re-lee las misiones al cambiar el idioma: los títulos vienen de la BD.
   useEffect(() => {
@@ -49,6 +103,15 @@ export default function Forest() {
       .then(setCompleted)
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelected(null);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [selected]);
 
   // Mapa número -> misión (para saber título / si existe contenido).
   const byNumero = new Map(missions.map((m) => [m.numero, m]));
@@ -91,7 +154,13 @@ export default function Forest() {
             const n = index + 1;
             const m = byNumero.get(n);
             const isDone = m ? completed.has(m.id) : false;
-            const title = m?.titulo || t('forest.comingSoon');
+            const previewTitle =
+              isDesignPreview && n === 1 ? t('forest.missionOnePreviewTitle') : '';
+            const previewDescription =
+              isDesignPreview && n === 1
+                ? t('forest.missionOnePreviewDescription')
+                : '';
+            const title = m?.titulo || previewTitle || t('forest.comingSoon');
 
             return (
               <button
@@ -99,7 +168,14 @@ export default function Forest() {
                 className={`mission-node ${isDone ? 'done' : 'pending'}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
                 aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}`}
-                onClick={() => setSelected({ numero: n, titulo: m?.titulo ?? '' })}
+                onClick={() =>
+                  setSelected({
+                    numero: n,
+                    titulo: m?.titulo || previewTitle,
+                    descripcion: m?.descripcion || previewDescription,
+                    isDone,
+                  })
+                }
               >
                 {!isDone && (
                   <img
@@ -120,24 +196,105 @@ export default function Forest() {
 
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>{t('forest.modalTitle', { numero: selected.numero })}</h2>
-            {selected.titulo && (
-              <p className="modal-mission-title">{selected.titulo}</p>
-            )}
-            <p>{t('forest.modalAsk')}</p>
-            <div className="modal-actions">
+          {selected.numero === 1 ? (
+            <section
+              className="mission-entry-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mission-entry-title"
+              aria-describedby="mission-entry-description"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <img
+                className="mission-entry-background"
+                src={missionOnePanel}
+                alt=""
+                draggable={false}
+              />
               <button
-                className="modal-primary"
-                onClick={() => navigate(`/mission/${selected.numero}`)}
+                className="mission-entry-close"
+                type="button"
+                aria-label={t('common.close')}
+                autoFocus
+                onClick={() => setSelected(null)}
               >
-                {t('forest.enter')}
+                <CloseIcon />
               </button>
-              <button className="modal-ghost" onClick={() => setSelected(null)}>
-                {t('common.backToMap')}
-              </button>
+
+              <div className="mission-entry-content">
+                <p className="mission-entry-label">
+                  {t('forest.modalTitle', { numero: selected.numero })}
+                </p>
+                <h2 id="mission-entry-title">
+                  {selected.titulo || t('forest.modalTitle', { numero: selected.numero })}
+                </h2>
+                <p id="mission-entry-description" className="mission-entry-description">
+                  {selected.descripcion || t('forest.modalAsk')}
+                </p>
+
+                <div className="mission-entry-facts">
+                  <div className="mission-entry-fact">
+                    <ClockIcon />
+                    <span>{t('forest.modalDuration')}</span>
+                  </div>
+                  <div className="mission-entry-fact">
+                    <PencilIcon />
+                    <span>{t('forest.modalMaterials')}</span>
+                  </div>
+                  <div className="mission-entry-fact">
+                    <StepsIcon />
+                    <span>
+                      {t('forest.modalSteps', {
+                        current: selected.isDone ? 3 : 0,
+                        total: 3,
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mission-entry-note">
+                  <SproutIcon />
+                  <span>{t('forest.modalHint')}</span>
+                </div>
+
+                <div className="mission-entry-actions">
+                  <button
+                    className="mission-entry-primary"
+                    type="button"
+                    onClick={() => navigate(`/mission/${selected.numero}`)}
+                  >
+                    {t('forest.enter')}
+                  </button>
+                  <button
+                    className="mission-entry-back"
+                    type="button"
+                    onClick={() => setSelected(null)}
+                  >
+                    {t('common.backToMap')}
+                  </button>
+                </div>
+              </div>
+            </section>
+          ) : (
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <h2>{t('forest.modalTitle', { numero: selected.numero })}</h2>
+              {selected.titulo && (
+                <p className="modal-mission-title">{selected.titulo}</p>
+              )}
+              <p>{t('forest.modalAsk')}</p>
+              <div className="modal-actions">
+                <button
+                  className="modal-primary"
+                  onClick={() => navigate(`/mission/${selected.numero}`)}
+                >
+                  {t('forest.enter')}
+                </button>
+                <button className="modal-ghost" onClick={() => setSelected(null)}>
+                  {t('common.backToMap')}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </main>

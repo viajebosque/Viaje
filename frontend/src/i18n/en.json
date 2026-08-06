@@ -11,7 +11,8 @@
     "saved": "Saved ✓",
     "backToMap": "Back to map",
     "backToMapArrow": "← Back to map",
-    "or": "or"
+    "or": "or",
+    "close": "Close"
   },
   "auth": {
     "title": "A Journey Through the Forest",
@@ -49,7 +50,13 @@
     "comingSoon": "Coming soon",
     "modalTitle": "Mission {{numero}}",
     "modalAsk": "Do you want to enter this mission?",
-    "enter": "Enter"
+    "modalDuration": "10 minutes",
+    "modalMaterials": "Paper and pencil",
+    "modalSteps": "{{current}} of {{total}} steps",
+    "modalHint": "There are no right answers. Move forward at your own pace.",
+    "missionOnePreviewTitle": "Entrance to the forest",
+    "missionOnePreviewDescription": "Take the first step on this journey. Breathe calmly, observe the path, and choose an intention to begin.",
+    "enter": "Start mission"
   },
   "profile": {
     "link": "My profile",

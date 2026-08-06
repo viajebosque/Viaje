@@ -30,7 +30,7 @@ export default function App() {
       <Route
         path="/forest"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowLocalPreview>
             <Forest />
           </ProtectedRoute>
         }
