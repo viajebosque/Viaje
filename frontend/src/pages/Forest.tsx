@@ -5,6 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useRole } from '../auth/useRole';
 import { useLanguage } from '../i18n/useLanguage';
 import forestMap from '../assets/forest/forest-map.png';
+import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -95,11 +96,19 @@ export default function Forest() {
             return (
               <button
                 key={n}
-                className={`mission-node ${isDone ? 'done' : ''}`}
+                className={`mission-node ${isDone ? 'done' : 'pending'}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
                 aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}`}
                 onClick={() => setSelected({ numero: n, titulo: m?.titulo ?? '' })}
               >
+                {!isDone && (
+                  <img
+                    className="mission-checkpoint"
+                    src={pendingCheckpoint}
+                    alt=""
+                    draggable={false}
+                  />
+                )}
                 <span className="mission-node-num">{n}</span>
                 <span className="mission-node-title">{title}</span>
                 {isDone && <span className="mission-node-token">🪙</span>}

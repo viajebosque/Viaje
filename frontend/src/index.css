@@ -164,7 +164,7 @@ body {
   padding: 0.35%;
   border: 0;
   border-radius: 50%;
-  background: rgba(255, 249, 220, 0.18);
+  background: transparent;
   color: #315a2f;
   cursor: pointer;
   line-height: 1.1;
@@ -173,29 +173,54 @@ body {
 }
 .mission-node:hover,
 .mission-node:focus-visible {
-  background: rgba(255, 252, 226, 0.78);
+  background: rgba(255, 252, 226, 0.5);
   box-shadow: 0 0 0 4px rgba(72, 128, 54, 0.34), 0 10px 24px rgba(24, 67, 27, 0.2);
   outline: none;
   transform: translate(-50%, -50%) scale(1.08);
 }
 .mission-node.done { box-shadow: inset 0 0 0 4px rgba(48, 128, 55, 0.58); }
+.mission-checkpoint {
+  position: absolute;
+  z-index: 1;
+  bottom: -25%;
+  left: 50%;
+  width: 160%;
+  max-width: none;
+  pointer-events: none;
+  filter: drop-shadow(0 7px 5px rgba(20, 55, 17, 0.3));
+  transform: translateX(-50%);
+  user-select: none;
+}
 .mission-node-num {
+  position: absolute;
+  z-index: 2;
+  bottom: 11%;
+  left: 50%;
+  display: grid;
+  width: 34%;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 2px solid rgba(78, 105, 40, 0.68);
+  border-radius: 50%;
+  background: rgba(255, 249, 218, 0.94);
   color: #285c2d;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(0.78rem, 1.25vw, 1.5rem);
   font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 3px 8px rgba(30, 69, 22, 0.2);
+  transform: translateX(-50%);
 }
 .mission-node-title {
-  display: -webkit-box;
-  max-width: 92%;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
   overflow: hidden;
-  color: #365738;
-  font-size: clamp(0.42rem, 0.58vw, 0.72rem);
-  font-weight: 700;
-  line-height: 1.05;
-  text-align: center;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .mission-node-token {
   position: absolute;
