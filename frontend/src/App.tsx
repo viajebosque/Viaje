@@ -38,7 +38,7 @@ export default function App() {
       <Route
         path="/mission/:numero"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowLocalPreview>
             <MissionPage />
           </ProtectedRoute>
         }

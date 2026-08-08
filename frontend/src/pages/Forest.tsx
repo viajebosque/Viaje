@@ -82,6 +82,10 @@ export default function Forest() {
     import.meta.env.DEV &&
     new URLSearchParams(window.location.search).get('preview') === '1';
 
+  function openMission(numero: number) {
+    navigate(`/mission/${numero}${isDesignPreview ? '?preview=1' : ''}`);
+  }
+
   const [missions, setMissions] = useState<Mission[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<{
@@ -261,7 +265,7 @@ export default function Forest() {
                   <button
                     className="mission-entry-primary"
                     type="button"
-                    onClick={() => navigate(`/mission/${selected.numero}`)}
+                    onClick={() => openMission(selected.numero)}
                   >
                     {t('forest.enter')}
                   </button>
@@ -285,7 +289,7 @@ export default function Forest() {
               <div className="modal-actions">
                 <button
                   className="modal-primary"
-                  onClick={() => navigate(`/mission/${selected.numero}`)}
+                  onClick={() => openMission(selected.numero)}
                 >
                   {t('forest.enter')}
                 </button>

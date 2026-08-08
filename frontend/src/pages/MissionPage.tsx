@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { useLanguage } from '../i18n/useLanguage';
+import { isSupabaseConfigured } from '../lib/supabase';
 import {
   getMissionByNumero,
   getQuestions,
@@ -18,12 +19,49 @@ import {
 // (mission.blocks.<categoria>).
 const BLOQUES: Categoria[] = ['iniciacion', 'actividad', 'reflexion'];
 
+const PREVIEW_MISSION: Mission = {
+  id: 'preview-mission-1',
+  numero: 1,
+  titulo: 'Primeros pasos en el bosque',
+  descripcion: 'Una pausa para observar, conectar y registrar lo que encuentras en el camino.',
+  texto_final: 'Cada respuesta es una pequeña huella de tu recorrido. Cuando estés listo, continúa explorando el bosque.',
+};
+
+const PREVIEW_QUESTIONS: Question[] = [
+  {
+    id: 'preview-question-1',
+    mission_id: PREVIEW_MISSION.id,
+    categoria: 'iniciacion',
+    enunciado: '¿Qué llama primero tu atención al comenzar este recorrido?',
+    orden: 1,
+  },
+  {
+    id: 'preview-question-2',
+    mission_id: PREVIEW_MISSION.id,
+    categoria: 'actividad',
+    enunciado: 'Describe un detalle del bosque que quieras recordar.',
+    orden: 2,
+  },
+  {
+    id: 'preview-question-3',
+    mission_id: PREVIEW_MISSION.id,
+    categoria: 'reflexion',
+    enunciado: '¿Qué te llevas de esta primera parada?',
+    orden: 3,
+  },
+];
+
 export default function MissionPage() {
   const { numero } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useTranslation();
   const { lang } = useLanguage();
+  const isDesignPreview =
+    import.meta.env.DEV &&
+    !isSupabaseConfigured &&
+    new URLSearchParams(window.location.search).get('preview') === '1';
+  const mapPath = `/forest${isDesignPreview ? '?preview=1' : ''}`;
 
   const [mission, setMission] = useState<Mission | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -48,6 +86,13 @@ export default function MissionPage() {
   useEffect(() => {
     const n = Number(numero);
     setLoading(true);
+    if (isDesignPreview && n === 1) {
+      setMission(PREVIEW_MISSION);
+      setQuestions(PREVIEW_QUESTIONS);
+      setAnswers({});
+      setLoading(false);
+      return;
+    }
     (async () => {
       const m = await getMissionByNumero(n, lang);
       setMission(m);
@@ -64,7 +109,7 @@ export default function MissionPage() {
       setErrText(e instanceof Error ? e.message : String(e));
       setLoading(false);
     });
-  }, [numero, lang]);
+  }, [numero, lang, isDesignPreview]);
 
   function setResp(questionId: string, value: string) {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -117,7 +162,7 @@ export default function MissionPage() {
     return (
       <main className="mission">
         <p>{t('mission.notAvailable')}</p>
-        <button className="mission-back" onClick={() => navigate('/forest')}>
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
           {t('common.backToMapArrow')}
         </button>
       </main>
@@ -126,7 +171,7 @@ export default function MissionPage() {
   return (
     <main className="mission">
       <div className="mission-top">
-        <button className="mission-back" onClick={() => navigate('/forest')}>
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
           {t('common.backToMapArrow')}
         </button>
       </div>
@@ -184,7 +229,7 @@ export default function MissionPage() {
           </button>
         )}
 
-        <button className="mission-back" onClick={() => navigate('/forest')}>
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
           {t('common.backToMap')}
         </button>
       </section>
