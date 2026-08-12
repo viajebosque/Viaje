@@ -4,12 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { useLanguage } from '../i18n/useLanguage';
 import { isSupabaseConfigured } from '../lib/supabase';
+import MissionOneGuided from './MissionOneGuided';
 import {
   getMissionByNumero,
   getQuestions,
   getAnswers,
   saveAnswers,
   completeMission,
+  hasMissionToken,
   type Mission,
   type Question,
   type Categoria,
@@ -22,34 +24,18 @@ const BLOQUES: Categoria[] = ['iniciacion', 'actividad', 'reflexion'];
 const PREVIEW_MISSION: Mission = {
   id: 'preview-mission-1',
   numero: 1,
-  titulo: 'Primeros pasos en el bosque',
-  descripcion: 'Una pausa para observar, conectar y registrar lo que encuentras en el camino.',
-  texto_final: 'Cada respuesta es una pequeña huella de tu recorrido. Cuando estés listo, continúa explorando el bosque.',
+  titulo: 'La entrada al bosque',
+  descripcion: 'Un espacio para soltar, escuchar y elegir cómo quieres comenzar.',
+  texto_final: 'Cada respuesta es una pequeña huella de tu recorrido.',
 };
 
-const PREVIEW_QUESTIONS: Question[] = [
-  {
-    id: 'preview-question-1',
-    mission_id: PREVIEW_MISSION.id,
-    categoria: 'iniciacion',
-    enunciado: '¿Qué llama primero tu atención al comenzar este recorrido?',
-    orden: 1,
-  },
-  {
-    id: 'preview-question-2',
-    mission_id: PREVIEW_MISSION.id,
-    categoria: 'actividad',
-    enunciado: 'Describe un detalle del bosque que quieras recordar.',
-    orden: 2,
-  },
-  {
-    id: 'preview-question-3',
-    mission_id: PREVIEW_MISSION.id,
-    categoria: 'reflexion',
-    enunciado: '¿Qué te llevas de esta primera parada?',
-    orden: 3,
-  },
-];
+const PREVIEW_QUESTIONS: Question[] = Array.from({ length: 5 }, (_, index) => ({
+  id: `preview-question-${index + 1}`,
+  mission_id: PREVIEW_MISSION.id,
+  categoria: index === 0 ? 'iniciacion' : index === 1 ? 'actividad' : 'reflexion',
+  enunciado: `Paso ${index + 1}`,
+  orden: index + 1,
+}));
 
 export default function MissionPage() {
   const { numero } = useParams();
@@ -90,6 +76,7 @@ export default function MissionPage() {
       setMission(PREVIEW_MISSION);
       setQuestions(PREVIEW_QUESTIONS);
       setAnswers({});
+      setTokenWon(false);
       setLoading(false);
       return;
     }
@@ -102,8 +89,12 @@ export default function MissionPage() {
       }
       const qs = await getQuestions(m.id, lang);
       setQuestions(qs);
-      const saved = await getAnswers(qs.map((q) => q.id));
+      const [saved, completedAlready] = await Promise.all([
+        getAnswers(qs.map((q) => q.id)),
+        hasMissionToken(m.id),
+      ]);
       setAnswers(saved);
+      setTokenWon(completedAlready);
       setLoading(false);
     })().catch((e) => {
       setErrText(e instanceof Error ? e.message : String(e));
@@ -167,6 +158,20 @@ export default function MissionPage() {
         </button>
       </main>
     );
+
+  if (mission.numero === 1) {
+    return (
+      <MissionOneGuided
+        mission={mission}
+        questions={questions}
+        initialAnswers={answers}
+        initialCompleted={tokenWon}
+        userId={user?.id ?? null}
+        isPreview={isDesignPreview}
+        mapPath={mapPath}
+      />
+    );
+  }
 
   return (
     <main className="mission">

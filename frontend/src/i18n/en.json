@@ -119,6 +119,81 @@
       "iniciacion": "Opening Questions",
       "actividad": "Mini-Action",
       "reflexion": "Reflection Questions"
+    },
+    "guided": {
+      "missionLabel": "Mission 1",
+      "title": "The entrance to the forest",
+      "threshold": "Your first threshold",
+      "sideNote": "Don't look for the perfect answer. This space is for listening to what needs your attention today.",
+      "detailsLabel": "Mission details",
+      "duration": "8–10 minutes",
+      "autoSave": "Saves automatically",
+      "private": "Your answers are private",
+      "illustrationAlt": "The glowing guide walks through the entrance to the forest",
+      "map": "Back to map",
+      "step": "Step {{current}} of {{total}}",
+      "progressLabel": "Mission progress",
+      "eyebrow": {
+        "step1": "Pause for a moment",
+        "step2": "A letter to yourself",
+        "step3": "Pause and listen",
+        "step4": "Look toward the path",
+        "step5": "Choose your compass"
+      },
+      "questions": {
+        "step1": "What do you need to let go of to enter the forest with an open mind?",
+        "step2": "Write a letter to the part of you that feels stuck.",
+        "step3": "What are you feeling right now?",
+        "step4": "What would you like to transform?",
+        "step5": "What intention do you choose for this journey?"
+      },
+      "help": {
+        "step1": "Choose the option that best matches how you arrive today. There are no right answers.",
+        "step2": "Speak to yourself with the same tenderness you would offer someone you love.",
+        "step3": "Name what is here without trying to change it yet.",
+        "step4": "It may be an idea, a habit, or a way of seeing yourself.",
+        "step5": "A simple phrase can accompany you throughout the path."
+      },
+      "releaseOptions": {
+        "daily": "Day-to-day worries",
+        "expectations": "Expectations and judgments",
+        "other": "Another burden I no longer want to carry",
+        "unsure": "I'm not sure yet"
+      },
+      "optionalReflection": "If you want, tell us a little more (optional)",
+      "optionalPlaceholder": "You can leave a short reflection here…",
+      "letterPrompt": "I see you standing here, and I want you to know…",
+      "preferPaper": "I prefer to write it on paper",
+      "placeholders": {
+        "step3": "Right now I feel…",
+        "step4": "I would like to transform…",
+        "step5": "I choose the intention to…"
+      },
+      "validation": {
+        "step1": "Choose an option before continuing.",
+        "step2": "Write a few more lines or choose to write your letter on paper.",
+        "step3": "Give yourself a moment to name what you are feeling.",
+        "step4": "Write what you would like to transform before continuing.",
+        "step5": "Choose an intention to close this first mission.",
+        "incomplete": "A response still needs to be saved. Review your path and try again."
+      },
+      "previous": "Previous",
+      "continue": "Continue",
+      "finish": "Complete mission",
+      "completing": "Completing…",
+      "saveExit": "Save and exit",
+      "saving": "Saving…",
+      "saved": "Changes saved",
+      "saveFailed": "We couldn't save online",
+      "ready": "Ready to begin",
+      "retry": "Try again",
+      "saveError": "Your answer is safe on this device. Try again when your connection returns.",
+      "completeError": "We couldn't complete the mission yet. Your answers are safe; please try again.",
+      "completeKicker": "Mission completed",
+      "completeTitle": "You earned a Solitary Leaf",
+      "reward": "Your first forest reward",
+      "rewardMeaning": "It represents the courage to begin",
+      "backToMap": "Back to map"
     }
   }
 }

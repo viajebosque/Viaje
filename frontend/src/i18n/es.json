@@ -119,6 +119,81 @@
       "iniciacion": "Preguntas Iniciales",
       "actividad": "Mini-Acción",
       "reflexion": "Preguntas de Reflexión"
+    },
+    "guided": {
+      "missionLabel": "Misión 1",
+      "title": "La entrada al bosque",
+      "threshold": "Tu primer umbral",
+      "sideNote": "No busques la respuesta perfecta. Este espacio es para escuchar lo que hoy necesita tu atención.",
+      "detailsLabel": "Detalles de la misión",
+      "duration": "8–10 minutos",
+      "autoSave": "Se guarda automáticamente",
+      "private": "Tus respuestas son privadas",
+      "illustrationAlt": "El guía luminoso camina por la entrada del bosque",
+      "map": "Volver al mapa",
+      "step": "Paso {{current}} de {{total}}",
+      "progressLabel": "Progreso de la misión",
+      "eyebrow": {
+        "step1": "Detente un momento",
+        "step2": "Una carta para ti",
+        "step3": "Haz una pausa y escucha",
+        "step4": "Mira hacia el sendero",
+        "step5": "Elige tu brújula"
+      },
+      "questions": {
+        "step1": "¿Qué necesitas soltar para entrar al bosque con mente abierta?",
+        "step2": "Escribe una carta a tu yo estancado/a.",
+        "step3": "¿Qué estás sintiendo ahora?",
+        "step4": "¿Qué te gustaría transformar?",
+        "step5": "¿Qué intención eliges para este recorrido?"
+      },
+      "help": {
+        "step1": "Elige la opción que más se acerque a cómo llegas hoy. No hay respuestas correctas.",
+        "step2": "Háblate con la misma ternura que ofrecerías a alguien querido.",
+        "step3": "Nombra lo que aparece, sin intentar cambiarlo todavía.",
+        "step4": "Puede ser una idea, una costumbre o una forma de mirarte.",
+        "step5": "Una frase sencilla puede acompañarte durante todo el camino."
+      },
+      "releaseOptions": {
+        "daily": "Preocupaciones del día a día",
+        "expectations": "Expectativas y juicios",
+        "other": "Otra carga que ya no quiero llevar",
+        "unsure": "No estoy seguro/a todavía"
+      },
+      "optionalReflection": "Si quieres, cuéntanos un poco más (opcional)",
+      "optionalPlaceholder": "Puedes dejar aquí una reflexión breve…",
+      "letterPrompt": "Te veo aquí de pie, y quiero que sepas…",
+      "preferPaper": "Prefiero escribirla en papel",
+      "placeholders": {
+        "step3": "Ahora mismo siento…",
+        "step4": "Me gustaría transformar…",
+        "step5": "Elijo la intención de…"
+      },
+      "validation": {
+        "step1": "Elige una opción para poder continuar.",
+        "step2": "Escribe unas líneas más o elige la opción de escribir tu carta en papel.",
+        "step3": "Regálate un momento para nombrar lo que estás sintiendo.",
+        "step4": "Escribe qué te gustaría transformar antes de continuar.",
+        "step5": "Elige una intención para cerrar esta primera misión.",
+        "incomplete": "Aún falta guardar alguna respuesta. Revisa el recorrido e inténtalo de nuevo."
+      },
+      "previous": "Anterior",
+      "continue": "Continuar",
+      "finish": "Completar misión",
+      "completing": "Completando…",
+      "saveExit": "Guardar y salir",
+      "saving": "Guardando…",
+      "saved": "Cambios guardados",
+      "saveFailed": "No pudimos guardar en línea",
+      "ready": "Listo para comenzar",
+      "retry": "Reintentar",
+      "saveError": "Tu respuesta está segura en este dispositivo. Reintenta cuando vuelva la conexión.",
+      "completeError": "No pudimos completar la misión todavía. Tus respuestas están a salvo; inténtalo nuevamente.",
+      "completeKicker": "Misión completada",
+      "completeTitle": "Has ganado una Hoja Solitaria",
+      "reward": "Tu primera recompensa del bosque",
+      "rewardMeaning": "Representa el coraje de comenzar",
+      "backToMap": "Volver al mapa"
     }
   }
 }

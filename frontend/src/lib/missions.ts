@@ -144,3 +144,16 @@ export async function getCompletedMissionIds(): Promise<Set<string>> {
   if (error) throw error;
   return new Set((data ?? []).map((r) => r.mission_id));
 }
+
+// Consulta puntual para restaurar la pantalla de celebracion al volver a una
+// mision ya completada. La restriccion unica de mission_tokens y la RPC hacen
+// que reclamar el premio siga siendo idempotente.
+export async function hasMissionToken(missionId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('mission_tokens')
+    .select('mission_id')
+    .eq('mission_id', missionId)
+    .maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
+}
