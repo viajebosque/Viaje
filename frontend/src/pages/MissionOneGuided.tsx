@@ -474,7 +474,10 @@ export default function MissionOneGuided({
                   </label>
                 ))}
                 <label className="guided-field guided-field--optional">
-                  <span>{t('mission.guided.optionalReflection')}</span>
+                  <span className="guided-optional-label">
+                    <span>{t('mission.guided.optionalReflection')}</span>
+                    <small>{t('mission.guided.optional')}</small>
+                  </span>
                   <textarea
                     value={draft.releaseReflection}
                     onChange={(event) => updateDraft({ releaseReflection: event.target.value })}

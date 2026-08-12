@@ -160,7 +160,8 @@
         "other": "Otra carga que ya no quiero llevar",
         "unsure": "No estoy seguro/a todavía"
       },
-      "optionalReflection": "Si quieres, cuéntanos un poco más (opcional)",
+      "optionalReflection": "Si quieres, cuéntanos un poco más",
+      "optional": "Opcional",
       "optionalPlaceholder": "Puedes dejar aquí una reflexión breve…",
       "letterPrompt": "Te veo aquí de pie, y quiero que sepas…",
       "preferPaper": "Prefiero escribirla en papel",

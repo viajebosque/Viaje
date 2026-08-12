@@ -68,6 +68,7 @@ body {
 
 /* ---------- Forest ---------- */
 .forest {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100svh;
@@ -75,6 +76,8 @@ body {
   background: #70b947;
 }
 .forest-top {
+  position: relative;
+  z-index: 30;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -82,10 +85,12 @@ body {
   min-height: 0;
   padding: 0.9rem clamp(1rem, 3vw, 3rem);
   padding-right: clamp(8rem, 13vw, 11rem);
-  background: rgba(255, 253, 244, 0.94);
-  border-bottom: 1px solid rgba(37, 74, 50, 0.18);
-  box-shadow: 0 8px 24px rgba(22, 67, 35, 0.12);
-  backdrop-filter: blur(12px);
+  background:
+    radial-gradient(circle at 10% 8%, rgba(255, 255, 255, 0.52), transparent 18%),
+    radial-gradient(circle at 72% 110%, rgba(255, 246, 193, 0.42), transparent 28%),
+    linear-gradient(100deg, #d8f1e8 0%, #c4e8e7 52%, #f6e8b9 100%);
+  border-bottom: 1px solid rgba(39, 91, 67, 0.16);
+  box-shadow: 0 6px 20px rgba(31, 91, 74, 0.09);
 }
 .forest-heading { min-width: 0; }
 .forest-account {
@@ -110,7 +115,7 @@ body {
 }
 .forest-top-actions > button {
   border: 1px solid rgba(37, 74, 50, 0.22);
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 248, 0.66);
   color: #234c32;
   padding: 0.38rem 0.72rem;
   border-radius: 999px;
@@ -118,7 +123,7 @@ body {
   font-size: 0.76rem;
   font-weight: 700;
 }
-.forest-top-actions > button:hover { background: #fff; border-color: #527e5b; }
+.forest-top-actions > button:hover { background: rgba(255, 255, 250, 0.9); border-color: #527e5b; }
 .forest-title {
   margin: 0 0 0.2rem;
   color: #205330;
@@ -126,8 +131,23 @@ body {
   font-size: clamp(1.5rem, 2.2vw, 2.3rem);
   font-weight: 500;
   line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 245, 0.7);
 }
-.forest-sub { max-width: 46rem; margin: 0; color: #54705a; font-size: 0.82rem; }
+.forest-sub {
+  max-width: 46rem;
+  margin: 0;
+  color: #466550;
+  font-size: 0.82rem;
+  text-shadow: 0 1px 0 rgba(255, 255, 245, 0.55);
+}
+
+body:has(.forest) .platform-lang-toggle .lang-toggle {
+  background: rgba(255, 255, 248, 0.76);
+  border-color: rgba(37, 74, 50, 0.18);
+  box-shadow: 0 5px 16px rgba(27, 42, 27, 0.1);
+  backdrop-filter: blur(10px) saturate(1.08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+}
 
 .forest-map-viewport {
   display: flex;
@@ -1889,4 +1909,292 @@ body:has(.guided-mission) .platform-lang-toggle { display: none; }
   .guided-actions { grid-template-columns: 1fr; }
   .guided-actions .guided-primary { grid-row: 1; }
   .guided-actions .guided-secondary { grid-row: 2; }
+}
+
+/* Mantiene login y Mision 1 anclados al viewport, sin rebote del documento. */
+html:has(.auth-wrap),
+html:has(.guided-mission),
+body:has(.auth-wrap),
+body:has(.guided-mission),
+#root:has(.auth-wrap),
+#root:has(.guided-mission) {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.auth-wrap {
+  width: 100%;
+  height: 100svh;
+  min-height: 0;
+  max-height: 100svh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.guided-mission {
+  width: 100%;
+  height: 100svh;
+  min-height: 0;
+  max-height: 100svh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.guided-shell {
+  height: calc(100svh - 4px);
+  min-height: 0;
+  max-height: calc(100svh - 4px);
+}
+
+.guided-panel {
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 1100px) {
+  .auth-wrap {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+
+@media (max-width: 700px) {
+  .guided-shell {
+    height: 100svh;
+    max-height: 100svh;
+  }
+  .guided-panel {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+/* Escala de escritorio mas contenida para dejar respirar el fondo del bosque. */
+@media (min-width: 901px) {
+  .guided-mission {
+    place-items: center;
+    padding: 24px;
+  }
+
+  .guided-shell {
+    grid-template-rows: 100px minmax(0, 1fr);
+    width: min(1500px, calc(100% - 48px));
+    height: calc(100svh - 48px);
+    min-height: 0;
+    max-height: calc(100svh - 48px);
+    border-bottom: 5px solid #245b3a;
+    border-radius: 44px;
+  }
+
+  .guided-topbar { padding-inline: 40px; }
+  .guided-back-icon { width: 46px; height: 46px; }
+  .guided-map-link,
+  .guided-top-exit { min-height: 52px; font-size: 1rem; }
+  .guided-top-exit { padding-inline: 19px; }
+
+  .guided-content {
+    grid-template-columns: clamp(330px, 27vw, 400px) minmax(0, 1fr);
+  }
+
+  .guided-illustration { padding: 58px 38px 40px; }
+  .guided-illustration-copy h2 { font-size: clamp(2.7rem, 3vw, 3.2rem); }
+  .guided-illustration-copy p { font-size: 1rem; }
+  .guided-features { gap: 18px; margin-top: 38px; }
+  .guided-features li > span { width: 40px; height: 40px; }
+
+  .guided-panel { padding: 38px clamp(34px, 5vw, 76px) 52px; }
+  .guided-progress-area,
+  .guided-question-card { width: min(880px, 100%); }
+  .guided-question-card { margin-top: 30px; border-radius: 26px; }
+  .guided-question-wrap { padding: 42px 46px 8px; }
+  .guided-eyebrow { margin-bottom: 22px; }
+  .guided-question-wrap h1 { font-size: clamp(2.35rem, 3vw, 3.25rem); }
+  .guided-help { margin: 20px 0 28px; }
+  .guided-option { min-height: 68px; }
+  .guided-footer { padding: 4px 46px 32px; }
+}
+
+/* Formulario completo visible: sin scroll vertical ni lateral por pregunta. */
+.guided-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.guided-progress-area { flex: 0 0 auto; }
+
+.guided-question-card {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.guided-question-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.guided-options {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.guided-field--optional {
+  grid-column: 1 / -1;
+}
+
+.guided-optional-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.guided-optional-label small {
+  color: #718073;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+@media (min-width: 901px) {
+  .guided-mission { padding: 32px; }
+
+  .guided-shell {
+    grid-template-rows: 88px minmax(0, 1fr);
+    width: min(1450px, calc(100% - 64px));
+    height: calc(100svh - 64px);
+    max-height: calc(100svh - 64px);
+    border-radius: 38px;
+  }
+
+  .guided-topbar { padding-inline: 36px; }
+  .guided-back-icon { width: 42px; height: 42px; }
+  .guided-map-link,
+  .guided-top-exit { min-height: 48px; }
+  .guided-top-exit { padding-inline: 18px; }
+
+  .guided-content {
+    grid-template-columns: clamp(310px, 25vw, 370px) minmax(0, 1fr);
+  }
+  .guided-illustration { padding: 42px 34px 30px; }
+  .guided-illustration-copy h2 { margin-block: 16px; font-size: clamp(2.4rem, 2.7vw, 2.9rem); }
+  .guided-illustration-copy p { font-size: 0.9rem; line-height: 1.5; }
+  .guided-features { gap: 12px; margin-top: 26px; }
+  .guided-features li { font-size: 0.84rem; }
+  .guided-features li > span { width: 34px; height: 34px; }
+
+  .guided-panel { padding: 22px clamp(30px, 4.5vw, 66px) 24px; }
+  .guided-progress-copy,
+  .guided-save-status { min-height: 22px; font-size: 0.8rem; }
+  .guided-progress { height: 8px; margin-top: 7px; }
+  .guided-question-card { margin-top: 17px; border-radius: 22px; }
+  .guided-question-wrap { padding: 24px 38px 2px; }
+  .guided-eyebrow { gap: 10px; margin-bottom: 12px; font-size: 0.72rem; }
+  .guided-question-wrap h1 {
+    font-size: clamp(2rem, 2.55vw, 2.75rem);
+    line-height: 1.02;
+  }
+  .guided-help { margin: 10px 0 15px; font-size: 0.86rem; line-height: 1.4; }
+  .guided-options,
+  .guided-fields { gap: 9px; }
+  .guided-option {
+    min-height: 54px;
+    gap: 12px;
+    padding: 8px 14px;
+    border-radius: 13px;
+    font-size: 0.88rem;
+  }
+  .guided-radio {
+    width: 23px;
+    height: 23px;
+    box-shadow: inset 0 0 0 5px #fffef8;
+  }
+  .guided-field textarea {
+    min-height: clamp(130px, 20vh, 190px);
+    max-height: clamp(130px, 20vh, 190px);
+  }
+  .guided-field--optional { gap: 3px; margin-top: 2px; font-size: 0.72rem; }
+  .guided-field--optional textarea {
+    min-height: clamp(64px, 9vh, 90px);
+    max-height: clamp(64px, 9vh, 90px);
+    padding: 0.55rem 0.75rem;
+    line-height: 1.35;
+  }
+  .guided-checkbox { min-height: 42px; font-size: 0.86rem; }
+  .guided-validation { min-height: 16px; margin-top: 2px; font-size: 0.74rem; }
+  .guided-footer { flex: 0 0 auto; padding: 0 38px 18px; }
+  .guided-actions { gap: 9px; }
+  .guided-primary,
+  .guided-secondary { min-height: 44px; padding-block: 0.55rem; border-radius: 11px; }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  .guided-mission { padding: 18px; }
+  .guided-shell {
+    grid-template-rows: 76px minmax(0, 1fr);
+    width: min(1400px, calc(100% - 36px));
+    height: calc(100svh - 36px);
+    max-height: calc(100svh - 36px);
+  }
+  .guided-illustration { padding-top: 30px; }
+  .guided-panel { padding-top: 14px; padding-bottom: 16px; }
+  .guided-question-card { margin-top: 10px; }
+  .guided-question-wrap { padding-top: 17px; }
+  .guided-question-wrap h1 { font-size: clamp(1.8rem, 2.35vw, 2.35rem); }
+  .guided-help { margin-block: 7px 10px; }
+  .guided-option { min-height: 48px; }
+  .guided-field--optional textarea { min-height: 48px; max-height: 48px; }
+  .guided-footer { padding-bottom: 12px; }
+}
+
+@media (max-width: 900px) {
+  .guided-shell { grid-template-rows: 70px minmax(0, 1fr); }
+  .guided-topbar { padding-inline: 12px; }
+  .guided-back-icon { width: 38px; height: 38px; }
+  .guided-map-link,
+  .guided-top-exit { min-height: 44px; font-size: 0.78rem; }
+  .guided-top-exit { padding-inline: 10px; }
+  .guided-panel {
+    min-height: 0;
+    padding: 12px 12px 14px;
+    overflow: hidden;
+  }
+  .guided-progress-copy,
+  .guided-save-status { min-height: 20px; font-size: 0.7rem; }
+  .guided-progress { height: 7px; margin-top: 5px; }
+  .guided-question-card { margin-top: 10px; border-radius: 17px; }
+  .guided-question-wrap { padding: 17px 15px 0; }
+  .guided-eyebrow { gap: 8px; margin-bottom: 8px; font-size: 0.62rem; }
+  .guided-question-wrap h1 { font-size: clamp(1.55rem, 6.5vw, 2rem); line-height: 1.03; }
+  .guided-help { margin: 7px 0 10px; font-size: 0.76rem; line-height: 1.35; }
+  .guided-options,
+  .guided-fields { gap: 7px; }
+  .guided-option {
+    min-height: 48px;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 11px;
+    font-size: 0.76rem;
+    line-height: 1.2;
+  }
+  .guided-radio { width: 20px; height: 20px; box-shadow: inset 0 0 0 4px #fffef8; }
+  .guided-field textarea { min-height: 120px; max-height: 120px; padding: 0.65rem; }
+  .guided-field--optional { margin-top: 0; font-size: 0.65rem; }
+  .guided-field--optional textarea { min-height: 48px; max-height: 48px; }
+  .guided-checkbox { min-height: 38px; font-size: 0.76rem; }
+  .guided-validation { min-height: 14px; margin-top: 1px; font-size: 0.66rem; }
+  .guided-footer { padding: 0 15px 12px; }
+  .guided-actions { grid-template-columns: 0.8fr 1.2fr; gap: 7px; }
+  .guided-primary,
+  .guided-secondary { min-height: 42px; padding: 0.45rem 0.6rem; font-size: 0.78rem; }
+}
+
+@media (max-width: 390px) {
+  .guided-actions { grid-template-columns: 0.8fr 1.2fr; }
+  .guided-actions .guided-primary,
+  .guided-actions .guided-secondary { grid-row: auto; }
 }

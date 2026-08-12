@@ -160,7 +160,8 @@
         "other": "Another burden I no longer want to carry",
         "unsure": "I'm not sure yet"
       },
-      "optionalReflection": "If you want, tell us a little more (optional)",
+      "optionalReflection": "If you want, tell us a little more",
+      "optional": "Optional",
       "optionalPlaceholder": "You can leave a short reflection here…",
       "letterPrompt": "I see you standing here, and I want you to know…",
       "preferPaper": "I prefer to write it on paper",
