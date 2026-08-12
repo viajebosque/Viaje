@@ -29,13 +29,26 @@ const PREVIEW_MISSION: Mission = {
   texto_final: 'Cada respuesta es una pequeña huella de tu recorrido.',
 };
 
-const PREVIEW_QUESTIONS: Question[] = Array.from({ length: 5 }, (_, index) => ({
-  id: `preview-question-${index + 1}`,
-  mission_id: PREVIEW_MISSION.id,
-  categoria: index === 0 ? 'iniciacion' : index === 1 ? 'actividad' : 'reflexion',
-  enunciado: `Paso ${index + 1}`,
-  orden: index + 1,
-}));
+const PREVIEW_QUESTION_TEXTS = [
+  '¿En qué área de tu vida te sientes más estancado/a ahora mismo?',
+  '¿Cuándo fue la última vez que te sentiste verdaderamente libre? ¿Qué estabas haciendo?',
+  '¿Qué estás fingiendo no saber?',
+  'Si tu vida fuera un bosque, ¿cómo sería el clima hoy?',
+  'Escribe una carta a tu yo estancado/a. Comienza con: “Te veo aquí de pie, y quiero que sepas…”',
+  '¿Qué has estado evitando mirar y cuánto tiempo lleva ahí?',
+  '¿Qué te cuesta quedarte en el borde, en energía, vitalidad o alegría?',
+  '¿Cómo se sentiría en tu cuerpo un pequeño paso hacia adelante?',
+] as const;
+
+const PREVIEW_QUESTIONS: Question[] = PREVIEW_QUESTION_TEXTS.map(
+  (enunciado, index) => ({
+    id: `preview-question-${index + 1}`,
+    mission_id: PREVIEW_MISSION.id,
+    categoria: index < 4 ? 'iniciacion' : index === 4 ? 'actividad' : 'reflexion',
+    enunciado,
+    orden: index + 1,
+  })
+);
 
 export default function MissionPage() {
   const { numero } = useParams();

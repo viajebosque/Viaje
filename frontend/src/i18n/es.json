@@ -171,6 +171,7 @@
         "step5": "Elijo la intención de…"
       },
       "validation": {
+        "required": "Regálate un momento para responder antes de continuar.",
         "step1": "Elige una opción para poder continuar.",
         "step2": "Escribe unas líneas más o elige la opción de escribir tu carta en papel.",
         "step3": "Regálate un momento para nombrar lo que estás sintiendo.",
@@ -178,6 +179,9 @@
         "step5": "Elige una intención para cerrar esta primera misión.",
         "incomplete": "Aún falta guardar alguna respuesta. Revisa el recorrido e inténtalo de nuevo."
       },
+      "questionLabel": "Pregunta {{current}}",
+      "backendHelp": "No hay respuestas correctas. Escribe con honestidad y a tu propio ritmo.",
+      "backendPlaceholder": "Escribe tu respuesta…",
       "previous": "Anterior",
       "continue": "Continuar",
       "finish": "Completar misión",

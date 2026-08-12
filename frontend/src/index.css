@@ -95,18 +95,8 @@ body {
 .forest-heading { min-width: 0; }
 .forest-account {
   display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-  gap: 0.3rem;
+  align-items: center;
   min-width: 0;
-}
-.forest-email {
-  max-width: 24rem;
-  overflow: hidden;
-  color: #52705d;
-  font-size: 0.78rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .forest-top-actions {
   display: flex;
@@ -276,7 +266,6 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   }
   .forest-heading { padding-right: 4rem; }
   .forest-account { align-items: flex-start; width: 100%; }
-  .forest-email { max-width: calc(100vw - 2rem); }
   .forest-top-actions { flex-wrap: wrap; gap: 0.42rem; }
   .forest-top-actions > button { padding: 0.32rem 0.62rem; font-size: 0.72rem; }
   .forest-title { font-size: clamp(1.55rem, 8vw, 2.15rem); }
@@ -1228,6 +1217,11 @@ button, input { font: inherit; }
   letter-spacing: -0.025em;
   line-height: 1.08;
   outline: none;
+}
+.guided-question-wrap h1.guided-question-title--long {
+  font-size: clamp(1.45rem, 2.15vw, 2.25rem);
+  line-height: 1.18;
+  white-space: pre-line;
 }
 .guided-help {
   max-width: 39rem;

@@ -73,7 +73,7 @@ function CloseIcon() {
 }
 
 export default function Forest() {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const { role } = useRole();
   const { t } = useTranslation();
   const { lang } = useLanguage();
@@ -133,7 +133,6 @@ export default function Forest() {
           <p className="forest-sub">{t('forest.subtitle')}</p>
         </div>
         <div className="forest-account">
-          <span className="forest-email">{user?.email}</span>
           <div className="forest-top-actions">
             <button onClick={() => navigate('/profile')}>{t('profile.link')}</button>
             {/* Atajo al panel: solo para admins. La ruta igual valida el rol. */}

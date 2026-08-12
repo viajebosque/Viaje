@@ -171,6 +171,7 @@
         "step5": "I choose the intention to…"
       },
       "validation": {
+        "required": "Give yourself a moment to answer before continuing.",
         "step1": "Choose an option before continuing.",
         "step2": "Write a few more lines or choose to write your letter on paper.",
         "step3": "Give yourself a moment to name what you are feeling.",
@@ -178,6 +179,9 @@
         "step5": "Choose an intention to close this first mission.",
         "incomplete": "A response still needs to be saved. Review your path and try again."
       },
+      "questionLabel": "Question {{current}}",
+      "backendHelp": "There are no right answers. Write honestly and at your own pace.",
+      "backendPlaceholder": "Write your answer…",
       "previous": "Previous",
       "continue": "Continue",
       "finish": "Complete mission",

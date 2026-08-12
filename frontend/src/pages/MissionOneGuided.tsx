@@ -4,7 +4,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ChangeEvent,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,18 +11,10 @@ import missionPanel from '../assets/forest/mission-one-panel.png';
 import forestMap from '../assets/forest/forest-map.png';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
 
-type GuidedDraft = {
-  releaseOption: string;
-  releaseReflection: string;
-  letter: string;
-  preferPaper: boolean;
-  feeling: string;
-  transformation: string;
-  intention: string;
-};
+type GuidedAnswers = Record<string, string>;
 
 type Backup = {
-  draft: GuidedDraft;
+  answers: GuidedAnswers;
   pending: boolean;
   step: number;
 };
@@ -40,19 +31,6 @@ type Props = {
   mapPath: string;
 };
 
-const EMPTY_DRAFT: GuidedDraft = {
-  releaseOption: '',
-  releaseReflection: '',
-  letter: '',
-  preferPaper: false,
-  feeling: '',
-  transformation: '',
-  intention: '',
-};
-
-const TOTAL_STEPS = 5;
-const LETTER_MIN_LENGTH = 20;
-
 function parseStructured(value: string): Record<string, unknown> | null {
   try {
     const parsed: unknown = JSON.parse(value);
@@ -64,35 +42,30 @@ function parseStructured(value: string): Record<string, unknown> | null {
   }
 }
 
-function draftFromAnswers(
+function normalizeLegacyAnswer(value: string): string {
+  const structured = parseStructured(value);
+  if (!structured) return value;
+  if (typeof structured.text === 'string' && structured.text.trim()) {
+    return structured.text;
+  }
+  if (structured.preferPaper === true) return 'Prefiero escribirla en papel';
+  if (typeof structured.reflection === 'string' && structured.reflection.trim()) {
+    return structured.reflection;
+  }
+  if (typeof structured.option === 'string') return structured.option;
+  return '';
+}
+
+function answersFromBackend(
   questions: Question[],
   answers: Record<string, string>
-): GuidedDraft {
-  const values = questions.slice(0, TOTAL_STEPS).map((q) => answers[q.id] ?? '');
-  const release = parseStructured(values[0] ?? '');
-  const letter = parseStructured(values[1] ?? '');
-
-  return {
-    ...EMPTY_DRAFT,
-    releaseOption:
-      typeof release?.option === 'string'
-        ? release.option
-        : values[0]
-          ? 'other'
-          : '',
-    releaseReflection:
-      typeof release?.reflection === 'string'
-        ? release.reflection
-        : release
-          ? ''
-          : values[0] ?? '',
-    letter:
-      typeof letter?.text === 'string' ? letter.text : values[1] ?? '',
-    preferPaper: letter?.preferPaper === true,
-    feeling: values[2] ?? '',
-    transformation: values[3] ?? '',
-    intention: values[4] ?? '',
-  };
+): GuidedAnswers {
+  return Object.fromEntries(
+    questions.map((question) => [
+      question.id,
+      normalizeLegacyAnswer(answers[question.id] ?? ''),
+    ])
+  );
 }
 
 function readBackup(storageKey: string): Backup | null {
@@ -100,11 +73,11 @@ function readBackup(storageKey: string): Backup | null {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(storageKey) ?? 'null');
     if (!parsed || typeof parsed !== 'object') return null;
     const candidate = parsed as Partial<Backup>;
-    if (!candidate.draft || typeof candidate.pending !== 'boolean') return null;
+    if (!candidate.answers || typeof candidate.pending !== 'boolean') return null;
     return {
-      draft: { ...EMPTY_DRAFT, ...candidate.draft },
+      answers: candidate.answers,
       pending: candidate.pending,
-      step: Math.min(Math.max(Number(candidate.step) || 0, 0), TOTAL_STEPS - 1),
+      step: Math.max(Number(candidate.step) || 0, 0),
     };
   } catch {
     return null;
@@ -119,26 +92,10 @@ function writeBackup(storageKey: string, backup: Backup) {
   }
 }
 
-function serializedEntries(questions: Question[], draft: GuidedDraft) {
-  const values = [
-    JSON.stringify({
-      version: 1,
-      option: draft.releaseOption,
-      reflection: draft.releaseReflection,
-    }),
-    JSON.stringify({
-      version: 1,
-      text: draft.letter,
-      preferPaper: draft.preferPaper,
-    }),
-    draft.feeling,
-    draft.transformation,
-    draft.intention,
-  ];
-
-  return questions.slice(0, TOTAL_STEPS).map((question, index) => ({
+function serializedEntries(questions: Question[], answers: GuidedAnswers) {
+  return questions.map((question) => ({
     question_id: question.id,
-    respuesta: values[index],
+    respuesta: answers[question.id]?.trim() ?? '',
   }));
 }
 
@@ -154,17 +111,26 @@ export default function MissionOneGuided({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const storageKey = `mission-one-guided:${userId ?? 'preview'}`;
+  const totalSteps = questions.length;
   const initialState = useMemo(() => {
-    const backendDraft = draftFromAnswers(questions, initialAnswers);
+    const backendAnswers = answersFromBackend(questions, initialAnswers);
     const backup = readBackup(storageKey);
+    const backupAnswers = backup
+      ? Object.fromEntries(
+          questions.map((question) => [
+            question.id,
+            backup.answers[question.id] ?? backendAnswers[question.id] ?? '',
+          ])
+        )
+      : backendAnswers;
     return {
-      draft: backup && (backup.pending || isPreview) ? backup.draft : backendDraft,
-      step: backup?.step ?? 0,
+      answers: backup && (backup.pending || isPreview) ? backupAnswers : backendAnswers,
+      step: Math.min(backup?.step ?? 0, Math.max(questions.length - 1, 0)),
       hasPendingBackup: Boolean(backup?.pending),
     };
   }, [initialAnswers, isPreview, questions, storageKey]);
 
-  const [draft, setDraft] = useState(initialState.draft);
+  const [answers, setAnswers] = useState(initialState.answers);
   const [step, setStep] = useState(initialState.step);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(
     initialState.hasPendingBackup ? 'saving' : 'idle'
@@ -176,7 +142,7 @@ export default function MissionOneGuided({
   const [exiting, setExiting] = useState(false);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const draftRef = useRef(draft);
+  const answersRef = useRef(answers);
   const stepRef = useRef(step);
   const dirtyVersionRef = useRef(initialState.hasPendingBackup ? 1 : 0);
   const savedVersionRef = useRef(0);
@@ -184,16 +150,11 @@ export default function MissionOneGuided({
   const saveInFlightRef = useRef<Promise<boolean> | null>(null);
 
   const isStepValid = useCallback(
-    (stepToCheck: number, value = draftRef.current) => {
-      if (stepToCheck === 0) return Boolean(value.releaseOption);
-      if (stepToCheck === 1) {
-        return value.preferPaper || value.letter.trim().length >= LETTER_MIN_LENGTH;
-      }
-      if (stepToCheck === 2) return Boolean(value.feeling.trim());
-      if (stepToCheck === 3) return Boolean(value.transformation.trim());
-      return Boolean(value.intention.trim());
+    (stepToCheck: number, value = answersRef.current) => {
+      const question = questions[stepToCheck];
+      return Boolean(question && value[question.id]?.trim());
     },
-    []
+    [questions]
   );
 
   const performSave = useCallback(async (): Promise<boolean> => {
@@ -202,19 +163,19 @@ export default function MissionOneGuided({
     const operation = (async () => {
       while (savedVersionRef.current < dirtyVersionRef.current) {
         const targetVersion = dirtyVersionRef.current;
-        const snapshot = draftRef.current;
+        const snapshot = answersRef.current;
         setSaveStatus('saving');
         setSaveError('');
 
         try {
           if (isPreview || !userId) {
             writeBackup(storageKey, {
-              draft: snapshot,
+              answers: snapshot,
               pending: false,
               step: stepRef.current,
             });
           } else {
-            if (questions.length < TOTAL_STEPS) {
+            if (questions.length === 0) {
               throw new Error('mission-content-incomplete');
             }
             await saveAnswers(userId, serializedEntries(questions, snapshot));
@@ -223,7 +184,7 @@ export default function MissionOneGuided({
 
           if (dirtyVersionRef.current === targetVersion) {
             writeBackup(storageKey, {
-              draft: isPreview ? snapshot : EMPTY_DRAFT,
+              answers: isPreview ? snapshot : {},
               pending: false,
               step: stepRef.current,
             });
@@ -231,7 +192,7 @@ export default function MissionOneGuided({
           }
         } catch {
           writeBackup(storageKey, {
-            draft: snapshot,
+            answers: snapshot,
             pending: true,
             step: stepRef.current,
           });
@@ -276,12 +237,12 @@ export default function MissionOneGuided({
     if (!completed) headingRef.current?.focus();
   }, [completed, step]);
 
-  function updateDraft(patch: Partial<GuidedDraft>) {
-    setDraft((current) => {
-      const next = { ...current, ...patch };
-      draftRef.current = next;
+  function updateAnswer(questionId: string, value: string) {
+    setAnswers((current) => {
+      const next = { ...current, [questionId]: value };
+      answersRef.current = next;
       dirtyVersionRef.current += 1;
-      writeBackup(storageKey, { draft: next, pending: true, step: stepRef.current });
+      writeBackup(storageKey, { answers: next, pending: true, step: stepRef.current });
       return next;
     });
     setSaveStatus('saving');
@@ -291,13 +252,13 @@ export default function MissionOneGuided({
   }
 
   function goToStep(nextStep: number) {
-    const bounded = Math.min(Math.max(nextStep, 0), TOTAL_STEPS - 1);
+    const bounded = Math.min(Math.max(nextStep, 0), Math.max(totalSteps - 1, 0));
     const hasPendingChanges = dirtyVersionRef.current > savedVersionRef.current;
     stepRef.current = bounded;
     setStep(bounded);
     setValidation('');
     writeBackup(storageKey, {
-      draft: hasPendingChanges || isPreview ? draftRef.current : EMPTY_DRAFT,
+      answers: hasPendingChanges || isPreview ? answersRef.current : {},
       pending: hasPendingChanges,
       step: bounded,
     });
@@ -305,7 +266,7 @@ export default function MissionOneGuided({
 
   function continueToNextStep() {
     if (!isStepValid(step)) {
-      setValidation(t(`mission.guided.validation.step${step + 1}`));
+      setValidation(t('mission.guided.validation.required'));
       return;
     }
     goToStep(step + 1);
@@ -320,7 +281,7 @@ export default function MissionOneGuided({
 
   async function finishMission() {
     if (!isStepValid(step)) {
-      setValidation(t('mission.guided.validation.step5'));
+      setValidation(t('mission.guided.validation.required'));
       return;
     }
     setCompleting(true);
@@ -357,6 +318,9 @@ export default function MissionOneGuided({
         : saveStatus === 'error'
           ? t('mission.guided.saveFailed')
           : t('mission.guided.ready');
+  const currentQuestion = questions[step];
+  const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? '' : '';
+  const isLongQuestion = (currentQuestion?.enunciado.length ?? 0) > 180;
 
   if (completed) {
     return (
@@ -390,8 +354,8 @@ export default function MissionOneGuided({
             {t('mission.guided.map')}
           </button>
           <p className="guided-brand">
-            {t('mission.guided.missionLabel')} <span aria-hidden="true">·</span>{' '}
-            {t('mission.guided.title')}
+            {t('forest.modalTitle', { numero: mission.numero })}{' '}
+            <span aria-hidden="true">·</span> {mission.titulo}
           </p>
           <button
             className="guided-top-exit"
@@ -411,8 +375,8 @@ export default function MissionOneGuided({
           >
             <div className="guided-illustration-copy">
               <span>{t('mission.guided.threshold')}</span>
-              <h2>{t('mission.guided.title')}</h2>
-              <p>{t('mission.guided.sideNote')}</p>
+              <h2>{mission.titulo}</h2>
+              <p>{mission.descripcion}</p>
               <ul className="guided-features" aria-label={t('mission.guided.detailsLabel')}>
                 <li><span aria-hidden="true">◷</span>{t('mission.guided.duration')}</li>
                 <li><span aria-hidden="true">✓</span>{t('mission.guided.autoSave')}</li>
@@ -425,7 +389,7 @@ export default function MissionOneGuided({
             <div className="guided-progress-area">
               <div className="guided-progress-meta">
                 <div className="guided-progress-copy" aria-live="polite">
-                  {t('mission.guided.step', { current: step + 1, total: TOTAL_STEPS })}
+                  {t('mission.guided.step', { current: step + 1, total: totalSteps })}
                 </div>
                 <div className={`guided-save-status guided-save-status--${saveStatus}`} aria-live="polite">
                   <span aria-hidden="true" />
@@ -442,97 +406,36 @@ export default function MissionOneGuided({
                 role="progressbar"
                 aria-label={t('mission.guided.progressLabel')}
                 aria-valuemin={1}
-                aria-valuemax={TOTAL_STEPS}
+                aria-valuemax={totalSteps}
                 aria-valuenow={step + 1}
               >
-                <span style={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }} />
+                <span style={{ width: `${totalSteps ? ((step + 1) / totalSteps) * 100 : 0}%` }} />
               </div>
             </div>
 
             <article className="guided-question-card">
               <div className="guided-question-wrap">
-            <p className="guided-eyebrow">{t(`mission.guided.eyebrow.step${step + 1}`)}</p>
-            <h1 ref={headingRef} id="guided-question-title" tabIndex={-1}>
-              {t(`mission.guided.questions.step${step + 1}`)}
+            <p className="guided-eyebrow">
+              {t('mission.guided.questionLabel', { current: step + 1 })}
+            </p>
+            <h1
+              ref={headingRef}
+              id="guided-question-title"
+              className={isLongQuestion ? 'guided-question-title--long' : undefined}
+              tabIndex={-1}
+            >
+              {currentQuestion?.enunciado ?? ''}
             </h1>
-            <p className="guided-help">{t(`mission.guided.help.step${step + 1}`)}</p>
+            <p className="guided-help">{t('mission.guided.backendHelp')}</p>
 
-            {step === 0 && (
-              <fieldset className="guided-options" aria-describedby="guided-validation">
-                <legend className="sr-only">{t('mission.guided.questions.step1')}</legend>
-                {(['daily', 'expectations', 'other', 'unsure'] as const).map((option) => (
-                  <label className="guided-option" key={option}>
-                    <input
-                      type="radio"
-                      name="release-option"
-                      value={option}
-                      checked={draft.releaseOption === option}
-                      onChange={(event) => updateDraft({ releaseOption: event.target.value })}
-                    />
-                    <span className="guided-radio" aria-hidden="true" />
-                    <span>{t(`mission.guided.releaseOptions.${option}`)}</span>
-                  </label>
-                ))}
-                <label className="guided-field guided-field--optional">
-                  <span className="guided-optional-label">
-                    <span>{t('mission.guided.optionalReflection')}</span>
-                    <small>{t('mission.guided.optional')}</small>
-                  </span>
-                  <textarea
-                    value={draft.releaseReflection}
-                    onChange={(event) => updateDraft({ releaseReflection: event.target.value })}
-                    rows={3}
-                    placeholder={t('mission.guided.optionalPlaceholder')}
-                  />
-                </label>
-              </fieldset>
-            )}
-
-            {step === 1 && (
-              <div className="guided-fields">
-                <label className="guided-field">
-                  <span className="sr-only">{t('mission.guided.questions.step2')}</span>
-                  <textarea
-                    value={draft.letter}
-                    onChange={(event) => updateDraft({ letter: event.target.value })}
-                    rows={9}
-                    disabled={draft.preferPaper}
-                    placeholder={t('mission.guided.letterPrompt')}
-                    aria-describedby="guided-validation"
-                  />
-                </label>
-                <label className="guided-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={draft.preferPaper}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      updateDraft({ preferPaper: event.target.checked })
-                    }
-                  />
-                  <span aria-hidden="true">✓</span>
-                  {t('mission.guided.preferPaper')}
-                </label>
-              </div>
-            )}
-
-            {step >= 2 && (
+            {currentQuestion && (
               <label className="guided-field">
-                <span className="sr-only">{t(`mission.guided.questions.step${step + 1}`)}</span>
+                <span className="sr-only">{currentQuestion.enunciado}</span>
                 <textarea
-                  value={
-                    step === 2
-                      ? draft.feeling
-                      : step === 3
-                        ? draft.transformation
-                        : draft.intention
-                  }
-                  onChange={(event) => {
-                    if (step === 2) updateDraft({ feeling: event.target.value });
-                    else if (step === 3) updateDraft({ transformation: event.target.value });
-                    else updateDraft({ intention: event.target.value });
-                  }}
+                  value={currentAnswer}
+                  onChange={(event) => updateAnswer(currentQuestion.id, event.target.value)}
                   rows={8}
-                  placeholder={t(`mission.guided.placeholders.step${step + 1}`)}
+                  placeholder={t('mission.guided.backendPlaceholder')}
                   aria-describedby="guided-validation"
                 />
               </label>
@@ -558,10 +461,10 @@ export default function MissionOneGuided({
               <button
                 className="guided-primary"
                 type="button"
-                onClick={step === TOTAL_STEPS - 1 ? finishMission : continueToNextStep}
+                onClick={step === totalSteps - 1 ? finishMission : continueToNextStep}
                 disabled={completing}
               >
-                {step === TOTAL_STEPS - 1
+                {step === totalSteps - 1
                   ? completing
                     ? t('mission.guided.completing')
                     : t('mission.guided.finish')
