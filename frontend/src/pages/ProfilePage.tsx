@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { changeEmail, changePassword } from '../auth/auth';
+import JourneyPageShell from './JourneyPageShell';
 import {
   getMyProfile,
   updateFullName,
@@ -18,10 +18,45 @@ const MIN_PASSWORD = 6;
 type Block = 'name' | 'email' | 'password';
 type Feedback = { key: string; error?: boolean } | { raw: string; error: true };
 
+function ProfileEmblemIcon() {
+  return (
+    <svg viewBox="0 0 40 40">
+      <circle cx="20" cy="13" r="6.5" />
+      <path d="M8.5 33c1.8-7.2 6.2-10.8 11.5-10.8S29.7 25.8 31.5 33" />
+      <path d="M20 35V25" />
+      <path d="M20 29c-4.8 0-7.2-2.2-7.2-6.2 4.7 0 7.2 2.2 7.2 6.2Zm0 2.4c4.7 0 7.4-2.1 7.4-6.1-4.8 0-7.4 2.1-7.4 6.1Z" />
+    </svg>
+  );
+}
+
+function ProfileSectionIcon({ kind }: { kind: Block }) {
+  if (kind === 'email') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m4 7 8 6 8-6" />
+      </svg>
+    );
+  }
+  if (kind === 'password') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="10" width="14" height="10" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2.5" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20c.8-4.2 3.3-6.3 7.5-6.3s6.7 2.1 7.5 6.3" />
+    </svg>
+  );
+}
+
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -141,102 +176,115 @@ export default function ProfilePage() {
   if (loading) return <div className="auth-loading">{t('common.loading')}</div>;
 
   return (
-    <main className="profile">
-      <button className="mission-back" onClick={() => navigate('/forest')}>
-        {t('common.backToMapArrow')}
-      </button>
+    <JourneyPageShell
+      pageClassName="profile-page"
+      shellClassName="profile"
+      eyebrow={t('profile.eyebrow')}
+      title={t('profile.title')}
+      subtitle={t('profile.subtitle')}
+      emblem={<ProfileEmblemIcon />}
+      badge={(
+        <span className={`profile-status ${profile?.is_paid ? 'paid' : 'free'}`}>
+          {profile?.is_paid ? t('profile.statusPaid') : t('profile.statusFree')}
+        </span>
+      )}
+    >
+      <div className="profile-grid">
+        <form className="profile-card" onSubmit={saveName}>
+          <div className="profile-card-heading">
+            <span className="profile-card-icon"><ProfileSectionIcon kind="name" /></span>
+            <h2>{t('profile.nameSection')}</h2>
+          </div>
+          <label className="auth-field">
+            <span>{t('auth.name')}</span>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder={t('auth.namePlaceholder')}
+              autoComplete="name"
+            />
+          </label>
+          <Msg block="name" />
+          <button className="auth-primary" type="submit" disabled={busy === 'name'}>
+            {busy === 'name' ? t('common.saving') : t('common.save')}
+          </button>
+        </form>
 
-      <h1 className="profile-title">{t('profile.title')}</h1>
-      <p className="profile-sub">
-        {profile?.is_paid ? t('profile.statusPaid') : t('profile.statusFree')}
-      </p>
+        <form className="profile-card" onSubmit={saveEmail}>
+          <div className="profile-card-heading">
+            <span className="profile-card-icon"><ProfileSectionIcon kind="email" /></span>
+            <h2>{t('profile.emailSection')}</h2>
+          </div>
+          <p className="profile-hint">{t('profile.emailHint')}</p>
+          <label className="auth-field">
+            <span>{t('auth.email')}</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t('auth.emailPlaceholder')}
+              autoComplete="email"
+            />
+          </label>
+          <Msg block="email" />
+          <button
+            className="auth-primary"
+            type="submit"
+            disabled={busy === 'email'}
+          >
+            {busy === 'email' ? t('common.saving') : t('common.save')}
+          </button>
+        </form>
 
-      {/* Nombre */}
-      <form className="profile-card" onSubmit={saveName}>
-        <h2>{t('profile.nameSection')}</h2>
-        <label className="auth-field">
-          <span>{t('auth.name')}</span>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder={t('auth.namePlaceholder')}
-            autoComplete="name"
-          />
-        </label>
-        <Msg block="name" />
-        <button className="auth-primary" type="submit" disabled={busy === 'name'}>
-          {busy === 'name' ? t('common.saving') : t('common.save')}
-        </button>
-      </form>
+        <form className="profile-card profile-card--password" onSubmit={savePassword}>
+          <div className="profile-card-heading">
+            <span className="profile-card-icon"><ProfileSectionIcon kind="password" /></span>
+            <h2>{t('profile.passwordSection')}</h2>
+          </div>
+          {hasPassword ? (
+            <>
+              <div className="profile-password-fields">
+                <label className="auth-field">
+                  <span>{t('profile.currentPassword')}</span>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                  />
+                </label>
+                <label className="auth-field">
+                  <span>{t('profile.newPassword')}</span>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="••••••••"
+                    minLength={MIN_PASSWORD}
+                    autoComplete="new-password"
+                  />
+                </label>
+              </div>
+              <Msg block="password" />
+              <button
+                className="auth-primary"
+                type="submit"
+                disabled={busy === 'password'}
+              >
+                {busy === 'password' ? t('common.saving') : t('common.save')}
+              </button>
+            </>
+          ) : (
+            <p className="profile-hint profile-google-note">{t('profile.googleOnly')}</p>
+          )}
+        </form>
+      </div>
 
-      {/* Correo */}
-      <form className="profile-card" onSubmit={saveEmail}>
-        <h2>{t('profile.emailSection')}</h2>
-        <p className="profile-hint">{t('profile.emailHint')}</p>
-        <label className="auth-field">
-          <span>{t('auth.email')}</span>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t('auth.emailPlaceholder')}
-            autoComplete="email"
-          />
-        </label>
-        <Msg block="email" />
-        <button
-          className="auth-primary"
-          type="submit"
-          disabled={busy === 'email'}
-        >
-          {busy === 'email' ? t('common.saving') : t('common.save')}
-        </button>
-      </form>
-
-      {/* Contraseña */}
-      <form className="profile-card" onSubmit={savePassword}>
-        <h2>{t('profile.passwordSection')}</h2>
-        {hasPassword ? (
-          <>
-            <label className="auth-field">
-              <span>{t('profile.currentPassword')}</span>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
-            </label>
-            <label className="auth-field">
-              <span>{t('profile.newPassword')}</span>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="••••••••"
-                minLength={MIN_PASSWORD}
-                autoComplete="new-password"
-              />
-            </label>
-            <Msg block="password" />
-            <button
-              className="auth-primary"
-              type="submit"
-              disabled={busy === 'password'}
-            >
-              {busy === 'password' ? t('common.saving') : t('common.save')}
-            </button>
-          </>
-        ) : (
-          <p className="profile-hint">{t('profile.googleOnly')}</p>
-        )}
-      </form>
-
-      <button className="profile-signout" onClick={() => void signOut()}>
+      <button className="profile-signout" type="button" onClick={() => void signOut()}>
         {t('auth.signOut')}
       </button>
-    </main>
+    </JourneyPageShell>
   );
 }

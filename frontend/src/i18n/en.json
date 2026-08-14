@@ -89,7 +89,9 @@
   },
   "profile": {
     "link": "My profile",
+    "eyebrow": "Your place in the forest",
     "title": "My profile",
+    "subtitle": "Care for your details and the keys that let you continue your journey.",
     "statusPaid": "Paid account ✓",
     "statusFree": "Free account",
     "nameSection": "Name",
@@ -108,6 +110,7 @@
   },
   "admin": {
     "link": "Admin panel",
+    "eyebrow": "Keeper of the journey",
     "title": "Admin panel",
     "subtitle": "Mark who has paid and who hasn't.",
     "searchPlaceholder": "Search by name or email…",

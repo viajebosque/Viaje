@@ -89,7 +89,9 @@
   },
   "profile": {
     "link": "Mi perfil",
+    "eyebrow": "Tu espacio en el bosque",
     "title": "Mi perfil",
+    "subtitle": "Cuida tus datos y las llaves que te permiten continuar el recorrido.",
     "statusPaid": "Cuenta de pago ✓",
     "statusFree": "Cuenta gratuita",
     "nameSection": "Nombre",
@@ -108,6 +110,7 @@
   },
   "admin": {
     "link": "Panel admin",
+    "eyebrow": "Guardia del recorrido",
     "title": "Panel de administración",
     "subtitle": "Marca quién pagó y quién no.",
     "searchPlaceholder": "Buscar por nombre o correo…",

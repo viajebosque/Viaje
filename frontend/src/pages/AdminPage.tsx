@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../i18n/useLanguage';
+import JourneyPageShell from './JourneyPageShell';
 import {
   listUsers,
   setUserPaid,
@@ -15,10 +15,19 @@ import {
 // Espera a que el usuario deje de escribir antes de pedirle la lista al backend.
 const SEARCH_DEBOUNCE_MS = 300;
 
+function AdminEmblemIcon() {
+  return (
+    <svg viewBox="0 0 40 40">
+      <path d="M20 4.5 33 10v8.7c0 8.2-5.1 13.8-13 16.8-7.9-3-13-8.6-13-16.8V10l13-5.5Z" />
+      <path d="M20 29V14" />
+      <path d="M20 20c-4.8 0-7.3-2.3-7.3-6.3 4.8 0 7.3 2.3 7.3 6.3Zm0 3c4.9 0 7.7-2.2 7.7-6.3-4.9 0-7.7 2.2-7.7 6.3Z" />
+    </svg>
+  );
+}
+
 export default function AdminPage() {
   const { t } = useTranslation();
   const { lang } = useLanguage();
-  const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<UserSort>(DEFAULT_SORT);
@@ -92,14 +101,14 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="admin">
-      <button className="mission-back" onClick={() => navigate('/forest')}>
-        {t('common.backToMapArrow')}
-      </button>
-
-      <h1 className="admin-title">{t('admin.title')}</h1>
-      <p className="admin-sub">{t('admin.subtitle')}</p>
-
+    <JourneyPageShell
+      pageClassName="admin-page"
+      shellClassName="admin"
+      eyebrow={t('admin.eyebrow')}
+      title={t('admin.title')}
+      subtitle={t('admin.subtitle')}
+      emblem={<AdminEmblemIcon />}
+    >
       <div className="admin-controls">
         <input
           className="admin-search"
@@ -141,19 +150,24 @@ export default function AdminPage() {
           <ul className="admin-list">
             {users.map((u) => (
               <li key={u.id} className="admin-row">
-                <div className="admin-row-who">
-                  <span className="admin-row-name">
-                    {u.full_name || t('admin.noName')}
-                    {u.role === 'admin' && (
-                      <span className="admin-badge-role">
-                        {t('admin.roleAdmin')}
-                      </span>
-                    )}
+                <div className="admin-row-identity">
+                  <span className="admin-avatar" aria-hidden="true">
+                    {(u.full_name || u.email || '?').trim().charAt(0).toUpperCase()}
                   </span>
-                  <span className="admin-row-email">{u.email}</span>
-                  <span className="admin-row-date">
-                    {t('admin.created')}: {formatDate(u.created_at)}
-                  </span>
+                  <div className="admin-row-who">
+                    <span className="admin-row-name">
+                      {u.full_name || t('admin.noName')}
+                      {u.role === 'admin' && (
+                        <span className="admin-badge-role">
+                          {t('admin.roleAdmin')}
+                        </span>
+                      )}
+                    </span>
+                    <span className="admin-row-email">{u.email}</span>
+                    <span className="admin-row-date">
+                      {t('admin.created')}: {formatDate(u.created_at)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="admin-row-paid">
@@ -197,6 +211,6 @@ export default function AdminPage() {
           )}
         </>
       )}
-    </main>
+    </JourneyPageShell>
   );
 }
