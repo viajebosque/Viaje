@@ -137,10 +137,16 @@ export default function Forest() {
 
   // Mapa número -> misión (para saber título / si existe contenido).
   const byNumero = new Map(missions.map((m) => [m.numero, m]));
+  const nextPendingPosition = completedLoaded
+    ? missionPositions.findIndex((_, index) => {
+        const mission = byNumero.get(index + 1);
+        return !mission || !completed.has(mission.id);
+      })
+    : -1;
   const nextMissionNumber = isDesignPreview
     ? 1
-    : completedLoaded
-      ? missions.find((mission) => !completed.has(mission.id))?.numero ?? null
+    : nextPendingPosition >= 0
+      ? nextPendingPosition + 1
       : null;
 
   async function handleSignOut() {
