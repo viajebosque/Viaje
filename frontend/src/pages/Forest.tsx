@@ -6,6 +6,7 @@ import { useRole } from '../auth/useRole';
 import { useLanguage } from '../i18n/useLanguage';
 import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
+import completedCheckpoint from '../assets/forest/checkpoint-completed.png';
 import missionOnePanel from '../assets/forest/mission-one-panel.png';
 import {
   getMissions,
@@ -180,17 +181,14 @@ export default function Forest() {
                   })
                 }
               >
-                {!isDone && (
-                  <img
-                    className="mission-checkpoint"
-                    src={pendingCheckpoint}
-                    alt=""
-                    draggable={false}
-                  />
-                )}
+                <img
+                  className="mission-checkpoint"
+                  src={isDone ? completedCheckpoint : pendingCheckpoint}
+                  alt=""
+                  draggable={false}
+                />
                 <span className="mission-node-num">{n}</span>
                 <span className="mission-node-title">{title}</span>
-                {isDone && <span className="mission-node-token">🪙</span>}
               </button>
             );
           })}

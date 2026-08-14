@@ -240,14 +240,6 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.mission-node-token {
-  position: absolute;
-  top: 2%;
-  right: 3%;
-  font-size: clamp(0.55rem, 1vw, 1.2rem);
-  line-height: 1;
-}
-
 @media (min-width: 1180px) {
   .forest-map {
     width: 100%;
