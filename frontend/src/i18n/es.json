@@ -48,6 +48,7 @@
     "title": "El Mapa del Bosque 🌲",
     "subtitle": "Elige una misión para comenzar.",
     "comingSoon": "Próximamente",
+    "nextMission": "Tu siguiente misión",
     "modalTitle": "Misión {{numero}}",
     "modalAsk": "¿Quieres ingresar a esta misión?",
     "modalDuration": "10 minutos",

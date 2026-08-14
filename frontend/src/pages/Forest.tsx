@@ -8,6 +8,7 @@ import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
 import completedCheckpoint from '../assets/forest/checkpoint-completed.png';
 import missionOnePanel from '../assets/forest/mission-one-panel.png';
+import forestGuide from '../assets/auth/forest-guide.webp';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -91,6 +92,7 @@ export default function Forest() {
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
   const [selected, setSelected] = useState<{
     numero: number;
@@ -107,9 +109,18 @@ export default function Forest() {
   }, [lang]);
 
   useEffect(() => {
+    let active = true;
     getCompletedMissionIds()
-      .then(setCompleted)
+      .then((missionIds) => {
+        if (active) {
+          setCompleted(missionIds);
+          setCompletedLoaded(true);
+        }
+      })
       .catch(() => {});
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -126,6 +137,11 @@ export default function Forest() {
 
   // Mapa número -> misión (para saber título / si existe contenido).
   const byNumero = new Map(missions.map((m) => [m.numero, m]));
+  const nextMissionNumber = isDesignPreview
+    ? 1
+    : completedLoaded
+      ? missions.find((mission) => !completed.has(mission.id))?.numero ?? null
+      : null;
 
   async function handleSignOut() {
     await signOut();
@@ -178,6 +194,7 @@ export default function Forest() {
             const n = index + 1;
             const m = byNumero.get(n);
             const isDone = m ? completed.has(m.id) : false;
+            const isNext = n === nextMissionNumber;
             const previewTitle =
               isDesignPreview && n === 1 ? t('forest.missionOnePreviewTitle') : '';
             const previewDescription =
@@ -189,9 +206,9 @@ export default function Forest() {
             return (
               <button
                 key={n}
-                className={`mission-node ${isDone ? 'done' : 'pending'}`}
+                className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
-                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}`}
+                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}`}
                 onClick={() =>
                   setSelected({
                     numero: n,
@@ -207,6 +224,14 @@ export default function Forest() {
                   alt=""
                   draggable={false}
                 />
+                {isNext && (
+                  <img
+                    className={`mission-guide ${n === 1 ? 'mission-guide--right' : ''}`}
+                    src={forestGuide}
+                    alt=""
+                    draggable={false}
+                  />
+                )}
                 <span className="mission-node-num">{n}</span>
                 <span className="mission-node-title">{title}</span>
               </button>

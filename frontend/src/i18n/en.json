@@ -48,6 +48,7 @@
     "title": "The Forest Map 🌲",
     "subtitle": "Choose a mission to begin.",
     "comingSoon": "Coming soon",
+    "nextMission": "Your next mission",
     "modalTitle": "Mission {{numero}}",
     "modalAsk": "Do you want to enter this mission?",
     "modalDuration": "10 minutes",

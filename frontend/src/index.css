@@ -219,6 +219,20 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   transform: translate(-50%, -50%) scale(1.08);
 }
 .mission-node.done { box-shadow: inset 0 0 0 4px rgba(48, 128, 55, 0.58); }
+.mission-node.next { z-index: 5; }
+.mission-node.next::after {
+  position: absolute;
+  z-index: 0;
+  inset: 5%;
+  border: 2px solid rgba(255, 224, 105, 0.68);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 5px rgba(255, 245, 169, 0.14),
+    0 0 24px rgba(255, 220, 89, 0.48);
+  content: "";
+  pointer-events: none;
+  animation: mission-next-glow 2.2s ease-in-out infinite;
+}
 .mission-checkpoint {
   position: absolute;
   z-index: 1;
@@ -230,6 +244,36 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   filter: drop-shadow(0 7px 5px rgba(20, 55, 17, 0.3));
   transform: translateX(-50%);
   user-select: none;
+}
+.mission-guide {
+  --mission-guide-direction: 1;
+  position: absolute;
+  z-index: 3;
+  right: 55%;
+  bottom: 18%;
+  width: 72%;
+  max-width: none;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 7px 5px rgba(18, 54, 24, 0.3))
+    drop-shadow(0 0 8px rgba(255, 221, 102, 0.35));
+  transform: scaleX(var(--mission-guide-direction));
+  transform-origin: bottom center;
+  user-select: none;
+  animation: mission-guide-bob 2.4s ease-in-out infinite;
+}
+.mission-guide--right {
+  --mission-guide-direction: -1;
+  right: auto;
+  left: 55%;
+}
+@keyframes mission-guide-bob {
+  0%, 100% { transform: scaleX(var(--mission-guide-direction)) translateY(0); }
+  50% { transform: scaleX(var(--mission-guide-direction)) translateY(-4%); }
+}
+@keyframes mission-next-glow {
+  0%, 100% { opacity: 0.58; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 .mission-node-num {
   position: absolute;
@@ -289,6 +333,11 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 
 @media (max-width: 430px) {
   .forest-map { min-width: 880px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-guide,
+  .mission-node.next::after { animation: none; }
 }
 
 /* ---------- Modal ---------- */
