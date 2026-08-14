@@ -8,7 +8,7 @@ import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
 import completedCheckpoint from '../assets/forest/checkpoint-completed.png';
 import missionOnePanel from '../assets/forest/mission-one-panel.png';
-import forestGuide from '../assets/auth/forest-guide.webp';
+import mapGuide from '../assets/forest/map-guide.png';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -227,7 +227,7 @@ export default function Forest() {
                 {isNext && (
                   <img
                     className={`mission-guide ${n === 1 ? 'mission-guide--right' : ''}`}
-                    src={forestGuide}
+                    src={mapGuide}
                     alt=""
                     draggable={false}
                   />
