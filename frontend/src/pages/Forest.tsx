@@ -26,6 +26,8 @@ const missionPositions = [
   { left: 93.9, top: 64.3 },
 ] as const;
 
+const reminderKeys = ['honesty', 'compassion', 'play', 'raft'] as const;
+
 function ClockIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -89,6 +91,7 @@ export default function Forest() {
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [showReminders, setShowReminders] = useState(false);
   const [selected, setSelected] = useState<{
     numero: number;
     titulo: string;
@@ -110,13 +113,16 @@ export default function Forest() {
   }, []);
 
   useEffect(() => {
-    if (!selected) return;
+    if (!selected && !showReminders) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSelected(null);
+      if (event.key === 'Escape') {
+        setSelected(null);
+        setShowReminders(false);
+      }
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [selected]);
+  }, [selected, showReminders]);
 
   // Mapa número -> misión (para saber título / si existe contenido).
   const byNumero = new Map(missions.map((m) => [m.numero, m]));
@@ -135,6 +141,20 @@ export default function Forest() {
         </div>
         <div className="forest-account">
           <div className="forest-top-actions">
+            <button
+              className="forest-help-button"
+              type="button"
+              title={t('forest.reminders.open')}
+              aria-label={t('forest.reminders.open')}
+              aria-haspopup="dialog"
+              aria-expanded={showReminders}
+              onClick={() => {
+                setSelected(null);
+                setShowReminders(true);
+              }}
+            >
+              <span aria-hidden="true">?</span>
+            </button>
             <button onClick={() => navigate('/profile')}>{t('profile.link')}</button>
             {/* Atajo al panel: solo para admins. La ruta igual valida el rol. */}
             {role === 'admin' && (
@@ -194,6 +214,74 @@ export default function Forest() {
           })}
         </div>
       </div>
+
+      {showReminders && (
+        <div
+          className="modal-backdrop reminders-backdrop"
+          onClick={() => setShowReminders(false)}
+        >
+          <section
+            className="reminders-modal"
+            style={{ '--reminders-forest': `url(${forestMap})` } as React.CSSProperties}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reminders-title"
+            aria-describedby="reminders-intro"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="reminders-close"
+              type="button"
+              aria-label={t('common.close')}
+              autoFocus
+              onClick={() => setShowReminders(false)}
+            >
+              <CloseIcon />
+            </button>
+
+            <header className="reminders-header">
+              <span className="reminders-emblem" aria-hidden="true">
+                <SproutIcon />
+              </span>
+              <p className="reminders-eyebrow">{t('forest.reminders.eyebrow')}</p>
+              <h2 id="reminders-title">{t('forest.reminders.title')}</h2>
+              <p id="reminders-intro" className="reminders-intro">
+                {t('forest.reminders.intro')}
+              </p>
+            </header>
+
+            <div className="reminders-grid">
+              {reminderKeys.map((key, index) => (
+                <article className="reminder-card" key={key}>
+                  <span className="reminder-number" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h3>{t(`forest.reminders.items.${key}.title`)}</h3>
+                    <p>{t(`forest.reminders.items.${key}.body`)}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <aside className="reminders-privacy">
+              <span className="reminders-privacy-icon" aria-hidden="true">🌿</span>
+              <div>
+                <h3>{t('forest.reminders.privacy.title')}</h3>
+                <p>{t('forest.reminders.privacy.body')}</p>
+              </div>
+            </aside>
+
+            <button
+              className="reminders-return"
+              type="button"
+              onClick={() => setShowReminders(false)}
+            >
+              {t('forest.reminders.return')}
+            </button>
+          </section>
+        </div>
+      )}
 
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>

@@ -56,7 +56,36 @@
     "modalHint": "There are no right answers. Move forward at your own pace.",
     "missionOnePreviewTitle": "Entrance to the forest",
     "missionOnePreviewDescription": "Take the first step on this journey. Breathe calmly, observe the path, and choose an intention to begin.",
-    "enter": "Start mission"
+    "enter": "Start mission",
+    "reminders": {
+      "open": "Open gentle reminders",
+      "eyebrow": "Before you continue",
+      "title": "A Few Gentle Reminders",
+      "intro": "This journey asks for neither haste nor perfection. Keep these words close as you make your way through the forest.",
+      "items": {
+        "honesty": {
+          "title": "Honesty above all.",
+          "body": "This guide is only for you. No one is grading it. The more truthful you are, the more powerful it will be."
+        },
+        "compassion": {
+          "title": "Self-compassion over speed.",
+          "body": "Take all the time you need with each mission. A week per mission is fine. A month is fine. The forest is patient."
+        },
+        "play": {
+          "title": "Play over perfection.",
+          "body": "The mini-actions are invitations, not tests. If one does not fit, adapt it. Make it your own."
+        },
+        "raft": {
+          "title": "The raft is built one token at a time.",
+          "body": "By Mission 9, you will have collected eight artifacts, and together they form everything you need to leave the shore. Trust the process, even when you cannot see the far shore."
+        }
+      },
+      "privacy": {
+        "title": "A Note on Confidentiality",
+        "body": "You may write your reflections on the platform or on paper, if you prefer. Reflections saved on the platform are linked to your account and can only be viewed by you throughout your journey."
+      },
+      "return": "Got it, return to the map"
+    }
   },
   "profile": {
     "link": "My profile",

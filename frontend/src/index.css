@@ -114,6 +114,28 @@ body {
   font-weight: 700;
 }
 .forest-top-actions > button:hover { background: rgba(255, 255, 250, 0.9); border-color: #527e5b; }
+.forest-top-actions > .forest-help-button {
+  display: grid;
+  width: 2rem;
+  min-width: 2rem;
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(38, 84, 51, 0.42);
+  background: #315b3c;
+  color: #fffbed;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1;
+  box-shadow: inset 0 0 0 2px rgba(244, 225, 160, 0.18);
+}
+.forest-top-actions > .forest-help-button:hover,
+.forest-top-actions > .forest-help-button:focus-visible {
+  border-color: #294d34;
+  background: #234d31;
+  color: #fff;
+  outline: 3px solid rgba(238, 203, 104, 0.42);
+}
 .forest-title {
   margin: 0 0 0.2rem;
   color: #205330;
@@ -297,6 +319,235 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 .modal-ghost {
   border: 1px solid #cdd9cd; background: #fff; color: #3a4a3a;
   padding: 0.7rem; border-radius: 8px; cursor: pointer;
+}
+
+/* ---------- Recordatorios del recorrido ---------- */
+.reminders-backdrop {
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(191, 226, 154, 0.2), transparent 28%),
+    rgba(10, 37, 23, 0.76);
+}
+.reminders-modal {
+  position: relative;
+  width: min(94vw, 980px);
+  max-height: calc(100svh - 2rem);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 6px double #49613f;
+  border-radius: clamp(1.4rem, 2.5vw, 2.2rem);
+  background:
+    linear-gradient(rgba(255, 250, 232, 0.94), rgba(246, 237, 207, 0.96)),
+    var(--reminders-forest) center / cover;
+  color: #263d2b;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 28px 70px rgba(4, 24, 13, 0.48);
+  scrollbar-color: #69805c #eee4c5;
+  scrollbar-width: thin;
+}
+.reminders-modal::before,
+.reminders-modal::after {
+  position: absolute;
+  z-index: 0;
+  width: 12rem;
+  height: 12rem;
+  border: 1px solid rgba(79, 105, 59, 0.16);
+  border-radius: 55% 45% 60% 40%;
+  background: rgba(138, 166, 99, 0.08);
+  content: "";
+  pointer-events: none;
+  transform: rotate(32deg);
+}
+.reminders-modal::before { top: -7rem; left: -5rem; }
+.reminders-modal::after { right: -5rem; bottom: -7rem; transform: rotate(210deg); }
+.reminders-modal > * { position: relative; z-index: 1; }
+.reminders-close {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  z-index: 3;
+  display: grid;
+  width: 2.65rem;
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(45, 80, 50, 0.45);
+  border-radius: 50%;
+  background: rgba(255, 251, 236, 0.82);
+  color: #31533b;
+  cursor: pointer;
+}
+.reminders-close:hover,
+.reminders-close:focus-visible {
+  background: #fffdf5;
+  outline: 3px solid rgba(92, 122, 73, 0.25);
+}
+.reminders-close svg {
+  width: 52%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.9;
+}
+.reminders-header {
+  max-width: 720px;
+  margin: 0 auto clamp(1.5rem, 3vw, 2.4rem);
+  text-align: center;
+}
+.reminders-emblem {
+  display: grid;
+  width: clamp(3.4rem, 6vw, 4.8rem);
+  aspect-ratio: 1;
+  margin: 0 auto 0.75rem;
+  place-items: center;
+  border: 1px solid rgba(91, 111, 61, 0.42);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f7eab9, #dce6b4);
+  color: #526d42;
+  box-shadow: 0 8px 24px rgba(55, 83, 46, 0.15);
+}
+.reminders-emblem svg {
+  width: 58%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+.reminders-eyebrow {
+  margin: 0 0 0.45rem;
+  color: #6d784a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.reminders-header h2 {
+  margin: 0;
+  color: #23472f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+.reminders-intro {
+  max-width: 620px;
+  margin: 0.85rem auto 0;
+  color: #586451;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.98rem, 1.8vw, 1.18rem);
+  font-style: italic;
+  line-height: 1.55;
+}
+.reminders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.reminder-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid rgba(86, 107, 67, 0.28);
+  border-radius: 1.1rem;
+  background: rgba(255, 253, 242, 0.7);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.65);
+}
+.reminder-number {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #436443;
+  color: #fff9df;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px rgba(248, 224, 139, 0.2);
+}
+.reminder-card h3,
+.reminders-privacy h3 {
+  margin: 0 0 0.35rem;
+  color: #284b33;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.08rem;
+  line-height: 1.2;
+}
+.reminder-card p,
+.reminders-privacy p {
+  margin: 0;
+  color: #4f5d4d;
+  font-size: 0.88rem;
+  line-height: 1.58;
+}
+.reminders-privacy {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid rgba(45, 90, 58, 0.38);
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, rgba(210, 229, 184, 0.72), rgba(232, 234, 194, 0.7));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+.reminders-privacy-icon {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 253, 234, 0.72);
+  font-size: 1.35rem;
+}
+.reminders-return {
+  display: block;
+  min-width: min(100%, 260px);
+  min-height: 3rem;
+  margin: 1.25rem auto 0;
+  padding: 0.7rem 1.35rem;
+  border: 2px solid #596647;
+  border-radius: 0.85rem;
+  background: #293f29;
+  color: #fffdf5;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(216, 203, 157, 0.42);
+}
+.reminders-return:hover,
+.reminders-return:focus-visible {
+  background: #193822;
+  outline: 3px solid rgba(81, 116, 72, 0.3);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .reminders-backdrop { align-items: center; padding: 0.45rem; }
+  .reminders-modal {
+    width: 100%;
+    max-height: calc(100svh - 0.9rem);
+    padding: 1.35rem 1rem 1.1rem;
+    border-width: 4px;
+    border-radius: 1.3rem;
+  }
+  .reminders-close { top: 0.8rem; right: 0.8rem; width: 2.4rem; }
+  .reminders-header { padding-inline: 1.8rem; margin-bottom: 1.2rem; }
+  .reminders-emblem { width: 3.5rem; }
+  .reminders-header h2 { font-size: clamp(1.85rem, 9vw, 2.7rem); }
+  .reminders-intro { font-size: 0.92rem; }
+  .reminders-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+  .reminder-card { gap: 0.7rem; padding: 0.85rem; border-radius: 0.9rem; }
+  .reminder-number { width: 2rem; height: 2rem; font-size: 0.88rem; }
+  .reminder-card h3, .reminders-privacy h3 { font-size: 1rem; }
+  .reminder-card p, .reminders-privacy p { font-size: 0.82rem; line-height: 1.5; }
+  .reminders-privacy { gap: 0.7rem; margin-top: 0.7rem; padding: 0.9rem; }
+  .reminders-privacy-icon { width: 2.2rem; height: 2.2rem; font-size: 1.05rem; }
+  .reminders-return { margin-top: 0.85rem; }
 }
 
 /* ---------- Panel de entrada a la Misión 1 ---------- */

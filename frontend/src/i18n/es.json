@@ -56,7 +56,36 @@
     "modalHint": "No hay respuestas correctas. Avanza a tu propio ritmo.",
     "missionOnePreviewTitle": "Entrada al bosque",
     "missionOnePreviewDescription": "Da el primer paso hacia este recorrido. Respira con calma, observa el sendero y elige una intención para comenzar.",
-    "enter": "Comenzar misión"
+    "enter": "Comenzar misión",
+    "reminders": {
+      "open": "Abrir recordatorios amables",
+      "eyebrow": "Antes de continuar",
+      "title": "Algunos Recordatorios Amables",
+      "intro": "Este recorrido no exige prisa ni perfección. Guarda estas palabras cerca mientras atraviesas el bosque.",
+      "items": {
+        "honesty": {
+          "title": "Honestidad sobre todo.",
+          "body": "Esta guía es solo para ti. Nadie la califica. Cuanto más verdadera seas, más poderosa será."
+        },
+        "compassion": {
+          "title": "Autocompasión sobre velocidad.",
+          "body": "Tómate el tiempo que necesites en cada misión. Una semana por misión está bien. Un mes está bien. El bosque es paciente."
+        },
+        "play": {
+          "title": "Juego sobre perfección.",
+          "body": "Las mini-acciones son invitaciones, no pruebas. Si una no encaja, adáptala. Hazla tuya."
+        },
+        "raft": {
+          "title": "La balsa se construye token por token.",
+          "body": "Para la Misión 9, habrás coleccionado ocho artefactos, y juntos forman todo lo que necesitas para alejarte de la orilla. Confía en el proceso, incluso cuando no puedas ver la orilla lejana."
+        }
+      },
+      "privacy": {
+        "title": "Una Nota sobre Confidencialidad",
+        "body": "Puedes escribir tus reflexiones en la plataforma o en papel si lo prefieres. Las reflexiones guardadas en la plataforma quedan asociadas a tu cuenta y solo tú puedes consultarlas durante tu recorrido."
+      },
+      "return": "Entendido, volver al mapa"
+    }
   },
   "profile": {
     "link": "Mi perfil",
