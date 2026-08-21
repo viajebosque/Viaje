@@ -2,7 +2,14 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { changeEmail, changePassword } from '../auth/auth';
+import { useLanguage } from '../i18n/useLanguage';
 import JourneyPageShell from './JourneyPageShell';
+import { getMissionTokenImage } from '../lib/missionTokens';
+import {
+  getCompletedMissionIds,
+  getMissions,
+  type Mission,
+} from '../lib/missions';
 import {
   getMyProfile,
   updateFullName,
@@ -54,12 +61,26 @@ function ProfileSectionIcon({ kind }: { kind: Block }) {
   );
 }
 
+function AmuletsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 5a3 3 0 1 1 6 0c0 1.7-1.3 2.7-3 2.7S9 6.7 9 5Z" />
+      <circle cx="12" cy="14" r="6" />
+      <path d="m9.5 14 1.7 1.7 3.6-3.8" />
+    </svg>
+  );
+}
+
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const { t } = useTranslation();
+  const { lang } = useLanguage();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [amulets, setAmulets] = useState<Mission[]>([]);
+  const [amuletsLoading, setAmuletsLoading] = useState(true);
+  const [amuletsError, setAmuletsError] = useState(false);
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -95,6 +116,37 @@ export default function ProfilePage() {
       cancelled = true;
     };
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    setAmuletsLoading(true);
+    setAmuletsError(false);
+
+    Promise.all([getMissions(lang), getCompletedMissionIds()])
+      .then(([missions, completedIds]) => {
+        if (cancelled) return;
+        setAmulets(
+          missions
+            .filter(
+              (mission) =>
+                completedIds.has(mission.id) &&
+                Boolean(getMissionTokenImage(mission.numero))
+            )
+            .sort((a, b) => a.numero - b.numero)
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setAmuletsError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setAmuletsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lang, user]);
 
   function say(block: Block, feedback: Feedback) {
     setMsg((prev) => ({ ...prev, [block]: feedback }));
@@ -280,6 +332,51 @@ export default function ProfilePage() {
             <p className="profile-hint profile-google-note">{t('profile.googleOnly')}</p>
           )}
         </form>
+
+        <section className="profile-card profile-card--amulets" aria-labelledby="profile-amulets-title">
+          <div className="profile-card-heading profile-amulets-heading">
+            <span className="profile-card-icon"><AmuletsIcon /></span>
+            <div>
+              <h2 id="profile-amulets-title">{t('profile.amuletsSection')}</h2>
+              <p className="profile-hint">{t('profile.amuletsIntro')}</p>
+            </div>
+            {!amuletsLoading && !amuletsError && (
+              <span className="profile-amulets-count">
+                {t('profile.amuletsCount', { count: amulets.length })}
+              </span>
+            )}
+          </div>
+
+          {amuletsLoading ? (
+            <p className="profile-amulets-state">{t('common.loading')}</p>
+          ) : amuletsError ? (
+            <p className="profile-amulets-state profile-amulets-state--error">
+              {t('profile.amuletsLoadError')}
+            </p>
+          ) : amulets.length === 0 ? (
+            <p className="profile-amulets-state">{t('profile.amuletsEmpty')}</p>
+          ) : (
+            <ul className="profile-amulets-grid">
+              {amulets.map((mission) => {
+                const image = getMissionTokenImage(mission.numero);
+                return (
+                  <li className="profile-amulet" key={mission.id}>
+                    <div className="profile-amulet-visual">
+                      <img
+                        src={image}
+                        alt={t('profile.amuletImageAlt', { numero: mission.numero })}
+                      />
+                    </div>
+                    <p className="profile-amulet-mission">
+                      {t('profile.amuletMission', { numero: mission.numero })}
+                    </p>
+                    <p className="profile-amulet-title">{mission.titulo}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
       </div>
 
       <button className="profile-signout" type="button" onClick={() => void signOut()}>

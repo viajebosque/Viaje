@@ -107,7 +107,15 @@
     "passwordTooShort": "La contraseña nueva debe tener al menos 6 caracteres.",
     "wrongPassword": "La contraseña actual no es correcta.",
     "passwordChanged": "Contraseña actualizada ✓",
-    "googleOnly": "Entras con Google, así que no hay contraseña que cambiar acá. Se administra desde tu cuenta de Google."
+    "googleOnly": "Entras con Google, así que no hay contraseña que cambiar acá. Se administra desde tu cuenta de Google.",
+    "amuletsSection": "Amuletos",
+    "amuletsIntro": "Los tokens que has conseguido al completar tus misiones.",
+    "amuletsCount_one": "{{count}} amuleto",
+    "amuletsCount_other": "{{count}} amuletos",
+    "amuletsEmpty": "Todavía no has conseguido amuletos. Completa una misión para obtener el primero.",
+    "amuletsLoadError": "No pudimos cargar tus amuletos. Inténtalo de nuevo más tarde.",
+    "amuletMission": "Misión {{numero}}",
+    "amuletImageAlt": "Amuleto conseguido en la misión {{numero}}"
   },
   "admin": {
     "link": "Panel admin",

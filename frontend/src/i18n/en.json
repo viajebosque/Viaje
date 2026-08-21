@@ -107,7 +107,15 @@
     "passwordTooShort": "The new password must be at least 6 characters.",
     "wrongPassword": "Your current password isn't correct.",
     "passwordChanged": "Password updated ✓",
-    "googleOnly": "You sign in with Google, so there's no password to change here. It's managed from your Google account."
+    "googleOnly": "You sign in with Google, so there's no password to change here. It's managed from your Google account.",
+    "amuletsSection": "Amulets",
+    "amuletsIntro": "The tokens you have earned by completing your missions.",
+    "amuletsCount_one": "{{count}} amulet",
+    "amuletsCount_other": "{{count}} amulets",
+    "amuletsEmpty": "You haven't earned any amulets yet. Complete a mission to receive your first one.",
+    "amuletsLoadError": "We couldn't load your amulets. Please try again later.",
+    "amuletMission": "Mission {{numero}}",
+    "amuletImageAlt": "Amulet earned in mission {{numero}}"
   },
   "admin": {
     "link": "Admin panel",

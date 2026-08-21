@@ -1042,6 +1042,7 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
     0 10px 24px rgba(49, 69, 42, 0.08);
 }
 .profile-card--password { grid-column: 1 / -1; }
+.profile-card--amulets { grid-column: 1 / -1; gap: 1rem; }
 .profile-card-heading {
   display: flex;
   align-items: center;
@@ -1091,6 +1092,83 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   border: 1px solid rgba(74, 106, 71, 0.25);
   border-radius: 0.8rem;
   background: rgba(225, 234, 207, 0.58);
+}
+.profile-amulets-heading > div { min-width: 0; }
+.profile-amulets-heading .profile-hint { margin-top: 0.2rem; }
+.profile-amulets-count {
+  margin-left: auto;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #dce8c8;
+  color: #315b39;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.profile-amulets-state {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  border: 1px dashed rgba(84, 108, 67, 0.38);
+  border-radius: 0.9rem;
+  background: rgba(242, 240, 216, 0.48);
+  color: #5b6755;
+  line-height: 1.5;
+  text-align: center;
+}
+.profile-amulets-state--error { color: #8b4035; }
+.profile-amulets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.7rem, 1.7vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.profile-amulet {
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(83, 105, 65, 0.24);
+  border-radius: 1rem;
+  background: linear-gradient(155deg, rgba(250, 246, 224, 0.92), rgba(226, 233, 199, 0.72));
+  text-align: center;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.78);
+}
+.profile-amulet-visual {
+  display: grid;
+  width: min(100%, 10rem);
+  aspect-ratio: 1;
+  margin: 0 auto 0.65rem;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 239, 157, 0.76), rgba(220, 228, 185, 0.34) 55%, transparent 72%);
+}
+.profile-amulet-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 9px 12px rgba(51, 70, 38, 0.2));
+  transition: filter 180ms ease, transform 180ms ease;
+}
+.profile-amulet:hover .profile-amulet-visual img {
+  filter: drop-shadow(0 12px 15px rgba(51, 70, 38, 0.28));
+  transform: translateY(-3px) scale(1.025);
+}
+.profile-amulet-mission {
+  margin: 0;
+  color: #6b774e;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.profile-amulet-title {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+  color: #294b33;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
 }
 .profile-signout {
   display: block;
@@ -1279,9 +1357,13 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   .journey-header-badge { position: static; margin-top: 1rem; }
   .journey-content { padding: 1rem; }
   .profile-grid { grid-template-columns: 1fr; }
-  .profile-card--password { grid-column: auto; }
+  .profile-card--password,
+  .profile-card--amulets { grid-column: auto; }
   .profile-password-fields { grid-template-columns: 1fr; gap: 0.8rem; }
   .profile-card--password .auth-primary { align-self: stretch; width: 100%; }
+  .profile-amulets-heading { align-items: flex-start; flex-wrap: wrap; }
+  .profile-amulets-count { margin-left: 3.35rem; }
+  .profile-amulets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-controls { grid-template-columns: 1fr; gap: 0.8rem; padding: 0.85rem; }
   .admin-sort select { width: 100%; }
   .admin-row { align-items: stretch; padding: 0.85rem; }
