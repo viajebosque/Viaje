@@ -650,6 +650,14 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   text-overflow: clip;
   white-space: nowrap;
 }
+.mission-entry-modal h2:lang(en) {
+  overflow: hidden;
+  font-size: clamp(1.7rem, 2.55vw, 3.2rem);
+  line-height: 1.08;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  white-space: normal;
+}
 .mission-entry-description {
   display: -webkit-box;
   margin: clamp(0.55rem, 1.6vw, 1.5rem) 0 0;
@@ -811,6 +819,10 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   }
   .mission-entry-label { margin-bottom: 0.45rem; font-size: 0.7rem; }
   .mission-entry-modal h2 { font-size: clamp(2rem, 10vw, 3.2rem); white-space: normal; }
+  .mission-entry-modal h2:lang(en) {
+    font-size: clamp(1.7rem, 8vw, 2.5rem);
+    line-height: 1.08;
+  }
   .mission-entry-description {
     margin-top: 0.7rem;
     font-size: 0.92rem;
