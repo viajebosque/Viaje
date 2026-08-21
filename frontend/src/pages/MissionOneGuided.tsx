@@ -9,7 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import missionPanel from '../assets/forest/mission-one-panel.png';
 import forestMap from '../assets/forest/forest-map.png';
+import MissionTokenReward from '../components/MissionTokenReward';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
+import { getMissionTokenImage } from '../lib/missionTokens';
 
 type GuidedAnswers = Record<string, string>;
 
@@ -321,6 +323,7 @@ export default function MissionOneGuided({
   const currentQuestion = questions[step];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? '' : '';
   const isLongQuestion = (currentQuestion?.enunciado.length ?? 0) > 180;
+  const tokenImage = getMissionTokenImage(mission.numero);
 
   if (completed) {
     return (
@@ -330,7 +333,13 @@ export default function MissionOneGuided({
       >
         <section className="guided-celebration" aria-labelledby="guided-complete-title">
           <span className="guided-celebration-kicker">{t('mission.guided.completeKicker')}</span>
-          <div className="guided-leaf" aria-hidden="true"><span /></div>
+          {tokenImage && (
+            <MissionTokenReward
+              src={tokenImage}
+              alt={t('mission.tokenImageAlt', { numero: mission.numero })}
+              large
+            />
+          )}
           <h1 id="guided-complete-title">{t('mission.guided.completeTitle')}</h1>
           <p className="guided-reward">{t('mission.guided.reward')}</p>
           <p className="guided-reward-meaning">{t('mission.guided.rewardMeaning')}</p>

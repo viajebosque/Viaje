@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { useLanguage } from '../i18n/useLanguage';
 import { isSupabaseConfigured } from '../lib/supabase';
+import MissionTokenReward from '../components/MissionTokenReward';
 import MissionOneGuided from './MissionOneGuided';
+import { getMissionTokenImage } from '../lib/missionTokens';
 import {
   getMissionByNumero,
   getQuestions,
@@ -186,6 +188,8 @@ export default function MissionPage() {
     );
   }
 
+  const tokenImage = getMissionTokenImage(mission.numero);
+
   return (
     <main className="mission">
       <div className="mission-top">
@@ -236,7 +240,15 @@ export default function MissionPage() {
         {errText && <p className="auth-error">{errText}</p>}
 
         {tokenWon ? (
-          <div className="mission-token-won">{t('mission.tokenWonBadge')}</div>
+          <div className="mission-token-won">
+            {tokenImage && (
+              <MissionTokenReward
+                src={tokenImage}
+                alt={t('mission.tokenImageAlt', { numero: mission.numero })}
+              />
+            )}
+            <span>{t('mission.tokenWonBadge')}</span>
+          </div>
         ) : (
           <button
             className="mission-token-btn"

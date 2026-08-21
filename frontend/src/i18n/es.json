@@ -145,8 +145,9 @@
     "answerPlaceholder": "Escribe tu respuesta…",
     "getToken": "Obtener mi token",
     "validating": "Validando…",
-    "tokenWon": "¡Token obtenido! 🪙",
-    "tokenWonBadge": "🪙 Token obtenido",
+    "tokenWon": "¡Token obtenido!",
+    "tokenWonBadge": "Token obtenido",
+    "tokenImageAlt": "Token obtenido en la misión {{numero}}",
     "missingAnswers": "Aún faltan preguntas por responder para obtener el token.",
     "blocks": {
       "iniciacion": "Preguntas Iniciales",
@@ -228,7 +229,7 @@
       "saveError": "Tu respuesta está segura en este dispositivo. Reintenta cuando vuelva la conexión.",
       "completeError": "No pudimos completar la misión todavía. Tus respuestas están a salvo; inténtalo nuevamente.",
       "completeKicker": "Misión completada",
-      "completeTitle": "Has ganado una Hoja Solitaria",
+      "completeTitle": "Has ganado el Primer Tablón",
       "reward": "Tu primera recompensa del bosque",
       "rewardMeaning": "Representa el coraje de comenzar",
       "backToMap": "Volver al mapa"

@@ -145,8 +145,9 @@
     "answerPlaceholder": "Write your answer…",
     "getToken": "Get my token",
     "validating": "Validating…",
-    "tokenWon": "Token earned! 🪙",
-    "tokenWonBadge": "🪙 Token earned",
+    "tokenWon": "Token earned!",
+    "tokenWonBadge": "Token earned",
+    "tokenImageAlt": "Token earned in mission {{numero}}",
     "missingAnswers": "Some questions still need answers before you can get the token.",
     "blocks": {
       "iniciacion": "Opening Questions",
@@ -228,7 +229,7 @@
       "saveError": "Your answer is safe on this device. Try again when your connection returns.",
       "completeError": "We couldn't complete the mission yet. Your answers are safe; please try again.",
       "completeKicker": "Mission completed",
-      "completeTitle": "You earned a Solitary Leaf",
+      "completeTitle": "You earned the First Plank",
       "reward": "Your first forest reward",
       "rewardMeaning": "It represents the courage to begin",
       "backToMap": "Back to map"
