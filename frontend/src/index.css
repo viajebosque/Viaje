@@ -1321,6 +1321,7 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
 .mission-token-reveal {
   position: relative;
   width: min(230px, 72vw);
+  aspect-ratio: 1;
   isolation: isolate;
 }
 .mission-token-reveal--large { width: min(260px, 72vw); margin: 1rem auto 0.35rem; }
@@ -1334,9 +1335,12 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   opacity: 1;
   transform: none;
 }
+.mission-token-reveal--pending .mission-token-image,
 .mission-token-reveal--animate .mission-token-image {
   opacity: 0;
   transform: scale(0.45) rotate(-8deg);
+}
+.mission-token-reveal--animate .mission-token-image {
   animation: token-reveal 1.9s cubic-bezier(0.16, 1, 0.3, 1) 0.18s forwards;
 }
 .mission-token-reveal--large .mission-token-image {
@@ -1351,9 +1355,12 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   opacity: 0.3;
   transform: scale(1.45);
 }
+.mission-token-reveal--pending .mission-token-glow,
 .mission-token-reveal--animate .mission-token-glow {
   opacity: 0;
   transform: scale(0.35);
+}
+.mission-token-reveal--animate .mission-token-glow {
   animation: token-glow 2.4s ease-out 0.28s forwards;
 }
 .mission-token-stars { position: absolute; z-index: 3; inset: -8%; pointer-events: none; }
@@ -1367,9 +1374,12 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   filter: drop-shadow(0 0 5px rgba(255, 205, 72, 0.9));
   transform: scale(1) rotate(135deg);
 }
+.mission-token-reveal--pending .mission-token-stars span,
 .mission-token-reveal--animate .mission-token-stars span {
   opacity: 0;
   transform: scale(0.15) rotate(0deg);
+}
+.mission-token-reveal--animate .mission-token-stars span {
   animation: token-star-burst 1.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .mission-token-stars span:nth-child(1) { left: 5%; top: 18%; animation-delay: 0.72s; }
@@ -1397,6 +1407,18 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   0% { opacity: 0; transform: scale(0.15) rotate(0deg); }
   55% { opacity: 1; transform: scale(1.35) rotate(90deg); }
   100% { opacity: 0.92; transform: scale(1) rotate(135deg); }
+}
+@keyframes token-reveal-reduced {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes token-star-reduced {
+  from { opacity: 0; }
+  to { opacity: 0.92; }
+}
+@keyframes token-glow-reduced {
+  from { opacity: 0; }
+  to { opacity: 0.3; }
 }
 
 /* ---------- Login ilustrado ---------- */
@@ -2120,9 +2142,18 @@ button, input { font: inherit; }
   .guided-primary,
   .guided-secondary { transition: none; }
   .guided-save-status--saving > span { animation: none; }
-  .mission-token-reveal--animate .mission-token-image { opacity: 1; transform: none; animation: none; }
-  .mission-token-reveal--animate .mission-token-glow { opacity: 0.3; transform: scale(1.2); animation: none; }
-  .mission-token-stars { display: none; }
+  .mission-token-reveal--animate .mission-token-image {
+    transform: none;
+    animation: token-reveal-reduced 1.9s ease-out 0.18s forwards;
+  }
+  .mission-token-reveal--animate .mission-token-glow {
+    transform: scale(1.2);
+    animation: token-glow-reduced 2.4s ease-out 0.28s forwards;
+  }
+  .mission-token-reveal--animate .mission-token-stars span {
+    transform: scale(1) rotate(135deg);
+    animation: token-star-reduced 1.45s ease-out forwards;
+  }
 }
 
 /* Ajuste fiel a la referencia visual de la Mision 1. */
