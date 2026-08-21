@@ -651,9 +651,9 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   white-space: nowrap;
 }
 .mission-entry-modal h2:lang(en) {
-  overflow: hidden;
-  font-size: clamp(1.7rem, 2.55vw, 3.2rem);
-  line-height: 1.08;
+  overflow: visible;
+  font-size: clamp(1.6rem, 2.35vw, 2.9rem);
+  line-height: 1.14;
   overflow-wrap: break-word;
   text-wrap: balance;
   white-space: normal;
@@ -667,6 +667,12 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   line-height: 1.55;
   white-space: pre-line;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+.mission-entry-description:lang(en) {
+  margin-bottom: clamp(0.45rem, 0.8vw, 0.8rem);
+  font-size: clamp(0.78rem, 1.08vw, 1.12rem);
+  line-height: 1.4;
   -webkit-line-clamp: 4;
 }
 .mission-entry-facts {
@@ -820,13 +826,19 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   .mission-entry-label { margin-bottom: 0.45rem; font-size: 0.7rem; }
   .mission-entry-modal h2 { font-size: clamp(2rem, 10vw, 3.2rem); white-space: normal; }
   .mission-entry-modal h2:lang(en) {
-    font-size: clamp(1.7rem, 8vw, 2.5rem);
-    line-height: 1.08;
+    font-size: clamp(1.55rem, 7.2vw, 2.25rem);
+    line-height: 1.14;
   }
   .mission-entry-description {
     margin-top: 0.7rem;
     font-size: 0.92rem;
     line-height: 1.45;
+    -webkit-line-clamp: 5;
+  }
+  .mission-entry-description:lang(en) {
+    margin-bottom: 0.5rem;
+    font-size: 0.84rem;
+    line-height: 1.4;
     -webkit-line-clamp: 5;
   }
   .mission-entry-facts { gap: 0.35rem; }
