@@ -322,7 +322,14 @@ export default function MissionOneGuided({
           : t('mission.guided.ready');
   const currentQuestion = questions[step];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? '' : '';
-  const isLongQuestion = (currentQuestion?.enunciado.length ?? 0) > 180;
+  const questionText = currentQuestion?.enunciado.trim() ?? '';
+  const questionLineCount = questionText ? questionText.split(/\r?\n/).length : 0;
+  const questionTitleClass =
+    questionText.length > 170 || questionLineCount > 3
+      ? 'guided-question-title--very-long'
+      : questionText.length > 90 || questionLineCount > 1
+        ? 'guided-question-title--long'
+        : undefined;
   const tokenImage = getMissionTokenImage(mission.numero);
 
   if (completed) {
@@ -422,7 +429,11 @@ export default function MissionOneGuided({
               </div>
             </div>
 
-            <article className="guided-question-card">
+            <article
+              className="guided-question-card"
+              data-question-category={currentQuestion?.categoria}
+              data-question-order={currentQuestion?.orden}
+            >
               <div className="guided-question-wrap">
             <p className="guided-eyebrow">
               {t('mission.guided.questionLabel', { current: step + 1 })}
@@ -430,7 +441,7 @@ export default function MissionOneGuided({
             <h1
               ref={headingRef}
               id="guided-question-title"
-              className={isLongQuestion ? 'guided-question-title--long' : undefined}
+              className={questionTitleClass}
               tabIndex={-1}
             >
               {currentQuestion?.enunciado ?? ''}

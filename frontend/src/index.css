@@ -1897,6 +1897,11 @@ button, input { font: inherit; }
   line-height: 1.18;
   white-space: pre-line;
 }
+.guided-question-wrap h1.guided-question-title--very-long {
+  font-size: clamp(1.3rem, 1.85vw, 1.95rem);
+  line-height: 1.22;
+  white-space: pre-line;
+}
 .guided-help {
   max-width: 39rem;
   margin: 0.9rem 0 1.5rem;
@@ -2695,7 +2700,15 @@ body:has(.guided-mission),
 .guided-question-wrap {
   flex: 1 1 auto;
   min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+  scrollbar-gutter: stable;
+  scrollbar-color: #88a17b transparent;
+  scrollbar-width: thin;
 }
+
+.guided-question-wrap h1 { text-wrap: balance; }
 
 .guided-options {
   grid-template-columns: minmax(0, 1fr);
