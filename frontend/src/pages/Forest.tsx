@@ -7,8 +7,8 @@ import { useLanguage } from '../i18n/useLanguage';
 import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
 import completedCheckpoint from '../assets/forest/checkpoint-completed.png';
-import missionOnePanel from '../assets/forest/mission-one-panel.png';
 import mapGuide from '../assets/forest/map-guide.png';
+import { getMissionPanelImage } from '../lib/missionPanels';
 import {
   getMissions,
   getCompletedMissionIds,
@@ -153,6 +153,10 @@ export default function Forest() {
     await signOut();
     navigate('/', { replace: true });
   }
+
+  const selectedPanel = selected
+    ? getMissionPanelImage(selected.numero)
+    : undefined;
 
   return (
     <main className="forest">
@@ -316,7 +320,7 @@ export default function Forest() {
 
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          {selected.numero === 1 ? (
+          {selectedPanel ? (
             <section
               className="mission-entry-modal"
               role="dialog"
@@ -327,7 +331,7 @@ export default function Forest() {
             >
               <img
                 className="mission-entry-background"
-                src={missionOnePanel}
+                src={selectedPanel}
                 alt=""
                 draggable={false}
               />
