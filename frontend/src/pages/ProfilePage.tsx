@@ -365,6 +365,9 @@ export default function ProfilePage() {
                       <img
                         src={image}
                         alt={t('profile.amuletImageAlt', { numero: mission.numero })}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                       />
                     </div>
                     <p className="profile-amulet-mission">
