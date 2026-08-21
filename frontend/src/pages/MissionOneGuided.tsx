@@ -27,7 +27,6 @@ type Props = {
   mission: Mission;
   questions: Question[];
   initialAnswers: Record<string, string>;
-  initialCompleted: boolean;
   userId: string | null;
   isPreview: boolean;
   mapPath: string;
@@ -105,7 +104,6 @@ export default function MissionOneGuided({
   mission,
   questions,
   initialAnswers,
-  initialCompleted,
   userId,
   isPreview,
   mapPath,
@@ -139,7 +137,9 @@ export default function MissionOneGuided({
   );
   const [saveError, setSaveError] = useState('');
   const [validation, setValidation] = useState('');
-  const [completed, setCompleted] = useState(initialCompleted);
+  // Haber obtenido el token antes no omite la misión: cada entrada inicia una
+  // nueva ejecución y muestra la recompensa solo al terminarla otra vez.
+  const [completed, setCompleted] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [exiting, setExiting] = useState(false);
 

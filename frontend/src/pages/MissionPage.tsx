@@ -180,7 +180,6 @@ export default function MissionPage() {
         mission={mission}
         questions={questions}
         initialAnswers={answers}
-        initialCompleted={tokenWon}
         userId={user?.id ?? null}
         isPreview={isDesignPreview}
         mapPath={mapPath}
