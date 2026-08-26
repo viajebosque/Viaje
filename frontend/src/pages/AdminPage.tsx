@@ -41,43 +41,50 @@ export default function AdminPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  // El debounce vive acá, sobre el texto, y no sobre la request. Antes envolvía
+  // al fetch entero, así que los 300 ms se pagaban también en la primera carga
+  // (donde no hay tecleo que amortiguar) y en cada clic del paginador. Ahora
+  // solo se demora lo que se está tecleando; página y orden salen al instante.
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   // Al cambiar búsqueda u orden se vuelve a la primera página: quedarse en la
   // 4 con un filtro que devuelve 8 resultados mostraría una lista vacía.
   useEffect(() => {
     setPage(1);
-  }, [search, sort]);
+  }, [debouncedSearch, sort]);
 
   // Re-lee la página al cambiar búsqueda, orden o página. El filtrado, el orden
   // y el corte los hace la base: el navegador nunca recibe la tabla entera.
   useEffect(() => {
     let cancelled = false;
-    const timer = setTimeout(() => {
-      setLoading(true);
-      listUsers(search, sort, page)
-        .then((res) => {
-          if (!cancelled) {
-            setUsers(res.users);
-            setTotal(res.total);
-            setErrText(null);
-          }
-        })
-        .catch((e: unknown) => {
-          if (!cancelled) {
-            setUsers([]);
-            setTotal(0);
-            setErrText(e instanceof Error ? e.message : String(e));
-          }
-        })
-        .finally(() => {
-          if (!cancelled) setLoading(false);
-        });
-    }, SEARCH_DEBOUNCE_MS);
+    setLoading(true);
+    listUsers(debouncedSearch, sort, page)
+      .then((res) => {
+        if (!cancelled) {
+          setUsers(res.users);
+          setTotal(res.total);
+          setErrText(null);
+        }
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) {
+          setUsers([]);
+          setTotal(0);
+          setErrText(e instanceof Error ? e.message : String(e));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
-  }, [search, sort, page]);
+  }, [debouncedSearch, sort, page]);
 
   async function togglePaid(user: AdminUser) {
     setSavingId(user.id);
