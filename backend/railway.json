@@ -7,6 +7,7 @@
     "startCommand": "npm start",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 100,
-    "restartPolicyType": "ON_FAILURE"
+    "restartPolicyType": "ON_FAILURE",
+    "sleepApplication": true
   }
 }
