@@ -8,7 +8,7 @@ import { getMissionTokenImage } from '../lib/missionTokens';
 import {
   getCompletedMissionIds,
   getMissions,
-  type Mission,
+  type MissionSummary,
 } from '../lib/missions';
 import {
   getMyProfile,
@@ -78,7 +78,7 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [amulets, setAmulets] = useState<Mission[]>([]);
+  const [amulets, setAmulets] = useState<MissionSummary[]>([]);
   const [amuletsLoading, setAmuletsLoading] = useState(true);
   const [amuletsError, setAmuletsError] = useState(false);
 

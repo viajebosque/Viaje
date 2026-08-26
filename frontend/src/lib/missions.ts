@@ -12,6 +12,16 @@ export type Mission = {
   texto_final: string;
 };
 
+// Lo que necesita el mapa para pintar los 9 nodos: el título y nada más.
+// La descripción se pide aparte (getMissionDescriptions) porque solo la usa el
+// modal, y es el campo pesado: 12 kB entre las 9 misiones contra 220 bytes de
+// títulos.
+export type MissionSummary = {
+  id: string;
+  numero: number;
+  titulo: string;
+};
+
 export type Question = {
   id: string;
   mission_id: string;
@@ -54,42 +64,96 @@ function toQuestion(row: Row, lang: Lang): Question {
   };
 }
 
-// Todas las misiones (para el mapa). Ordenadas por numero.
-export async function getMissions(lang: Lang): Promise<Mission[]> {
-  const { data, error } = await supabase
-    .from('missions')
-    .select('*')
-    .order('numero');
-  if (error) throw error;
-  return (data ?? []).map((row) => toMission(row, lang));
+// Columnas de texto que hay que pedir para un idioma: la del idioma activo más
+// la española, que es a la que cae el fallback. En español es una sola.
+function langCols(base: string, lang: Lang): string[] {
+  return lang === DEFAULT_LANG
+    ? [`${base}_${DEFAULT_LANG}`]
+    : [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`];
 }
 
-// Una misión por su numero (1..9).
-export async function getMissionByNumero(
+// Títulos de las 9 misiones, para el mapa y para la lista de amuletos del
+// perfil. Antes esto era select('*'): bajaba las 9 descripciones y los 9 textos
+// finales en los dos idiomas (27 kB) para mostrar títulos (220 bytes).
+export async function getMissions(lang: Lang): Promise<MissionSummary[]> {
+  const { data, error } = (await supabase
+    .from('missions')
+    .select(['id', 'numero', ...langCols('titulo', lang)].join(', '))
+    .order('numero')) as unknown as {
+    data: Row[] | null;
+    error: { message: string } | null;
+  };
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    numero: row.numero as number,
+    titulo: pick(row, 'titulo', lang),
+  }));
+}
+
+// Descripciones por numero de misión. Va aparte del mapa a propósito: los nodos
+// se pintan con los títulos y esto llega detrás, sin frenar el primer dibujo.
+// El modal ya tiene fallback (forest.modalAsk) para el instante en que todavía
+// no llegó.
+export async function getMissionDescriptions(
+  lang: Lang
+): Promise<Map<number, string>> {
+  const { data, error } = (await supabase
+    .from('missions')
+    .select(['numero', ...langCols('descripcion', lang)].join(', '))) as unknown as {
+    data: Row[] | null;
+    error: { message: string } | null;
+  };
+  if (error) throw new Error(error.message);
+  const map = new Map<number, string>();
+  for (const row of data ?? []) {
+    map.set(row.numero as number, pick(row, 'descripcion', lang));
+  }
+  return map;
+}
+
+// Una misión con sus preguntas, en UNA sola consulta: PostgREST las anida por
+// la foreign key questions.mission_id -> missions.id. Antes eran dos viajes
+// encadenados, porque no se podían pedir las preguntas sin saber el id.
+export async function getMissionWithQuestions(
   numero: number,
   lang: Lang
-): Promise<Mission | null> {
-  const { data, error } = await supabase
-    .from('missions')
-    .select('*')
-    .eq('numero', numero)
-    .maybeSingle();
-  if (error) throw error;
-  return data ? toMission(data, lang) : null;
-}
+): Promise<{ mission: Mission; questions: Question[] } | null> {
+  const misCols = [
+    'id',
+    'numero',
+    ...langCols('titulo', lang),
+    ...langCols('descripcion', lang),
+    ...langCols('texto_final', lang),
+  ].join(', ');
+  const qCols = [
+    'id',
+    'mission_id',
+    'categoria',
+    'orden',
+    ...langCols('enunciado', lang),
+  ].join(', ');
 
-// Preguntas de una misión, ordenadas.
-export async function getQuestions(
-  missionId: string,
-  lang: Lang
-): Promise<Question[]> {
-  const { data, error } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('mission_id', missionId)
-    .order('orden');
-  if (error) throw error;
-  return (data ?? []).map((row) => toQuestion(row, lang));
+  // El select se arma en tiempo de ejecución (depende del idioma), así que el
+  // parser de tipos de PostgREST no puede deducir la forma de la respuesta. Se
+  // tipea acá, en el borde, y de ahí para adentro es Row como el resto.
+  const { data, error } = (await supabase
+    .from('missions')
+    .select(`${misCols}, questions(${qCols})`)
+    .eq('numero', numero)
+    .order('orden', { referencedTable: 'questions' })
+    .maybeSingle()) as unknown as {
+    data: Row | null;
+    error: { message: string } | null;
+  };
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  const rows = Array.isArray(data.questions) ? (data.questions as Row[]) : [];
+  return {
+    mission: toMission(data, lang),
+    questions: rows.map((q) => toQuestion(q, lang)),
+  };
 }
 
 // Respuestas del usuario para un conjunto de preguntas.

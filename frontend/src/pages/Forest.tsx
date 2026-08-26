@@ -11,8 +11,9 @@ import mapGuide from '../assets/forest/map-guide.png';
 import { getMissionPanelImage } from '../lib/missionPanels';
 import {
   getMissions,
+  getMissionDescriptions,
   getCompletedMissionIds,
-  type Mission,
+  type MissionSummary,
 } from '../lib/missions';
 
 const missionPositions = [
@@ -90,22 +91,48 @@ export default function Forest() {
     navigate(`/mission/${numero}${isDesignPreview ? '?preview=1' : ''}`);
   }
 
-  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState<MissionSummary[]>([]);
+  const [descriptions, setDescriptions] = useState<Map<number, string>>(
+    () => new Map()
+  );
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
-  const [selected, setSelected] = useState<{
-    numero: number;
-    titulo: string;
-    descripcion: string;
-    isDone: boolean;
-  } | null>(null);
+  // Se guarda SOLO el numero. Titulo, descripcion y isDone se resuelven al
+  // renderizar (selectedInfo): guardarlos acá los congelaba en el momento del
+  // click, así que quedaban vacíos si los datos todavía no habían llegado y en
+  // el idioma viejo si la persona movía el switch con el modal abierto.
+  const [selected, setSelected] = useState<number | null>(null);
 
   // Re-lee las misiones al cambiar el idioma: los títulos vienen de la BD.
   useEffect(() => {
+    let active = true;
     getMissions(lang)
-      .then(setMissions)
-      .catch(() => setMissions([]));
+      .then((rows) => {
+        if (active) setMissions(rows);
+      })
+      .catch(() => {
+        if (active) setMissions([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [lang]);
+
+  // Las descripciones solo las usa el modal, así que van en su propia lectura y
+  // no demoran el dibujo del mapa.
+  useEffect(() => {
+    let active = true;
+    getMissionDescriptions(lang)
+      .then((rows) => {
+        if (active) setDescriptions(rows);
+      })
+      .catch(() => {
+        if (active) setDescriptions(new Map());
+      });
+    return () => {
+      active = false;
+    };
   }, [lang]);
 
   useEffect(() => {
@@ -124,7 +151,7 @@ export default function Forest() {
   }, []);
 
   useEffect(() => {
-    if (!selected && !showReminders) return;
+    if (selected === null && !showReminders) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelected(null);
@@ -154,9 +181,27 @@ export default function Forest() {
     navigate('/', { replace: true });
   }
 
-  const selectedPanel = selected
-    ? getMissionPanelImage(selected.numero)
-    : undefined;
+  const selectedPanel =
+    selected !== null ? getMissionPanelImage(selected) : undefined;
+
+  const selectedMission = selected !== null ? byNumero.get(selected) : undefined;
+  const selectedInfo =
+    selected === null
+      ? null
+      : {
+          numero: selected,
+          titulo:
+            selectedMission?.titulo ||
+            (isDesignPreview && selected === 1
+              ? t('forest.missionOnePreviewTitle')
+              : ''),
+          descripcion:
+            descriptions.get(selected) ||
+            (isDesignPreview && selected === 1
+              ? t('forest.missionOnePreviewDescription')
+              : ''),
+          isDone: selectedMission ? completed.has(selectedMission.id) : false,
+        };
 
   return (
     <main className="forest">
@@ -207,10 +252,6 @@ export default function Forest() {
             const isNext = n === nextMissionNumber;
             const previewTitle =
               isDesignPreview && n === 1 ? t('forest.missionOnePreviewTitle') : '';
-            const previewDescription =
-              isDesignPreview && n === 1
-                ? t('forest.missionOnePreviewDescription')
-                : '';
             const title = m?.titulo || previewTitle || t('forest.comingSoon');
 
             return (
@@ -219,14 +260,7 @@ export default function Forest() {
                 className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
                 aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}`}
-                onClick={() =>
-                  setSelected({
-                    numero: n,
-                    titulo: m?.titulo || previewTitle,
-                    descripcion: m?.descripcion || previewDescription,
-                    isDone,
-                  })
-                }
+                onClick={() => setSelected(n)}
               >
                 <img
                   className="mission-checkpoint"
@@ -318,7 +352,7 @@ export default function Forest() {
         </div>
       )}
 
-      {selected && (
+      {selectedInfo && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
           {selectedPanel ? (
             <section
@@ -347,13 +381,13 @@ export default function Forest() {
 
               <div className="mission-entry-content">
                 <p className="mission-entry-label">
-                  {t('forest.modalTitle', { numero: selected.numero })}
+                  {t('forest.modalTitle', { numero: selectedInfo.numero })}
                 </p>
                 <h2 id="mission-entry-title">
-                  {selected.titulo || t('forest.modalTitle', { numero: selected.numero })}
+                  {selectedInfo.titulo || t('forest.modalTitle', { numero: selectedInfo.numero })}
                 </h2>
                 <p id="mission-entry-description" className="mission-entry-description">
-                  {selected.descripcion || t('forest.modalAsk')}
+                  {selectedInfo.descripcion || t('forest.modalAsk')}
                 </p>
 
                 <div className="mission-entry-facts">
@@ -369,7 +403,7 @@ export default function Forest() {
                     <StepsIcon />
                     <span>
                       {t('forest.modalSteps', {
-                        current: selected.isDone ? 3 : 0,
+                        current: selectedInfo.isDone ? 3 : 0,
                         total: 3,
                       })}
                     </span>
@@ -385,7 +419,7 @@ export default function Forest() {
                   <button
                     className="mission-entry-primary"
                     type="button"
-                    onClick={() => openMission(selected.numero)}
+                    onClick={() => openMission(selectedInfo.numero)}
                   >
                     {t('forest.enter')}
                   </button>
@@ -401,15 +435,15 @@ export default function Forest() {
             </section>
           ) : (
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h2>{t('forest.modalTitle', { numero: selected.numero })}</h2>
-              {selected.titulo && (
-                <p className="modal-mission-title">{selected.titulo}</p>
+              <h2>{t('forest.modalTitle', { numero: selectedInfo.numero })}</h2>
+              {selectedInfo.titulo && (
+                <p className="modal-mission-title">{selectedInfo.titulo}</p>
               )}
               <p>{t('forest.modalAsk')}</p>
               <div className="modal-actions">
                 <button
                   className="modal-primary"
-                  onClick={() => openMission(selected.numero)}
+                  onClick={() => openMission(selectedInfo.numero)}
                 >
                   {t('forest.enter')}
                 </button>

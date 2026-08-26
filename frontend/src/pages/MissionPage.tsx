@@ -8,8 +8,7 @@ import MissionTokenReward from '../components/MissionTokenReward';
 import MissionOneGuided from './MissionOneGuided';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import {
-  getMissionByNumero,
-  getQuestions,
+  getMissionWithQuestions,
   getAnswers,
   saveAnswers,
   completeMission,
@@ -68,6 +67,9 @@ export default function MissionPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  // Para qué conjunto de preguntas ya se cargaron respuestas y token. Comparar
+  // contra qsKey evita mostrar los campos vacíos un instante antes de llenarlos.
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [savingBlock, setSavingBlock] = useState<Categoria | null>(null);
   const [claiming, setClaiming] = useState(false);
   // Mensajes de estado: se guarda la CLAVE i18n, no el texto, para que el
@@ -95,27 +97,52 @@ export default function MissionPage() {
       setLoading(false);
       return;
     }
-    (async () => {
-      const m = await getMissionByNumero(n, lang);
-      setMission(m);
-      if (!m) {
+    let cancelled = false;
+    getMissionWithQuestions(n, lang)
+      .then((res) => {
+        if (cancelled) return;
+        setMission(res?.mission ?? null);
+        setQuestions(res?.questions ?? []);
         setLoading(false);
-        return;
-      }
-      const qs = await getQuestions(m.id, lang);
-      setQuestions(qs);
-      const [saved, completedAlready] = await Promise.all([
-        getAnswers(qs.map((q) => q.id)),
-        hasMissionToken(m.id),
-      ]);
-      setAnswers(saved);
-      setTokenWon(completedAlready);
-      setLoading(false);
-    })().catch((e) => {
-      setErrText(e instanceof Error ? e.message : String(e));
-      setLoading(false);
-    });
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setErrText(e instanceof Error ? e.message : String(e));
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [numero, lang, isDesignPreview]);
+
+  // Respuestas y token NO dependen del idioma: se leen cuando cambia el CONJUNTO
+  // de preguntas, no cuando se mueve el switch. Antes colgaban del efecto de
+  // arriba, con lang en las dependencias, así que cambiar de idioma releía las
+  // respuestas de la base y pisaba lo que la persona había escrito sin guardar.
+  const qsKey = questions.map((q) => q.id).join(',');
+  const missionId = mission?.id ?? '';
+  useEffect(() => {
+    if (isDesignPreview || !qsKey || !missionId) {
+      setLoadedKey(qsKey);
+      return;
+    }
+    let cancelled = false;
+    Promise.all([getAnswers(qsKey.split(',')), hasMissionToken(missionId)])
+      .then(([saved, completedAlready]) => {
+        if (cancelled) return;
+        setAnswers(saved);
+        setTokenWon(completedAlready);
+        setLoadedKey(qsKey);
+      })
+      .catch(() => {
+        // Que no se puedan leer las respuestas no debe dejar la pantalla
+        // trabada: se muestran las preguntas vacías.
+        if (!cancelled) setLoadedKey(qsKey);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [qsKey, missionId, isDesignPreview]);
 
   function setResp(questionId: string, value: string) {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -162,7 +189,8 @@ export default function MissionPage() {
     }
   }
 
-  if (loading) return <div className="auth-loading">{t('mission.loading')}</div>;
+  if (loading || loadedKey !== qsKey)
+    return <div className="auth-loading">{t('mission.loading')}</div>;
 
   if (!mission)
     return (

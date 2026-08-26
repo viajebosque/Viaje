@@ -7,6 +7,7 @@ import {
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { forgetProfile } from '../lib/profile';
 
 type AuthCtx = {
   session: Session | null;
@@ -47,6 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = async () => {
+    // El perfil cacheado es de quien se está yendo: si no se limpia, el
+    // siguiente que entre en esta misma pestaña arrancaría con el rol y el
+    // idioma del anterior.
+    forgetProfile();
     await supabase.auth.signOut();
   };
 

@@ -36,6 +36,7 @@ export async function updateFullName(
   userId: string,
   fullName: string
 ): Promise<void> {
+  forgetProfile();
   const { error } = await supabase
     .from('profiles')
     .update({ full_name: fullName })
@@ -50,34 +51,59 @@ export async function syncProfileEmail(
   userId: string,
   email: string
 ): Promise<void> {
+  forgetProfile();
   await supabase.from('profiles').update({ email }).eq('id', userId);
 }
 
 export type Role = 'admin' | 'usuario';
 
+// ---------------------------------------------------------------------------
+// Caché de la fila propia de profiles
+//
+// Varios componentes piden el perfil a la vez y todos quieren la MISMA fila:
+// LangToggle (que está en App.tsx, o sea en todas las pantallas) y la pantalla
+// activa preguntan por `lang`; Forest y AdminRoute preguntan por `role`. Sin
+// esto, abrir /forest disparaba tres selects idénticos contra profiles.
+//
+// Se guarda la promesa, no el resultado: si tres componentes preguntan en el
+// mismo tick, los tres esperan la misma request. Si la lectura falla o no
+// devuelve fila, se descarta, para que un error pasajero no quede pegado toda
+// la sesión.
+// ---------------------------------------------------------------------------
+let cache: { userId: string; promise: Promise<Profile | null> } | null = null;
+
+function cachedProfile(userId: string): Promise<Profile | null> {
+  if (cache && cache.userId === userId) return cache.promise;
+  const promise = getMyProfile(userId).then((p) => {
+    if (!p && cache?.promise === promise) cache = null;
+    return p;
+  });
+  cache = { userId, promise };
+  return promise;
+}
+
+// Llamarla cuando el perfil cacheado deja de ser el bueno: al cerrar sesión y
+// después de escribir sobre la fila.
+export function forgetProfile(): void {
+  cache = null;
+}
+
 // Rol del usuario logueado. RLS deja leer SOLO la fila propia, así que esto
 // sirve para saber si soy admin, no para mirar a otros.
 // Sirve para mostrar/ocultar el panel; el permiso real lo valida el backend.
 export async function getProfileRole(userId: string): Promise<Role | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .maybeSingle();
-  if (error || !data) return null;
-  return data.role === 'admin' || data.role === 'usuario' ? data.role : null;
+  const p = await cachedProfile(userId);
+  if (!p) return null;
+  return p.role === 'admin' || p.role === 'usuario' ? p.role : null;
 }
 
 export async function getProfileLang(userId: string): Promise<Lang | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('lang')
-    .eq('id', userId)
-    .maybeSingle();
-  if (error || !data) return null;
-  return isLang(data.lang) ? data.lang : null;
+  const p = await cachedProfile(userId);
+  if (!p) return null;
+  return isLang(p.lang) ? p.lang : null;
 }
 
 export async function setProfileLang(userId: string, lang: Lang): Promise<void> {
+  forgetProfile();
   await supabase.from('profiles').update({ lang }).eq('id', userId);
 }
