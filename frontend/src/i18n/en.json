@@ -61,6 +61,9 @@
     "locked": "Locked",
     "lockedHint": "Complete Mission {{numero}} to unlock this one.",
     "lockedNode": "locked",
+    "paywallHint": "The first {{numero}} missions are freely open. The rest of the forest opens with full access.",
+    "paywallCta": "Get full access",
+    "paywallNode": "requires full access",
     "reminders": {
       "open": "Open gentle reminders",
       "eyebrow": "Before you continue",
@@ -162,6 +165,8 @@
     "missingAnswers": "Some questions still need answers before you can get the token.",
     "lockedTitle": "This mission is locked",
     "lockedBody": "You need to complete Mission {{numero}} before entering this one.",
+    "paywallTitle": "The path continues a little further ahead",
+    "paywallBody": "The first {{numero}} missions are freely open. To keep walking through the forest you need full access.",
     "blocks": {
       "iniciacion": "Opening Questions",
       "actividad": "Mini-Action",

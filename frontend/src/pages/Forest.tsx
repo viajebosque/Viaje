@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { useRole } from '../auth/useRole';
+import { usePaid } from '../auth/usePaid';
 import { useLanguage } from '../i18n/useLanguage';
 import forestMap from '../assets/forest/forest-map.png';
 import pendingCheckpoint from '../assets/forest/checkpoint-pending.png';
@@ -13,8 +14,11 @@ import {
   getMissions,
   getMissionDescriptions,
   getCompletedMissionIds,
+  FREE_MISSIONS,
+  type MissionAccess,
   type MissionSummary,
 } from '../lib/missions';
+import { paymentUrl } from '../lib/payment';
 
 const missionPositions = [
   { left: 5.9, top: 55.2 },
@@ -90,6 +94,7 @@ function CloseIcon() {
 export default function Forest() {
   const { signOut } = useAuth();
   const { role } = useRole();
+  const { isPaid, checking: checkingPaid } = usePaid();
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const navigate = useNavigate();
@@ -186,14 +191,23 @@ export default function Forest() {
       ? nextPendingPosition + 1
       : null;
 
-  // Bloqueo secuencial. Como el avance es en orden, todo lo anterior a la
-  // siguiente pendiente ya está completo: basta con que el numero sea mayor que
-  // ella. Si nextMissionNumber es null no hay nada bloqueado (o están todas
-  // hechas, o los tokens aún no llegaron y en ese caso manda la pantalla de
-  // misión, que vuelve a preguntarle a la base).
-  function isLocked(numero: number): boolean {
-    if (isDesignPreview || nextMissionNumber === null) return false;
-    return numero > nextMissionNumber;
+  // Por qué está cerrada una misión. Dos reglas encimadas:
+  //
+  //   paywall -> es de la 3 en adelante y el usuario no pagó. Va primero
+  //              porque es el motivo que va a seguir ahí por mucho que avance;
+  //              el orden, en cambio, se resuelve jugando.
+  //   locked  -> le falta terminar la anterior. Como el avance es en orden,
+  //              todo lo previo a la siguiente pendiente ya está hecho: basta
+  //              con que el numero sea mayor que ella.
+  //
+  // Mientras los tokens o el perfil no llegaron no se pinta nada cerrado, para
+  // no mostrar candados que después desaparecen. La pantalla de misión vuelve a
+  // preguntarle a la base de todos modos.
+  function accessOf(numero: number): MissionAccess {
+    if (isDesignPreview) return 'open';
+    if (!checkingPaid && !isPaid && numero > FREE_MISSIONS) return 'paywall';
+    if (nextMissionNumber === null) return 'open';
+    return numero > nextMissionNumber ? 'locked' : 'open';
   }
 
   async function handleSignOut() {
@@ -221,10 +235,28 @@ export default function Forest() {
               ? t('forest.missionOnePreviewDescription')
               : ''),
           isDone: selectedMission ? completed.has(selectedMission.id) : false,
-          isLocked: isLocked(selected),
+          access: accessOf(selected),
           // Qué misión hay que terminar para abrir esta.
           requiredNumero: selected - 1,
         };
+
+  // Texto de la nota y del botón segun por qué está cerrada la misión. El
+  // aviso de pago es deliberadamente suave: informa, no presiona.
+  const noteText =
+    selectedInfo === null
+      ? ''
+      : selectedInfo.access === 'paywall'
+        ? t('forest.paywallHint', { numero: FREE_MISSIONS })
+        : selectedInfo.access === 'open'
+          ? t('forest.modalHint')
+          : t('forest.lockedHint', { numero: selectedInfo.requiredNumero });
+
+  const primaryText =
+    selectedInfo === null
+      ? ''
+      : selectedInfo.access === 'open'
+        ? t('forest.enter')
+        : t('forest.locked');
 
   return (
     <main className="forest">
@@ -273,7 +305,8 @@ export default function Forest() {
             const m = byNumero.get(n);
             const isDone = m ? completed.has(m.id) : false;
             const isNext = n === nextMissionNumber;
-            const locked = isLocked(n);
+            const access = accessOf(n);
+            const closed = access !== 'open';
             const previewTitle =
               isDesignPreview && n === 1 ? t('forest.missionOnePreviewTitle') : '';
             const title = m?.titulo || previewTitle || t('forest.comingSoon');
@@ -281,9 +314,9 @@ export default function Forest() {
             return (
               <button
                 key={n}
-                className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''} ${locked ? 'locked' : ''}`}
+                className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''} ${closed ? 'locked' : ''}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
-                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}${locked ? `. ${t('forest.lockedNode')}` : ''}`}
+                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}${closed ? `. ${t(access === 'paywall' ? 'forest.paywallNode' : 'forest.lockedNode')}` : ''}`}
                 onClick={() => setSelected(n)}
               >
                 <img
@@ -300,7 +333,7 @@ export default function Forest() {
                     draggable={false}
                   />
                 )}
-                {locked && (
+                {closed && (
                   <span className="mission-node-lock" aria-hidden="true">
                     <LockIcon />
                   </span>
@@ -440,25 +473,37 @@ export default function Forest() {
                 </div>
 
                 <div
-                  className={`mission-entry-note ${selectedInfo.isLocked ? 'mission-entry-note--locked' : ''}`}
+                  className={`mission-entry-note ${
+                    selectedInfo.access === 'open' ? '' : 'mission-entry-note--locked'
+                  } ${selectedInfo.access === 'paywall' ? 'mission-entry-note--paywall' : ''}`}
                 >
-                  {selectedInfo.isLocked ? <LockIcon /> : <SproutIcon />}
-                  <span>
-                    {selectedInfo.isLocked
-                      ? t('forest.lockedHint', { numero: selectedInfo.requiredNumero })
-                      : t('forest.modalHint')}
-                  </span>
+                  {selectedInfo.access === 'open' ? <SproutIcon /> : <LockIcon />}
+                  <span>{noteText}</span>
                 </div>
 
                 <div className="mission-entry-actions">
-                  <button
-                    className="mission-entry-primary"
-                    type="button"
-                    disabled={selectedInfo.isLocked}
-                    onClick={() => openMission(selectedInfo.numero)}
-                  >
-                    {selectedInfo.isLocked ? t('forest.locked') : t('forest.enter')}
-                  </button>
+                  {/* El aviso de pago es el único cierre con salida: en vez de
+                      un botón muerto, lleva al enlace de acceso. Si no hay
+                      enlace configurado queda el aviso solo. */}
+                  {selectedInfo.access === 'paywall' && paymentUrl ? (
+                    <a
+                      className="mission-entry-primary"
+                      href={paymentUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {t('forest.paywallCta')}
+                    </a>
+                  ) : (
+                    <button
+                      className="mission-entry-primary"
+                      type="button"
+                      disabled={selectedInfo.access !== 'open'}
+                      onClick={() => openMission(selectedInfo.numero)}
+                    >
+                      {primaryText}
+                    </button>
+                  )}
                   <button
                     className="mission-entry-back"
                     type="button"
@@ -476,18 +521,27 @@ export default function Forest() {
                 <p className="modal-mission-title">{selectedInfo.titulo}</p>
               )}
               <p>
-                {selectedInfo.isLocked
-                  ? t('forest.lockedHint', { numero: selectedInfo.requiredNumero })
-                  : t('forest.modalAsk')}
+                {selectedInfo.access === 'open' ? t('forest.modalAsk') : noteText}
               </p>
               <div className="modal-actions">
-                <button
-                  className="modal-primary"
-                  disabled={selectedInfo.isLocked}
-                  onClick={() => openMission(selectedInfo.numero)}
-                >
-                  {selectedInfo.isLocked ? t('forest.locked') : t('forest.enter')}
-                </button>
+                {selectedInfo.access === 'paywall' && paymentUrl ? (
+                  <a
+                    className="modal-primary"
+                    href={paymentUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {t('forest.paywallCta')}
+                  </a>
+                ) : (
+                  <button
+                    className="modal-primary"
+                    disabled={selectedInfo.access !== 'open'}
+                    onClick={() => openMission(selectedInfo.numero)}
+                  >
+                    {primaryText}
+                  </button>
+                )}
                 <button className="modal-ghost" onClick={() => setSelected(null)}>
                   {t('common.backToMap')}
                 </button>

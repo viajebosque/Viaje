@@ -209,20 +209,30 @@ export async function getCompletedMissionIds(): Promise<Set<string>> {
   return new Set((data ?? []).map((r) => r.mission_id));
 }
 
-// Bloqueo secuencial: la misión N solo se abre si el usuario ya tiene el token
-// de la N-1. Quien manda es la base (SQL/011): RLS esconde las preguntas de una
-// misión bloqueada y complete_mission no da el token. Esto es para que la UI
-// muestre "Bloqueado" en vez de una pantalla vacía.
+// Por qué una misión está abierta o cerrada.
+//   open    -> puede entrar
+//   locked  -> le falta el token de la misión anterior
+//   paywall -> es de pago y todavía no pagó
+//   missing -> ese número de misión no existe
+export type MissionAccess = 'open' | 'locked' | 'paywall' | 'missing';
+
+// Hasta qué misión se llega sin pagar. Es un espejo de free_mission_limit() en
+// la base (SQL/012), que es la que manda de verdad: esta constante solo sirve
+// para pintar el mapa sin preguntar 9 veces. Si cambia una, cambia la otra.
+export const FREE_MISSIONS = 2;
+
+// Dos reglas encimadas: orden (token de la N-1) y pago. Quien manda es la base
+// (SQL/011 + SQL/012): la RLS esconde las preguntas y complete_mission no da el
+// token. Esto es para que la UI muestre el mensaje correcto en vez de una
+// pantalla vacía.
 //
-// Una sola llamada: la RPC resuelve el numero -> mision -> token anterior sin
-// que el navegador tenga que leerse la tabla de tokens.
-export async function isMissionUnlocked(numero: number): Promise<boolean> {
-  if (numero <= 1) return true;
-  const { data, error } = await supabase.rpc('mission_unlocked_by_numero', {
+// Una sola llamada: la RPC resuelve número -> misión -> token anterior -> pago.
+export async function getMissionAccess(numero: number): Promise<MissionAccess> {
+  const { data, error } = await supabase.rpc('mission_access_by_numero', {
     p_numero: numero,
   });
   if (error) throw error;
-  return Boolean(data);
+  return (data as MissionAccess) ?? 'missing';
 }
 
 // Consulta puntual para reflejar si una misión ya fue completada. La

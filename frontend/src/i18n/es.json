@@ -61,6 +61,9 @@
     "locked": "Bloqueado",
     "lockedHint": "Completa la Misión {{numero}} para desbloquear esta.",
     "lockedNode": "bloqueada",
+    "paywallHint": "Las primeras {{numero}} misiones son de entrada libre. El resto del bosque se abre con el acceso completo.",
+    "paywallCta": "Obtener el acceso completo",
+    "paywallNode": "requiere acceso completo",
     "reminders": {
       "open": "Abrir recordatorios amables",
       "eyebrow": "Antes de continuar",
@@ -162,6 +165,8 @@
     "missingAnswers": "Aún faltan preguntas por responder para obtener el token.",
     "lockedTitle": "Esta misión está bloqueada",
     "lockedBody": "Necesitas completar la Misión {{numero}} antes de entrar aquí.",
+    "paywallTitle": "El sendero continúa un poco más adelante",
+    "paywallBody": "Las primeras {{numero}} misiones son de entrada libre. Para seguir recorriendo el bosque necesitas el acceso completo.",
     "blocks": {
       "iniciacion": "Preguntas Iniciales",
       "actividad": "Mini-Acción",

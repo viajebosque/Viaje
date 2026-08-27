@@ -97,6 +97,17 @@ export async function getProfileRole(userId: string): Promise<Role | null> {
   return p.role === 'admin' || p.role === 'usuario' ? p.role : null;
 }
 
+// ¿El usuario pagó? Sale de la misma fila cacheada que el rol y el idioma, así
+// que no cuesta una consulta extra. Solo sirve para pintar el mapa: el muro de
+// pago de verdad lo aplica la base (SQL/012).
+//
+// OJO: si un admin marca a alguien como pagado mientras esa persona tiene la
+// sesión abierta, la caché sigue con el valor viejo hasta que recargue.
+export async function getProfileIsPaid(userId: string): Promise<boolean> {
+  const p = await cachedProfile(userId);
+  return p?.is_paid === true;
+}
+
 export async function getProfileLang(userId: string): Promise<Lang | null> {
   const p = await cachedProfile(userId);
   if (!p) return null;

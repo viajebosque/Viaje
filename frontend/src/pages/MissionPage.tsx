@@ -7,13 +7,16 @@ import { isSupabaseConfigured } from '../lib/supabase';
 import MissionTokenReward from '../components/MissionTokenReward';
 import MissionOneGuided from './MissionOneGuided';
 import { getMissionTokenImage } from '../lib/missionTokens';
+import { paymentUrl } from '../lib/payment';
 import {
   getMissionWithQuestions,
   getAnswers,
   saveAnswers,
   completeMission,
   hasMissionToken,
-  isMissionUnlocked,
+  getMissionAccess,
+  FREE_MISSIONS,
+  type MissionAccess,
   type Mission,
   type Question,
   type Categoria,
@@ -69,8 +72,9 @@ export default function MissionPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   // null = todavía no se sabe. Cierra el acceso por URL directa: entrar a
-  // /mission/4 sin el token de la 3 muestra la pantalla de bloqueada.
-  const [unlocked, setUnlocked] = useState<boolean | null>(null);
+  // /mission/4 sin el token de la 3, o a /mission/3 sin haber pagado, muestra
+  // la pantalla correspondiente en vez del contenido.
+  const [access, setAccess] = useState<MissionAccess | null>(null);
   // Para qué conjunto de preguntas ya se cargaron respuestas y token. Comparar
   // contra qsKey evita mostrar los campos vacíos un instante antes de llenarlos.
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -124,22 +128,22 @@ export default function MissionPage() {
   // tiene que volver a preguntarlo.
   useEffect(() => {
     const n = Number(numero);
-    // Un :numero que no es una misión no está "bloqueado", no existe: se deja
-    // pasar para que caiga en la pantalla de "misión no disponible".
+    // Un :numero que no es una misión no está cerrado, no existe: se deja pasar
+    // para que caiga en la pantalla de "misión no disponible".
     if (isDesignPreview || !Number.isInteger(n) || n < 1) {
-      setUnlocked(true);
+      setAccess('open');
       return;
     }
     let cancelled = false;
-    setUnlocked(null);
-    isMissionUnlocked(n)
-      .then((ok) => {
-        if (!cancelled) setUnlocked(ok);
+    setAccess(null);
+    getMissionAccess(n)
+      .then((a) => {
+        if (!cancelled) setAccess(a);
       })
       .catch(() => {
-        // Si no se pudo preguntar, no se inventa permiso: queda bloqueada. La
+        // Si no se pudo preguntar, no se inventa permiso: queda cerrada. La
         // base igual esconde las preguntas, así que abrirla no serviría.
-        if (!cancelled) setUnlocked(false);
+        if (!cancelled) setAccess('locked');
       });
     return () => {
       cancelled = true;
@@ -220,12 +224,36 @@ export default function MissionPage() {
     }
   }
 
-  if (loading || unlocked === null || loadedKey !== qsKey)
+  if (loading || access === null || loadedKey !== qsKey)
     return <div className="auth-loading">{t('mission.loading')}</div>;
 
-  // Bloqueada: se corta acá, antes de mirar el contenido. Es lo que ve quien
-  // escribe la URL a mano.
-  if (!unlocked)
+  // Falta pagar: se corta acá, antes de mirar el contenido. El tono es de
+  // aviso, no de portazo, y ofrece la salida si hay enlace configurado.
+  if (access === 'paywall')
+    return (
+      <main className="mission mission-locked">
+        <h1 className="mission-title">{t('mission.paywallTitle')}</h1>
+        <p className="mission-desc">
+          {t('mission.paywallBody', { numero: FREE_MISSIONS })}
+        </p>
+        {paymentUrl && (
+          <a
+            className="mission-token-btn mission-paywall-cta"
+            href={paymentUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {t('forest.paywallCta')}
+          </a>
+        )}
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
+          {t('common.backToMapArrow')}
+        </button>
+      </main>
+    );
+
+  // Falta terminar la anterior. Es lo que ve quien escribe la URL a mano.
+  if (access === 'locked')
     return (
       <main className="mission mission-locked">
         <h1 className="mission-title">{t('mission.lockedTitle')}</h1>
