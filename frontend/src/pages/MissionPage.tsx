@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from '../lib/supabase';
 import MissionTokenReward from '../components/MissionTokenReward';
 import MissionOneGuided from './MissionOneGuided';
 import { getMissionTokenImage } from '../lib/missionTokens';
-import { paymentUrl } from '../lib/payment';
+import { whatsappUrl } from '../lib/payment';
 import {
   getMissionWithQuestions,
   getAnswers,
@@ -236,16 +236,14 @@ export default function MissionPage() {
         <p className="mission-desc">
           {t('mission.paywallBody', { numero: FREE_MISSIONS })}
         </p>
-        {paymentUrl && (
-          <a
-            className="mission-token-btn mission-paywall-cta"
-            href={paymentUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {t('forest.paywallCta')}
-          </a>
-        )}
+        <a
+          className="mission-token-btn mission-paywall-cta"
+          href={whatsappUrl(t('forest.paywallMessage'))}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {t('forest.paywallCta')}
+        </a>
         <button className="mission-back" onClick={() => navigate(mapPath)}>
           {t('common.backToMapArrow')}
         </button>

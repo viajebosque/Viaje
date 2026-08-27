@@ -18,7 +18,7 @@ import {
   type MissionAccess,
   type MissionSummary,
 } from '../lib/missions';
-import { paymentUrl } from '../lib/payment';
+import { whatsappUrl } from '../lib/payment';
 
 const missionPositions = [
   { left: 5.9, top: 55.2 },
@@ -482,13 +482,13 @@ export default function Forest() {
                 </div>
 
                 <div className="mission-entry-actions">
-                  {/* El aviso de pago es el único cierre con salida: en vez de
-                      un botón muerto, lleva al enlace de acceso. Si no hay
-                      enlace configurado queda el aviso solo. */}
-                  {selectedInfo.access === 'paywall' && paymentUrl ? (
+                  {/* El aviso de pago es el único cierre con salida: en vez
+                      de un botón muerto, abre WhatsApp con el mensaje ya
+                      escrito en el idioma activo. */}
+                  {selectedInfo.access === 'paywall' ? (
                     <a
                       className="mission-entry-primary"
-                      href={paymentUrl}
+                      href={whatsappUrl(t('forest.paywallMessage'))}
                       target="_blank"
                       rel="noreferrer noopener"
                     >
@@ -524,10 +524,10 @@ export default function Forest() {
                 {selectedInfo.access === 'open' ? t('forest.modalAsk') : noteText}
               </p>
               <div className="modal-actions">
-                {selectedInfo.access === 'paywall' && paymentUrl ? (
+                {selectedInfo.access === 'paywall' ? (
                   <a
                     className="modal-primary"
-                    href={paymentUrl}
+                    href={whatsappUrl(t('forest.paywallMessage'))}
                     target="_blank"
                     rel="noreferrer noopener"
                   >

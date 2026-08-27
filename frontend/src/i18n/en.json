@@ -63,6 +63,7 @@
     "lockedNode": "locked",
     "paywallHint": "The first {{numero}} missions are freely open. The rest of the forest opens with full access.",
     "paywallCta": "Get full access",
+    "paywallMessage": "Hi! I completed the open missions of the Journey Through the Forest, I would like to unlock the other missions",
     "paywallNode": "requires full access",
     "reminders": {
       "open": "Open gentle reminders",

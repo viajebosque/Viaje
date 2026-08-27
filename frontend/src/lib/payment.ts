@@ -1,15 +1,13 @@
-// Enlace para obtener el acceso completo (el que abre las Misiones 3 a 9).
+// Botón "Obtener el acceso completo": abre un chat de WhatsApp con el mensaje
+// ya escrito, para que la persona solo tenga que enviarlo.
 //
-// Vive en una variable de entorno y NO en el código a propósito: puede ser
-// distinto en Dev y en Prod (un checkout de prueba contra el real), y así se
-// cambia desde Vercel sin tocar el repo. Ver frontend/.env.example.
-//
-// Vite hornea las VITE_* en el build: si se cambia en Vercel hay que
-// redeployar para que tenga efecto.
-//
-// Si no está configurada, el aviso de pago se muestra igual pero sin botón: es
-// preferible a un botón que no lleva a ningún lado.
-const raw = import.meta.env.VITE_PAYMENT_URL;
+// El número está acá y no en una variable de entorno a propósito: es uno solo,
+// el mismo en Dev y en Prod, y no es un secreto (va en la URL, a la vista).
+const WHATSAPP_NUMBER = '15712745547'; // +1 (571) 274-5547
 
-export const paymentUrl: string | null =
-  typeof raw === 'string' && raw.trim().length > 0 ? raw.trim() : null;
+// El texto del mensaje NO se arma acá: llega desde i18n
+// (forest.paywallMessage), así que sale en el idioma que la persona tenga
+// puesto en ese momento. Ver la regla de idiomas en CLAUDE.md 1.3.
+export function whatsappUrl(message: string): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}

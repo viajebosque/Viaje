@@ -63,6 +63,7 @@
     "lockedNode": "bloqueada",
     "paywallHint": "Las primeras {{numero}} misiones son de entrada libre. El resto del bosque se abre con el acceso completo.",
     "paywallCta": "Obtener el acceso completo",
+    "paywallMessage": "Hola! Completé las misiones abiertas del Viaje en el Bosque, quisiera desbloquear las otras misiones",
     "paywallNode": "requiere acceso completo",
     "reminders": {
       "open": "Abrir recordatorios amables",
