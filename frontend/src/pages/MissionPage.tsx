@@ -13,6 +13,7 @@ import {
   saveAnswers,
   completeMission,
   hasMissionToken,
+  isMissionUnlocked,
   type Mission,
   type Question,
   type Categoria,
@@ -67,6 +68,9 @@ export default function MissionPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  // null = todavía no se sabe. Cierra el acceso por URL directa: entrar a
+  // /mission/4 sin el token de la 3 muestra la pantalla de bloqueada.
+  const [unlocked, setUnlocked] = useState<boolean | null>(null);
   // Para qué conjunto de preguntas ya se cargaron respuestas y token. Comparar
   // contra qsKey evita mostrar los campos vacíos un instante antes de llenarlos.
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -114,6 +118,33 @@ export default function MissionPage() {
       cancelled = true;
     };
   }, [numero, lang, isDesignPreview]);
+
+  // Bloqueo secuencial. Va en su propio efecto y SIN lang en las dependencias:
+  // es un dato del usuario, no contenido traducible, así que mover el switch no
+  // tiene que volver a preguntarlo.
+  useEffect(() => {
+    const n = Number(numero);
+    // Un :numero que no es una misión no está "bloqueado", no existe: se deja
+    // pasar para que caiga en la pantalla de "misión no disponible".
+    if (isDesignPreview || !Number.isInteger(n) || n < 1) {
+      setUnlocked(true);
+      return;
+    }
+    let cancelled = false;
+    setUnlocked(null);
+    isMissionUnlocked(n)
+      .then((ok) => {
+        if (!cancelled) setUnlocked(ok);
+      })
+      .catch(() => {
+        // Si no se pudo preguntar, no se inventa permiso: queda bloqueada. La
+        // base igual esconde las preguntas, así que abrirla no serviría.
+        if (!cancelled) setUnlocked(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [numero, isDesignPreview]);
 
   // Respuestas y token NO dependen del idioma: se leen cuando cambia el CONJUNTO
   // de preguntas, no cuando se mueve el switch. Antes colgaban del efecto de
@@ -189,8 +220,23 @@ export default function MissionPage() {
     }
   }
 
-  if (loading || loadedKey !== qsKey)
+  if (loading || unlocked === null || loadedKey !== qsKey)
     return <div className="auth-loading">{t('mission.loading')}</div>;
+
+  // Bloqueada: se corta acá, antes de mirar el contenido. Es lo que ve quien
+  // escribe la URL a mano.
+  if (!unlocked)
+    return (
+      <main className="mission mission-locked">
+        <h1 className="mission-title">{t('mission.lockedTitle')}</h1>
+        <p className="mission-desc">
+          {t('mission.lockedBody', { numero: Number(numero) - 1 })}
+        </p>
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
+          {t('common.backToMapArrow')}
+        </button>
+      </main>
+    );
 
   if (!mission)
     return (

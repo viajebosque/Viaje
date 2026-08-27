@@ -69,6 +69,16 @@ function SproutIcon() {
   );
 }
 
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="4.5" y="10.5" width="15" height="10" rx="2.2" />
+      <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" />
+      <circle cx="12" cy="15.5" r="1.3" />
+    </svg>
+  );
+}
+
 function CloseIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -176,6 +186,16 @@ export default function Forest() {
       ? nextPendingPosition + 1
       : null;
 
+  // Bloqueo secuencial. Como el avance es en orden, todo lo anterior a la
+  // siguiente pendiente ya está completo: basta con que el numero sea mayor que
+  // ella. Si nextMissionNumber es null no hay nada bloqueado (o están todas
+  // hechas, o los tokens aún no llegaron y en ese caso manda la pantalla de
+  // misión, que vuelve a preguntarle a la base).
+  function isLocked(numero: number): boolean {
+    if (isDesignPreview || nextMissionNumber === null) return false;
+    return numero > nextMissionNumber;
+  }
+
   async function handleSignOut() {
     await signOut();
     navigate('/', { replace: true });
@@ -201,6 +221,9 @@ export default function Forest() {
               ? t('forest.missionOnePreviewDescription')
               : ''),
           isDone: selectedMission ? completed.has(selectedMission.id) : false,
+          isLocked: isLocked(selected),
+          // Qué misión hay que terminar para abrir esta.
+          requiredNumero: selected - 1,
         };
 
   return (
@@ -250,6 +273,7 @@ export default function Forest() {
             const m = byNumero.get(n);
             const isDone = m ? completed.has(m.id) : false;
             const isNext = n === nextMissionNumber;
+            const locked = isLocked(n);
             const previewTitle =
               isDesignPreview && n === 1 ? t('forest.missionOnePreviewTitle') : '';
             const title = m?.titulo || previewTitle || t('forest.comingSoon');
@@ -257,9 +281,9 @@ export default function Forest() {
             return (
               <button
                 key={n}
-                className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''}`}
+                className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''} ${locked ? 'locked' : ''}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
-                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}`}
+                aria-label={`${t('forest.modalTitle', { numero: n })}: ${title}${isNext ? `. ${t('forest.nextMission')}` : ''}${locked ? `. ${t('forest.lockedNode')}` : ''}`}
                 onClick={() => setSelected(n)}
               >
                 <img
@@ -275,6 +299,11 @@ export default function Forest() {
                     alt=""
                     draggable={false}
                   />
+                )}
+                {locked && (
+                  <span className="mission-node-lock" aria-hidden="true">
+                    <LockIcon />
+                  </span>
                 )}
                 <span className="mission-node-num">{n}</span>
                 <span className="mission-node-title">{title}</span>
@@ -410,18 +439,25 @@ export default function Forest() {
                   </div>
                 </div>
 
-                <div className="mission-entry-note">
-                  <SproutIcon />
-                  <span>{t('forest.modalHint')}</span>
+                <div
+                  className={`mission-entry-note ${selectedInfo.isLocked ? 'mission-entry-note--locked' : ''}`}
+                >
+                  {selectedInfo.isLocked ? <LockIcon /> : <SproutIcon />}
+                  <span>
+                    {selectedInfo.isLocked
+                      ? t('forest.lockedHint', { numero: selectedInfo.requiredNumero })
+                      : t('forest.modalHint')}
+                  </span>
                 </div>
 
                 <div className="mission-entry-actions">
                   <button
                     className="mission-entry-primary"
                     type="button"
+                    disabled={selectedInfo.isLocked}
                     onClick={() => openMission(selectedInfo.numero)}
                   >
-                    {t('forest.enter')}
+                    {selectedInfo.isLocked ? t('forest.locked') : t('forest.enter')}
                   </button>
                   <button
                     className="mission-entry-back"
@@ -439,13 +475,18 @@ export default function Forest() {
               {selectedInfo.titulo && (
                 <p className="modal-mission-title">{selectedInfo.titulo}</p>
               )}
-              <p>{t('forest.modalAsk')}</p>
+              <p>
+                {selectedInfo.isLocked
+                  ? t('forest.lockedHint', { numero: selectedInfo.requiredNumero })
+                  : t('forest.modalAsk')}
+              </p>
               <div className="modal-actions">
                 <button
                   className="modal-primary"
+                  disabled={selectedInfo.isLocked}
                   onClick={() => openMission(selectedInfo.numero)}
                 >
-                  {t('forest.enter')}
+                  {selectedInfo.isLocked ? t('forest.locked') : t('forest.enter')}
                 </button>
                 <button className="modal-ghost" onClick={() => setSelected(null)}>
                   {t('common.backToMap')}

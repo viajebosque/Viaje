@@ -58,6 +58,9 @@
     "missionOnePreviewTitle": "Entrance to the forest",
     "missionOnePreviewDescription": "Take the first step on this journey. Breathe calmly, observe the path, and choose an intention to begin.",
     "enter": "Start mission",
+    "locked": "Locked",
+    "lockedHint": "Complete Mission {{numero}} to unlock this one.",
+    "lockedNode": "locked",
     "reminders": {
       "open": "Open gentle reminders",
       "eyebrow": "Before you continue",
@@ -157,6 +160,8 @@
     "tokenWonBadge": "Token earned",
     "tokenImageAlt": "Token earned in mission {{numero}}",
     "missingAnswers": "Some questions still need answers before you can get the token.",
+    "lockedTitle": "This mission is locked",
+    "lockedBody": "You need to complete Mission {{numero}} before entering this one.",
     "blocks": {
       "iniciacion": "Opening Questions",
       "actividad": "Mini-Action",

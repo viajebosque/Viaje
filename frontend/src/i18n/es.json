@@ -58,6 +58,9 @@
     "missionOnePreviewTitle": "Entrada al bosque",
     "missionOnePreviewDescription": "Da el primer paso hacia este recorrido. Respira con calma, observa el sendero y elige una intención para comenzar.",
     "enter": "Comenzar misión",
+    "locked": "Bloqueado",
+    "lockedHint": "Completa la Misión {{numero}} para desbloquear esta.",
+    "lockedNode": "bloqueada",
     "reminders": {
       "open": "Abrir recordatorios amables",
       "eyebrow": "Antes de continuar",
@@ -157,6 +160,8 @@
     "tokenWonBadge": "Token obtenido",
     "tokenImageAlt": "Token obtenido en la misión {{numero}}",
     "missingAnswers": "Aún faltan preguntas por responder para obtener el token.",
+    "lockedTitle": "Esta misión está bloqueada",
+    "lockedBody": "Necesitas completar la Misión {{numero}} antes de entrar aquí.",
     "blocks": {
       "iniciacion": "Preguntas Iniciales",
       "actividad": "Mini-Acción",

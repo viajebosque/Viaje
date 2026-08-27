@@ -209,6 +209,22 @@ export async function getCompletedMissionIds(): Promise<Set<string>> {
   return new Set((data ?? []).map((r) => r.mission_id));
 }
 
+// Bloqueo secuencial: la misión N solo se abre si el usuario ya tiene el token
+// de la N-1. Quien manda es la base (SQL/011): RLS esconde las preguntas de una
+// misión bloqueada y complete_mission no da el token. Esto es para que la UI
+// muestre "Bloqueado" en vez de una pantalla vacía.
+//
+// Una sola llamada: la RPC resuelve el numero -> mision -> token anterior sin
+// que el navegador tenga que leerse la tabla de tokens.
+export async function isMissionUnlocked(numero: number): Promise<boolean> {
+  if (numero <= 1) return true;
+  const { data, error } = await supabase.rpc('mission_unlocked_by_numero', {
+    p_numero: numero,
+  });
+  if (error) throw error;
+  return Boolean(data);
+}
+
 // Consulta puntual para reflejar si una misión ya fue completada. La
 // restricción única de mission_tokens y la RPC mantienen el premio idempotente.
 export async function hasMissionToken(missionId: string): Promise<boolean> {
