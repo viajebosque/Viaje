@@ -6,9 +6,7 @@ import {
   signUpWithEmail,
   signInWithGoogle,
 } from '../auth/auth';
-import forestBackground from '../assets/auth/forest-login.webp';
-import forestMobileBackground from '../assets/auth/forest-login-mobile.webp';
-import forestGuide from '../assets/auth/forest-guide.webp';
+import forestBackground from '../assets/auth/forest-login-v5.png';
 import branchTop from '../assets/auth/branch-top.webp';
 import branchBottom from '../assets/auth/branch-bottom.webp';
 
@@ -87,7 +85,6 @@ export default function AuthPage() {
       className="auth-wrap"
       style={{
         '--auth-background': `url(${forestBackground})`,
-        '--auth-mobile-background': `url(${forestMobileBackground})`,
       } as CSSProperties}
     >
       <section className="auth-story" aria-labelledby="auth-brand-title">
@@ -101,7 +98,6 @@ export default function AuthPage() {
           <p>{t('auth.brandLineOne')}</p>
           <p>{t('auth.brandLineTwo')}</p>
         </div>
-        <img className="auth-guide" src={forestGuide} alt={t('auth.guideAlt')} />
       </section>
 
       <section className="auth-panel" aria-label={t('auth.accessArea')}>
