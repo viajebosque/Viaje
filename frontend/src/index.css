@@ -1275,27 +1275,103 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   outline: none;
 }
 .admin-search:focus,
-.admin-sort select:focus {
+.admin-sort-trigger:focus-visible {
   border-color: #467750;
   box-shadow: 0 0 0 3px rgba(70, 119, 80, 0.16);
   outline: none;
 }
 .admin-sort {
+  position: relative;
   display: grid;
   gap: 0.35rem;
+  min-width: 16.5rem;
   color: #4e614e;
   font-size: 0.75rem;
   font-weight: 750;
 }
-.admin-sort select {
+.admin-sort-label { padding-left: 0.2rem; }
+.admin-sort-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  width: 100%;
   min-height: 3.15rem;
-  padding: 0.65rem 2.2rem 0.65rem 0.75rem;
-  border: 1px solid #aeb8a1;
-  border-radius: 0.8rem;
-  background: rgba(255, 254, 247, 0.9);
-  color: #2d4332;
+  padding: 0.65rem 0.85rem 0.65rem 1rem;
+  border: 1px solid #78906f;
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, #fffef7, #f8f3dc);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  color: #294431;
   font: inherit;
+  font-size: 0.9rem;
+  font-weight: 750;
+  text-align: left;
   cursor: pointer;
+}
+.admin-sort-trigger:hover { border-color: #4d7554; background: #fffef7; }
+.admin-sort-trigger[aria-expanded="true"] {
+  border-color: #3f704c;
+  box-shadow: 0 0 0 3px rgba(70, 119, 80, 0.13);
+}
+.admin-sort-chevron {
+  width: 1.15rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  transition: transform 160ms ease;
+}
+.admin-sort-trigger[aria-expanded="true"] .admin-sort-chevron { transform: rotate(180deg); }
+.admin-sort-options {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.45rem;
+  overflow: hidden;
+  border: 1px solid rgba(69, 105, 73, 0.64);
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #fffdf2 0%, #f3efd6 100%);
+  box-shadow: 0 1rem 2rem rgba(36, 59, 39, 0.18), 0 0.2rem 0.55rem rgba(36, 59, 39, 0.12);
+}
+.admin-sort-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.65rem;
+  padding: 0.6rem 0.75rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: transparent;
+  color: #304733;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-sort-option:hover,
+.admin-sort-option:focus-visible { background: rgba(195, 211, 160, 0.5); outline: none; }
+.admin-sort-option[aria-selected="true"] {
+  background: linear-gradient(135deg, #315d39, #3f7048);
+  color: #fffdf2;
+  box-shadow: 0 0.2rem 0.45rem rgba(38, 78, 47, 0.2);
+}
+.admin-sort-option svg {
+  width: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: #f1d795;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
 }
 .admin > .journey-content > .auth-error {
   margin: 0 0 1rem;
@@ -1431,7 +1507,7 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   .profile-amulets-count { margin-left: 3.35rem; }
   .profile-amulets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-controls { grid-template-columns: 1fr; gap: 0.8rem; padding: 0.85rem; }
-  .admin-sort select { width: 100%; }
+  .admin-sort { min-width: 0; width: 100%; }
   .admin-row { align-items: stretch; padding: 0.85rem; }
   .admin-row-identity { width: 100%; }
   .admin-avatar { width: 2.5rem; height: 2.5rem; }

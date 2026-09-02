@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../i18n/useLanguage';
 import JourneyPageShell from './JourneyPageShell';
@@ -31,6 +31,7 @@ export default function AdminPage() {
 
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<UserSort>(DEFAULT_SORT);
+  const [sortOpen, setSortOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [total, setTotal] = useState(0);
@@ -38,6 +39,10 @@ export default function AdminPage() {
   const [savingId, setSavingId] = useState<string | null>(null);
   // Errores del backend: texto crudo, no traducible.
   const [errText, setErrText] = useState<string | null>(null);
+
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+  const sortTriggerRef = useRef<HTMLButtonElement>(null);
+  const sortOptionRefs = useRef<Partial<Record<UserSort, HTMLButtonElement | null>>>({});
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -56,6 +61,21 @@ export default function AdminPage() {
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, sort]);
+
+  useEffect(() => {
+    if (!sortOpen) return;
+
+    sortOptionRefs.current[sort]?.focus();
+
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (!sortMenuRef.current?.contains(event.target as Node)) {
+        setSortOpen(false);
+      }
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    return () => document.removeEventListener('pointerdown', closeOnOutsideClick);
+  }, [sortOpen, sort]);
 
   // Re-lee la página al cambiar búsqueda, orden o página. El filtrado, el orden
   // y el corte los hace la base: el navegador nunca recibe la tabla entera.
@@ -107,6 +127,40 @@ export default function AdminPage() {
     );
   }
 
+  function chooseSort(nextSort: UserSort) {
+    setSort(nextSort);
+    setSortOpen(false);
+    sortTriggerRef.current?.focus();
+  }
+
+  function handleSortOptionKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    option: UserSort
+  ) {
+    const optionIndex = USER_SORTS.indexOf(option);
+    let nextIndex = optionIndex;
+
+    if (event.key === 'ArrowDown') nextIndex = (optionIndex + 1) % USER_SORTS.length;
+    else if (event.key === 'ArrowUp') {
+      nextIndex = (optionIndex - 1 + USER_SORTS.length) % USER_SORTS.length;
+    } else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = USER_SORTS.length - 1;
+    else if (event.key === 'Escape') {
+      event.preventDefault();
+      setSortOpen(false);
+      sortTriggerRef.current?.focus();
+      return;
+    } else if (event.key === 'Tab') {
+      setSortOpen(false);
+      return;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    sortOptionRefs.current[USER_SORTS[nextIndex]]?.focus();
+  }
+
   return (
     <JourneyPageShell
       pageClassName="admin-page"
@@ -125,19 +179,57 @@ export default function AdminPage() {
           placeholder={t('admin.searchPlaceholder')}
           aria-label={t('admin.searchPlaceholder')}
         />
-        <label className="admin-sort">
-          <span>{t('admin.sortLabel')}</span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as UserSort)}
+        <div className="admin-sort" ref={sortMenuRef}>
+          <span className="admin-sort-label" id="admin-sort-label">
+            {t('admin.sortLabel')}
+          </span>
+          <button
+            ref={sortTriggerRef}
+            className="admin-sort-trigger"
+            type="button"
+            aria-labelledby="admin-sort-label admin-sort-value"
+            aria-haspopup="listbox"
+            aria-expanded={sortOpen}
+            aria-controls="admin-sort-options"
+            onClick={() => setSortOpen((open) => !open)}
           >
-            {USER_SORTS.map((s) => (
-              <option key={s} value={s}>
-                {t(`admin.sort.${s}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+            <span id="admin-sort-value">{t(`admin.sort.${sort}`)}</span>
+            <svg className="admin-sort-chevron" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="m4 7 6 6 6-6" />
+            </svg>
+          </button>
+
+          {sortOpen && (
+            <div
+              className="admin-sort-options"
+              id="admin-sort-options"
+              role="listbox"
+              aria-labelledby="admin-sort-label"
+            >
+              {USER_SORTS.map((s) => (
+                <button
+                  key={s}
+                  ref={(node) => {
+                    sortOptionRefs.current[s] = node;
+                  }}
+                  className="admin-sort-option"
+                  type="button"
+                  role="option"
+                  aria-selected={sort === s}
+                  onClick={() => chooseSort(s)}
+                  onKeyDown={(event) => handleSortOptionKeyDown(event, s)}
+                >
+                  <span>{t(`admin.sort.${s}`)}</span>
+                  {sort === s && (
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="m4 10 4 4 8-9" />
+                    </svg>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {errText && <p className="auth-error">{errText}</p>}
