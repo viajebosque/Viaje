@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
+import type { Lang } from '../i18n';
 import { useLanguage } from '../i18n/useLanguage';
 import { whatsappUrl } from '../lib/payment';
 import {
@@ -16,34 +17,59 @@ import {
 import { isSupabaseConfigured } from '../lib/supabase';
 import MissionGuided from './MissionGuided';
 
-const PREVIEW_MISSION: Mission = {
-  id: 'preview-mission-1',
-  numero: 1,
-  titulo: 'La entrada al bosque',
-  descripcion: 'Un espacio para soltar, escuchar y elegir cómo quieres comenzar.',
-  texto_final: 'Cada respuesta es una pequeña huella de tu recorrido.',
+const PREVIEW_QUESTION_TEXTS: Record<Lang, readonly string[]> = {
+  es: [
+    '¿En qué área de tu vida te sientes más estancado/a ahora mismo?',
+    '¿Cuándo fue la última vez que te sentiste verdaderamente libre? ¿Qué estabas haciendo?',
+    '¿Qué estás fingiendo no saber?',
+    'Si tu vida fuera un bosque, ¿cómo sería el clima hoy?',
+    'Escribe una carta a tu yo estancado/a. Comienza con: “Te veo aquí de pie, y quiero que sepas…”',
+    '¿Qué has estado evitando mirar y cuánto tiempo lleva ahí?',
+    '¿Qué te cuesta quedarte en el borde, en energía, vitalidad o alegría?',
+    '¿Cómo se sentiría en tu cuerpo un pequeño paso hacia adelante?',
+  ],
+  en: [
+    'In which area of your life do you feel most stuck right now?',
+    'When was the last time you felt truly free? What were you doing?',
+    'What are you pretending not to know?',
+    'If your life were a forest, what would the weather be like today?',
+    'Write a letter to the part of you that feels stuck. Begin with: “I see you standing here, and I want you to know…”',
+    'What have you been avoiding looking at, and how long has it been there?',
+    'What does staying at the edge cost you in energy, vitality, or joy?',
+    'How would one small step forward feel in your body?',
+  ],
 };
 
-const PREVIEW_QUESTION_TEXTS = [
-  '¿En qué área de tu vida te sientes más estancado/a ahora mismo?',
-  '¿Cuándo fue la última vez que te sentiste verdaderamente libre? ¿Qué estabas haciendo?',
-  '¿Qué estás fingiendo no saber?',
-  'Si tu vida fuera un bosque, ¿cómo sería el clima hoy?',
-  'Escribe una carta a tu yo estancado/a. Comienza con: “Te veo aquí de pie, y quiero que sepas…”',
-  '¿Qué has estado evitando mirar y cuánto tiempo lleva ahí?',
-  '¿Qué te cuesta quedarte en el borde, en energía, vitalidad o alegría?',
-  '¿Cómo se sentiría en tu cuerpo un pequeño paso hacia adelante?',
-] as const;
-
-const PREVIEW_QUESTIONS: Question[] = PREVIEW_QUESTION_TEXTS.map(
-  (enunciado, index) => ({
-    id: `preview-question-${index + 1}`,
-    mission_id: PREVIEW_MISSION.id,
+function createPreviewMission(missionNumber: number, lang: Lang) {
+  const missionId = `preview-mission-${missionNumber}`;
+  const isFirstMission = missionNumber === 1;
+  const mission: Mission = {
+    id: missionId,
+    numero: missionNumber,
+    titulo: isFirstMission
+      ? lang === 'es' ? 'La entrada al bosque' : 'The entrance to the forest'
+      : lang === 'es' ? `Vista de la Misión ${missionNumber}` : `Mission ${missionNumber} preview`,
+    descripcion: isFirstMission
+      ? lang === 'es'
+        ? 'Un espacio para soltar, escuchar y elegir cómo quieres comenzar.'
+        : 'A space to let go, listen, and choose how you want to begin.'
+      : lang === 'es'
+        ? 'Contenido de muestra para revisar el diseño guiado de esta misión.'
+        : 'Sample content for reviewing this mission’s guided design.',
+    texto_final: lang === 'es'
+      ? 'Cada respuesta es una pequeña huella de tu recorrido.'
+      : 'Each answer is a small footprint along your journey.',
+  };
+  const questions: Question[] = PREVIEW_QUESTION_TEXTS[lang].map((enunciado, index) => ({
+    id: `preview-question-${missionNumber}-${index + 1}`,
+    mission_id: missionId,
     categoria: index < 4 ? 'iniciacion' : index === 4 ? 'actividad' : 'reflexion',
     enunciado,
     orden: index + 1,
-  })
-);
+  }));
+
+  return { mission, questions };
+}
 
 export default function MissionPage() {
   const { numero } = useParams();
@@ -74,9 +100,15 @@ export default function MissionPage() {
     setLoading(true);
     setErrText(null);
 
-    if (isDesignPreview && missionNumber === 1) {
-      setMission(PREVIEW_MISSION);
-      setQuestions(PREVIEW_QUESTIONS);
+    if (
+      isDesignPreview &&
+      Number.isInteger(missionNumber) &&
+      missionNumber >= 1 &&
+      missionNumber <= 9
+    ) {
+      const preview = createPreviewMission(missionNumber, lang);
+      setMission(preview.mission);
+      setQuestions(preview.questions);
       setAnswers({});
       setLoading(false);
       return;
