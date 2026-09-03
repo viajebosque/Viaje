@@ -29,8 +29,8 @@ const GoogleIcon = () => (
   </svg>
 );
 
-function ForestGlowText({ children }: { children: ReactNode }) {
-  return <span className="auth-forest-glow-text">{children}</span>;
+function SkyCloudText({ children }: { children: ReactNode }) {
+  return <span className="auth-sky-cloud-text">{children}</span>;
 }
 
 export default function AuthPage() {
@@ -94,15 +94,15 @@ export default function AuthPage() {
       <section className="auth-story" aria-labelledby="auth-brand-title">
         <div className="auth-brand">
           <h1 id="auth-brand-title" aria-label={brandTitle}>
-            <ForestGlowText>
+            <SkyCloudText>
               <span className="auth-brand-mark" aria-hidden="true">
                 {brandTitle.charAt(0)}
               </span>
               {brandTitle.slice(1)}
-            </ForestGlowText>
+            </SkyCloudText>
           </h1>
-          <p><ForestGlowText>{t('auth.brandLineOne')}</ForestGlowText></p>
-          <p><ForestGlowText>{t('auth.brandLineTwo')}</ForestGlowText></p>
+          <p><SkyCloudText>{t('auth.brandLineOne')}</SkyCloudText></p>
+          <p><SkyCloudText>{t('auth.brandLineTwo')}</SkyCloudText></p>
         </div>
       </section>
 

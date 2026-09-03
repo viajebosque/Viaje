@@ -1716,21 +1716,35 @@ button, input { font: inherit; }
 }
 .auth-brand h1,
 .auth-brand p,
-.auth-forest-glow-text { max-width: 100%; }
-.auth-forest-glow-text {
-  background: transparent;
+.auth-sky-cloud-text { max-width: 100%; }
+.auth-sky-cloud-text {
+  background: linear-gradient(
+    105deg,
+    rgba(174, 225, 244, .88),
+    rgba(211, 239, 246, .86) 54%,
+    rgba(244, 241, 213, .78)
+  );
+  color: #123f2b;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  -webkit-text-stroke: .012em rgba(255, 255, 244, 0.8);
-  paint-order: stroke fill;
+  border: 1px solid rgba(255, 255, 255, .38);
+  box-shadow:
+    0 .08em .28em rgba(40, 102, 118, .14),
+    0 0 .4em rgba(199, 235, 244, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .52);
   text-shadow:
-    -.02em -.02em .02em rgba(255, 255, 247, 0.96),
-    .02em -.02em .02em rgba(255, 255, 247, 0.96),
-    -.02em .02em .02em rgba(255, 255, 247, 0.96),
-    .02em .02em .02em rgba(255, 255, 247, 0.96),
-    0 0 .13em rgba(255, 255, 242, 0.92),
-    0 0 .26em rgba(250, 248, 226, 0.68),
-    0 0 .42em rgba(246, 243, 216, 0.38);
+    0 1px 0 rgba(255, 255, 255, .74),
+    0 .04em .08em rgba(11, 53, 39, .12);
+  -webkit-backdrop-filter: blur(5px) saturate(.92);
+  backdrop-filter: blur(5px) saturate(.92);
+}
+.auth-brand h1 .auth-sky-cloud-text {
+  padding: .07em .28em .12em;
+  border-radius: .54em;
+}
+.auth-brand p .auth-sky-cloud-text {
+  padding: .1em .42em .14em;
+  border-radius: 999px;
 }
 .auth-brand h1 {
   margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
