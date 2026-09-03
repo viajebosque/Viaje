@@ -2381,7 +2381,7 @@ button, input { font: inherit; }
   }
 }
 
-/* Ajuste fiel a la referencia visual de la Mision 1. */
+/* Experiencia guiada compartida por las actividades de las nueve misiones. */
 body:has(.guided-mission) .platform-lang-toggle { display: none; }
 
 .guided-mission {
@@ -2794,7 +2794,7 @@ body:has(.guided-mission) .platform-lang-toggle { display: none; }
   .guided-actions .guided-secondary { grid-row: 2; }
 }
 
-/* Mantiene login y Mision 1 anclados al viewport, sin rebote del documento. */
+/* Mantiene login y las misiones guiadas anclados al viewport, sin rebote. */
 html:has(.auth-wrap),
 html:has(.guided-mission),
 body:has(.auth-wrap),

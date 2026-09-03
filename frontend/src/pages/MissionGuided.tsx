@@ -7,10 +7,10 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import missionPanel from '../assets/forest/mission-one-panel.png';
 import forestMap from '../assets/forest/forest-map.png';
 import MissionTokenReward from '../components/MissionTokenReward';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
+import { getMissionPanelImage } from '../lib/missionPanels';
 import { getMissionTokenImage } from '../lib/missionTokens';
 
 type GuidedAnswers = Record<string, string>;
@@ -100,7 +100,7 @@ function serializedEntries(questions: Question[], answers: GuidedAnswers) {
   }));
 }
 
-export default function MissionOneGuided({
+export default function MissionGuided({
   mission,
   questions,
   initialAnswers,
@@ -110,7 +110,11 @@ export default function MissionOneGuided({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const storageKey = `mission-one-guided:${userId ?? 'preview'}`;
+  // Conserva los borradores existentes de la primera misión y separa los de
+  // las demás para que una respuesta nunca aparezca en otro recorrido.
+  const storageKey = mission.numero === 1
+    ? `mission-one-guided:${userId ?? 'preview'}`
+    : `mission-guided:${mission.id}:${userId ?? 'preview'}`;
   const totalSteps = questions.length;
   const initialState = useMemo(() => {
     const backendAnswers = answersFromBackend(questions, initialAnswers);
@@ -331,6 +335,8 @@ export default function MissionOneGuided({
         ? 'guided-question-title--long'
         : undefined;
   const tokenImage = getMissionTokenImage(mission.numero);
+  const missionPanel = getMissionPanelImage(mission.numero) ?? forestMap;
+  const isFirstMission = mission.numero === 1;
 
   if (completed) {
     return (
@@ -347,9 +353,19 @@ export default function MissionOneGuided({
               large
             />
           )}
-          <h1 id="guided-complete-title">{t('mission.guided.completeTitle')}</h1>
-          <p className="guided-reward">{t('mission.guided.reward')}</p>
-          <p className="guided-reward-meaning">{t('mission.guided.rewardMeaning')}</p>
+          <h1 id="guided-complete-title">
+            {isFirstMission
+              ? t('mission.guided.completeTitle')
+              : t('mission.guided.completeTitleGeneric', { numero: mission.numero })}
+          </h1>
+          <p className="guided-reward">
+            {isFirstMission
+              ? t('mission.guided.reward')
+              : t('mission.guided.rewardGeneric')}
+          </p>
+          <p className="guided-reward-meaning">
+            {isFirstMission ? t('mission.guided.rewardMeaning') : mission.texto_final}
+          </p>
           <button className="guided-primary" type="button" onClick={() => navigate(mapPath)}>
             {t('mission.guided.backToMap')}
           </button>
@@ -387,10 +403,18 @@ export default function MissionOneGuided({
           <aside
             className="guided-illustration"
             style={{ '--guided-panel': `url(${missionPanel})` } as React.CSSProperties}
-            aria-label={t('mission.guided.illustrationAlt')}
+            aria-label={
+              isFirstMission
+                ? t('mission.guided.illustrationAlt')
+                : t('mission.guided.illustrationAltGeneric', { numero: mission.numero })
+            }
           >
             <div className="guided-illustration-copy">
-              <span>{t('mission.guided.threshold')}</span>
+              <span>
+                {isFirstMission
+                  ? t('mission.guided.threshold')
+                  : t('mission.guided.thresholdGeneric')}
+              </span>
               <h2>{mission.titulo}</h2>
               <p>{mission.descripcion}</p>
               <ul className="guided-features" aria-label={t('mission.guided.detailsLabel')}>
