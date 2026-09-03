@@ -1712,7 +1712,7 @@ button, input { font: inherit; }
   width: fit-content;
   max-width: 100%;
   padding: 0;
-  color: #123f2b;
+  color: #0b3825;
 }
 .auth-brand h1,
 .auth-brand p,
@@ -1721,20 +1721,26 @@ button, input { font: inherit; }
   background: transparent;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  -webkit-text-stroke: .012em rgba(255, 255, 244, 0.8);
   paint-order: stroke fill;
+  text-rendering: optimizeLegibility;
+}
+.auth-brand h1 .auth-forest-glow-text {
+  -webkit-text-stroke: 1.1px rgba(255, 254, 238, 0.96);
   text-shadow:
-    -.02em -.02em .02em rgba(255, 255, 247, 0.96),
-    .02em -.02em .02em rgba(255, 255, 247, 0.96),
-    -.02em .02em .02em rgba(255, 255, 247, 0.96),
-    .02em .02em .02em rgba(255, 255, 247, 0.96),
-    0 0 .13em rgba(255, 255, 242, 0.92),
-    0 0 .26em rgba(250, 248, 226, 0.68),
-    0 0 .42em rgba(246, 243, 216, 0.38);
+    0 0 2px rgba(255, 255, 247, 1),
+    0 0 6px rgba(250, 247, 222, 0.88),
+    0 2px 2px rgba(7, 40, 24, 0.4);
+}
+.auth-brand p .auth-forest-glow-text {
+  -webkit-text-stroke: 1px rgba(255, 254, 238, 0.98);
+  text-shadow:
+    0 0 2px rgba(255, 255, 247, 1),
+    0 0 5px rgba(250, 247, 222, 0.9),
+    0 2px 2px rgba(7, 40, 24, 0.38);
 }
 .auth-brand h1 {
   margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
-  max-width: 100%; font-size: clamp(2.6rem, 3.55vw, 4.8rem); font-weight: 500; line-height: 1;
+  max-width: 100%; font-size: clamp(2.6rem, 3.55vw, 4.8rem); font-weight: 600; line-height: 1.04;
   letter-spacing: -.045em; white-space: normal; text-wrap: balance;
 }
 .auth-brand-mark { position: relative; }
@@ -1745,7 +1751,7 @@ button, input { font: inherit; }
 }
 .auth-brand p {
   margin: .18rem 0; max-width: 42rem; font-size: clamp(1rem, 1.25vw, 1.4rem);
-  font-weight: 600; line-height: 1.35;
+  font-weight: 700; line-height: 1.35;
 }
 .auth-panel {
   display: grid; place-items: center;
