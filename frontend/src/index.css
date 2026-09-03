@@ -1683,7 +1683,7 @@ button, input { font: inherit; }
 .auth-wrap {
   /* El paisaje entregado ocupa el viewport en escritorio. */
   --auth-bg-size: cover;
-  --auth-bg-position: center center;
+  --auth-bg-position: center 38%;
   min-height: 100vh;
   position: relative;
   isolation: isolate;
@@ -1708,20 +1708,29 @@ button, input { font: inherit; }
 }
 .auth-brand {
   position: relative;
+  isolation: isolate;
   z-index: 2;
   width: 100%;
   max-width: 48rem;
-  padding: clamp(1.15rem, 2vw, 1.75rem) clamp(1.25rem, 2.5vw, 2rem);
-  border: 1px solid rgba(99, 119, 69, 0.55);
-  border-radius: 1.6rem .9rem 1.6rem .9rem;
-  background: linear-gradient(135deg, rgba(255, 253, 242, 0.86), rgba(244, 235, 201, 0.74));
-  box-shadow:
-    0 .75rem 1.9rem rgba(17, 63, 43, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  padding: clamp(1rem, 1.6vw, 1.4rem) clamp(1.1rem, 2vw, 1.65rem);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   color: #123f2b;
-  text-shadow: none;
-  -webkit-backdrop-filter: blur(10px) saturate(.9);
-  backdrop-filter: blur(10px) saturate(.9);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+.auth-brand::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -.9rem -1.8rem -1rem -1.5rem;
+  border-radius: 48% 52% 46% 54% / 55% 48% 52% 45%;
+  background:
+    radial-gradient(ellipse at 31% 58%, rgba(255, 255, 249, 0.86) 0%, rgba(251, 249, 231, 0.68) 52%, rgba(245, 242, 217, 0.25) 72%, transparent 87%),
+    radial-gradient(ellipse at 73% 42%, rgba(255, 255, 249, 0.78) 0%, rgba(249, 247, 228, 0.58) 48%, rgba(244, 241, 214, 0.2) 70%, transparent 86%);
+  -webkit-backdrop-filter: blur(7px) saturate(.9) brightness(1.04);
+  backdrop-filter: blur(7px) saturate(.9) brightness(1.04);
+  pointer-events: none;
 }
 .auth-brand h1 {
   margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
@@ -1837,7 +1846,7 @@ button, input { font: inherit; }
       linear-gradient(90deg, rgba(231, 246, 247, 0.12), rgba(255, 244, 201, 0.06)),
       var(--auth-background);
     background-size: cover, cover;
-    background-position: center, 40% center;
+    background-position: center, 40% 38%;
     background-repeat: no-repeat;
   }
   .auth-wrap::after {
@@ -1855,7 +1864,9 @@ button, input { font: inherit; }
     width: 100%;
     max-width: 100%;
     padding: 1rem clamp(.9rem, 2vw, 1.25rem);
-    border-radius: 1.25rem .75rem;
+  }
+  .auth-brand::before {
+    inset: -.55rem -.75rem -.65rem;
   }
   .auth-brand h1 {
     margin-bottom: .8rem;
