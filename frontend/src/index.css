@@ -1683,7 +1683,7 @@ button, input { font: inherit; }
 .auth-wrap {
   /* El paisaje entregado ocupa el viewport en escritorio. */
   --auth-bg-size: cover;
-  --auth-bg-position: center 38%;
+  --auth-bg-position: center 30%;
   min-height: 100vh;
   position: relative;
   isolation: isolate;
@@ -1708,29 +1708,29 @@ button, input { font: inherit; }
 }
 .auth-brand {
   position: relative;
-  isolation: isolate;
   z-index: 2;
-  width: 100%;
-  max-width: 48rem;
-  padding: clamp(1rem, 1.6vw, 1.4rem) clamp(1.1rem, 2vw, 1.65rem);
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
   color: #123f2b;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
 }
-.auth-brand::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -.9rem -1.8rem -1rem -1.5rem;
-  border-radius: 48% 52% 46% 54% / 55% 48% 52% 45%;
-  background:
-    radial-gradient(ellipse at 31% 58%, rgba(255, 255, 249, 0.86) 0%, rgba(251, 249, 231, 0.68) 52%, rgba(245, 242, 217, 0.25) 72%, transparent 87%),
-    radial-gradient(ellipse at 73% 42%, rgba(255, 255, 249, 0.78) 0%, rgba(249, 247, 228, 0.58) 48%, rgba(244, 241, 214, 0.2) 70%, transparent 86%);
-  -webkit-backdrop-filter: blur(7px) saturate(.9) brightness(1.04);
-  backdrop-filter: blur(7px) saturate(.9) brightness(1.04);
-  pointer-events: none;
+.auth-brand h1,
+.auth-brand p,
+.auth-forest-glow-text { max-width: 100%; }
+.auth-forest-glow-text {
+  background: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  -webkit-text-stroke: .012em rgba(255, 255, 244, 0.8);
+  paint-order: stroke fill;
+  text-shadow:
+    -.02em -.02em .02em rgba(255, 255, 247, 0.96),
+    .02em -.02em .02em rgba(255, 255, 247, 0.96),
+    -.02em .02em .02em rgba(255, 255, 247, 0.96),
+    .02em .02em .02em rgba(255, 255, 247, 0.96),
+    0 0 .13em rgba(255, 255, 242, 0.92),
+    0 0 .26em rgba(250, 248, 226, 0.68),
+    0 0 .42em rgba(246, 243, 216, 0.38);
 }
 .auth-brand h1 {
   margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
@@ -1846,7 +1846,7 @@ button, input { font: inherit; }
       linear-gradient(90deg, rgba(231, 246, 247, 0.12), rgba(255, 244, 201, 0.06)),
       var(--auth-background);
     background-size: cover, cover;
-    background-position: center, 40% 38%;
+    background-position: center, 40% 30%;
     background-repeat: no-repeat;
   }
   .auth-wrap::after {
@@ -1861,12 +1861,8 @@ button, input { font: inherit; }
     background: none;
   }
   .auth-brand {
-    width: 100%;
+    width: fit-content;
     max-width: 100%;
-    padding: 1rem clamp(.9rem, 2vw, 1.25rem);
-  }
-  .auth-brand::before {
-    inset: -.55rem -.75rem -.65rem;
   }
   .auth-brand h1 {
     margin-bottom: .8rem;

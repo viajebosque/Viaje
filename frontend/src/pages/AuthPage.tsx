@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -28,6 +28,10 @@ const GoogleIcon = () => (
     <path fill="#EA4335" d="M12 5.95c1.47 0 2.78.5 3.82 1.49l2.87-2.87A9.64 9.64 0 0 0 12 2a10 10 0 0 0-8.95 5.47l3.35 2.61C7.19 7.71 9.4 5.95 12 5.95Z" />
   </svg>
 );
+
+function ForestGlowText({ children }: { children: ReactNode }) {
+  return <span className="auth-forest-glow-text">{children}</span>;
+}
 
 export default function AuthPage() {
   const { t } = useTranslation();
@@ -89,14 +93,16 @@ export default function AuthPage() {
     >
       <section className="auth-story" aria-labelledby="auth-brand-title">
         <div className="auth-brand">
-          <h1 id="auth-brand-title">
-            <span className="auth-brand-mark" aria-hidden="true">
-              {brandTitle.charAt(0)}
-            </span>
-            {brandTitle.slice(1)}
+          <h1 id="auth-brand-title" aria-label={brandTitle}>
+            <ForestGlowText>
+              <span className="auth-brand-mark" aria-hidden="true">
+                {brandTitle.charAt(0)}
+              </span>
+              {brandTitle.slice(1)}
+            </ForestGlowText>
           </h1>
-          <p>{t('auth.brandLineOne')}</p>
-          <p>{t('auth.brandLineTwo')}</p>
+          <p><ForestGlowText>{t('auth.brandLineOne')}</ForestGlowText></p>
+          <p><ForestGlowText>{t('auth.brandLineTwo')}</ForestGlowText></p>
         </div>
       </section>
 
