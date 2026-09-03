@@ -1707,8 +1707,21 @@ button, input { font: inherit; }
   padding: clamp(1.5rem, 3.2vh, 3rem) clamp(2rem, 4.7vw, 6rem);
 }
 .auth-brand {
-  position: relative; z-index: 2; width: 100%; max-width: 54rem; color: #123f2b;
-  text-shadow: 0 1px 0 rgba(255,255,255,.7), 0 2px 12px rgba(255,255,255,.34);
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 48rem;
+  padding: clamp(1.15rem, 2vw, 1.75rem) clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid rgba(99, 119, 69, 0.55);
+  border-radius: 1.6rem .9rem 1.6rem .9rem;
+  background: linear-gradient(135deg, rgba(255, 253, 242, 0.86), rgba(244, 235, 201, 0.74));
+  box-shadow:
+    0 .75rem 1.9rem rgba(17, 63, 43, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  color: #123f2b;
+  text-shadow: none;
+  -webkit-backdrop-filter: blur(10px) saturate(.9);
+  backdrop-filter: blur(10px) saturate(.9);
 }
 .auth-brand h1 {
   margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
@@ -1841,13 +1854,16 @@ button, input { font: inherit; }
   .auth-brand {
     width: 100%;
     max-width: 100%;
+    padding: 1rem clamp(.9rem, 2vw, 1.25rem);
+    border-radius: 1.25rem .75rem;
   }
   .auth-brand h1 {
     margin-bottom: .8rem;
-    font-size: clamp(2rem, 4.2vw, 3.1rem);
-    line-height: 1.02;
+    font-size: clamp(1.85rem, 4vw, 2.8rem);
+    line-height: 1.04;
     white-space: normal;
     text-wrap: balance;
+    overflow-wrap: break-word;
   }
   .auth-brand p {
     margin: .2rem 0;
