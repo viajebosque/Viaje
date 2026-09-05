@@ -19,9 +19,16 @@ type Backup = {
   answers: GuidedAnswers;
   pending: boolean;
   step: number;
+  flowVersion?: number;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+const GUIDED_FLOW_VERSION = 2;
+
+const MISSION_ACTIVITY_VIDEOS: Partial<Record<number, string>> = {
+  1: 'b0-4whrjbLg',
+};
 
 type Props = {
   mission: Mission;
@@ -79,6 +86,7 @@ function readBackup(storageKey: string): Backup | null {
       answers: candidate.answers,
       pending: candidate.pending,
       step: Math.max(Number(candidate.step) || 0, 0),
+      flowVersion: Number(candidate.flowVersion) || undefined,
     };
   } catch {
     return null;
@@ -115,7 +123,22 @@ export default function MissionGuided({
   const storageKey = mission.numero === 1
     ? `mission-one-guided:${userId ?? 'preview'}`
     : `mission-guided:${mission.id}:${userId ?? 'preview'}`;
-  const totalSteps = questions.length;
+  const activityVideoId = MISSION_ACTIVITY_VIDEOS[mission.numero];
+  const activityQuestionIndex = activityVideoId
+    ? questions.findIndex((question) => question.categoria === 'actividad')
+    : -1;
+  const hasActivityVideo = Boolean(activityVideoId && activityQuestionIndex >= 0);
+  const totalSteps = questions.length + (hasActivityVideo ? 1 : 0);
+  const questionForStep = useCallback(
+    (stepToMap: number) => {
+      if (!hasActivityVideo || stepToMap < activityQuestionIndex) {
+        return questions[stepToMap];
+      }
+      if (stepToMap === activityQuestionIndex) return undefined;
+      return questions[stepToMap - 1];
+    },
+    [activityQuestionIndex, hasActivityVideo, questions]
+  );
   const initialState = useMemo(() => {
     const backendAnswers = answersFromBackend(questions, initialAnswers);
     const backup = readBackup(storageKey);
@@ -127,12 +150,19 @@ export default function MissionGuided({
           ])
         )
       : backendAnswers;
+    const backupStep =
+      backup &&
+      backup.flowVersion !== GUIDED_FLOW_VERSION &&
+      hasActivityVideo &&
+      backup.step >= activityQuestionIndex
+        ? backup.step + 1
+        : backup?.step ?? 0;
     return {
       answers: backup && (backup.pending || isPreview) ? backupAnswers : backendAnswers,
-      step: Math.min(backup?.step ?? 0, Math.max(questions.length - 1, 0)),
+      step: Math.min(backupStep, Math.max(totalSteps - 1, 0)),
       hasPendingBackup: Boolean(backup?.pending),
     };
-  }, [initialAnswers, isPreview, questions, storageKey]);
+  }, [activityQuestionIndex, hasActivityVideo, initialAnswers, isPreview, questions, storageKey, totalSteps]);
 
   const [answers, setAnswers] = useState(initialState.answers);
   const [step, setStep] = useState(initialState.step);
@@ -157,10 +187,10 @@ export default function MissionGuided({
 
   const isStepValid = useCallback(
     (stepToCheck: number, value = answersRef.current) => {
-      const question = questions[stepToCheck];
-      return Boolean(question && value[question.id]?.trim());
+      const question = questionForStep(stepToCheck);
+      return !question || Boolean(value[question.id]?.trim());
     },
-    [questions]
+    [questionForStep]
   );
 
   const performSave = useCallback(async (): Promise<boolean> => {
@@ -179,6 +209,7 @@ export default function MissionGuided({
               answers: snapshot,
               pending: false,
               step: stepRef.current,
+              flowVersion: GUIDED_FLOW_VERSION,
             });
           } else {
             if (questions.length === 0) {
@@ -193,6 +224,7 @@ export default function MissionGuided({
               answers: isPreview ? snapshot : {},
               pending: false,
               step: stepRef.current,
+              flowVersion: GUIDED_FLOW_VERSION,
             });
             setSaveStatus('saved');
           }
@@ -201,6 +233,7 @@ export default function MissionGuided({
             answers: snapshot,
             pending: true,
             step: stepRef.current,
+            flowVersion: GUIDED_FLOW_VERSION,
           });
           setSaveStatus('error');
           setSaveError(t('mission.guided.saveError'));
@@ -248,7 +281,12 @@ export default function MissionGuided({
       const next = { ...current, [questionId]: value };
       answersRef.current = next;
       dirtyVersionRef.current += 1;
-      writeBackup(storageKey, { answers: next, pending: true, step: stepRef.current });
+      writeBackup(storageKey, {
+        answers: next,
+        pending: true,
+        step: stepRef.current,
+        flowVersion: GUIDED_FLOW_VERSION,
+      });
       return next;
     });
     setSaveStatus('saving');
@@ -267,6 +305,7 @@ export default function MissionGuided({
       answers: hasPendingChanges || isPreview ? answersRef.current : {},
       pending: hasPendingChanges,
       step: bounded,
+      flowVersion: GUIDED_FLOW_VERSION,
     });
   }
 
@@ -324,7 +363,8 @@ export default function MissionGuided({
         : saveStatus === 'error'
           ? t('mission.guided.saveFailed')
           : t('mission.guided.ready');
-  const currentQuestion = questions[step];
+  const currentQuestion = questionForStep(step);
+  const isActivityVideoStep = hasActivityVideo && step === activityQuestionIndex;
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? '' : '';
   const questionText = currentQuestion?.enunciado.trim() ?? '';
   const questionLineCount = questionText ? questionText.split(/\r?\n/).length : 0;
@@ -337,6 +377,9 @@ export default function MissionGuided({
   const tokenImage = getMissionTokenImage(mission.numero);
   const missionPanel = getMissionPanelImage(mission.numero) ?? forestMap;
   const isFirstMission = mission.numero === 1;
+  const sidebarDescription = isFirstMission
+    ? t('mission.guided.sidebarDescriptionFirst')
+    : t('mission.guided.sidebarDescriptionGeneric');
 
   if (completed) {
     return (
@@ -416,11 +459,33 @@ export default function MissionGuided({
                   : t('mission.guided.thresholdGeneric')}
               </span>
               <h2>{mission.titulo}</h2>
-              <p>{mission.descripcion}</p>
+              <p>{sidebarDescription}</p>
               <ul className="guided-features" aria-label={t('mission.guided.detailsLabel')}>
-                <li><span aria-hidden="true">◷</span>{t('mission.guided.duration')}</li>
-                <li><span aria-hidden="true">✓</span>{t('mission.guided.autoSave')}</li>
-                <li><span aria-hidden="true">⌁</span>{t('mission.guided.private')}</li>
+                <li>
+                  <span aria-hidden="true" className="guided-feature-icon">
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="8" />
+                      <path d="M12 7v5h5" />
+                    </svg>
+                  </span>
+                  {t('mission.guided.duration')}
+                </li>
+                <li>
+                  <span aria-hidden="true" className="guided-feature-icon">
+                    <svg viewBox="0 0 24 24">
+                      <path d="m6.5 12.5 3.5 3.5 7.5-8" />
+                    </svg>
+                  </span>
+                  {t('mission.guided.autoSave')}
+                </li>
+                <li>
+                  <span aria-hidden="true" className="guided-feature-icon">
+                    <svg viewBox="0 0 24 24">
+                      <path d="m13.5 3-7 10h5l-1 8 7-11h-5z" />
+                    </svg>
+                  </span>
+                  {t('mission.guided.private')}
+                </li>
               </ul>
             </div>
           </aside>
@@ -455,39 +520,60 @@ export default function MissionGuided({
 
             <article
               className="guided-question-card"
-              data-question-category={currentQuestion?.categoria}
+              data-question-category={isActivityVideoStep ? 'actividad-video' : currentQuestion?.categoria}
               data-question-order={currentQuestion?.orden}
             >
-              <div className="guided-question-wrap">
-            <p className="guided-eyebrow">
-              {t('mission.guided.questionLabel', { current: step + 1 })}
-            </p>
-            <h1
-              ref={headingRef}
-              id="guided-question-title"
-              className={questionTitleClass}
-              tabIndex={-1}
-            >
-              {currentQuestion?.enunciado ?? ''}
-            </h1>
-            <p className="guided-help">{t('mission.guided.backendHelp')}</p>
+              <div
+                className={`guided-question-wrap${isActivityVideoStep ? ' guided-question-wrap--video-only' : ''}`}
+              >
+                {isActivityVideoStep && activityVideoId ? (
+                  <>
+                    <h1 ref={headingRef} id="guided-question-title" className="sr-only" tabIndex={-1}>
+                      {t('mission.guided.activityVideoTitle', { numero: mission.numero })}
+                    </h1>
+                  <div className="guided-activity-video">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${activityVideoId}`}
+                      title={t('mission.guided.activityVideoTitle', { numero: mission.numero })}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                  </>
+                ) : (
+                  <div className="guided-question-body">
+                  <p className="guided-eyebrow">
+                    {t('mission.guided.questionLabel', { current: currentQuestion?.orden ?? step + 1 })}
+                  </p>
+                  <h1
+                    ref={headingRef}
+                    id="guided-question-title"
+                    className={questionTitleClass}
+                    tabIndex={-1}
+                  >
+                    {currentQuestion?.enunciado ?? ''}
+                  </h1>
+                  <p className="guided-help">{t('mission.guided.backendHelp')}</p>
 
-            {currentQuestion && (
-              <label className="guided-field">
-                <span className="sr-only">{currentQuestion.enunciado}</span>
-                <textarea
-                  value={currentAnswer}
-                  onChange={(event) => updateAnswer(currentQuestion.id, event.target.value)}
-                  rows={8}
-                  placeholder={t('mission.guided.backendPlaceholder')}
-                  aria-describedby="guided-validation"
-                />
-              </label>
-            )}
+                  {currentQuestion && (
+                    <label className="guided-field">
+                      <span className="sr-only">{currentQuestion.enunciado}</span>
+                      <textarea
+                        value={currentAnswer}
+                        onChange={(event) => updateAnswer(currentQuestion.id, event.target.value)}
+                        rows={8}
+                        placeholder={t('mission.guided.backendPlaceholder')}
+                        aria-describedby="guided-validation"
+                      />
+                    </label>
+                  )}
 
-            <div id="guided-validation" className="guided-validation" aria-live="assertive">
-              {validation}
-            </div>
+                  <div id="guided-validation" className="guided-validation" aria-live="assertive">
+                    {validation}
+                  </div>
+                  </div>
+                )}
               </div>
 
               <footer className="guided-footer">

@@ -178,6 +178,8 @@
       "title": "The entrance to the forest",
       "threshold": "Your first threshold",
       "thresholdGeneric": "A new stretch of the path",
+      "sidebarDescriptionFirst": "A space to let go, listen, and choose how you want to begin.",
+      "sidebarDescriptionGeneric": "A space to move forward calmly, listen to what arises, and take the next step.",
       "sideNote": "Don't look for the perfect answer. This space is for listening to what needs your attention today.",
       "detailsLabel": "Mission details",
       "duration": "8–10 minutes",
@@ -235,6 +237,7 @@
         "incomplete": "A response still needs to be saved. Review your path and try again."
       },
       "questionLabel": "Question {{current}}",
+      "activityVideoTitle": "Mission {{numero}} activity video",
       "backendHelp": "There are no right answers. Write honestly and at your own pace.",
       "backendPlaceholder": "Write your answer…",
       "previous": "Previous",

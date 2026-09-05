@@ -178,6 +178,8 @@
       "title": "La entrada al bosque",
       "threshold": "Tu primer umbral",
       "thresholdGeneric": "Un nuevo tramo del sendero",
+      "sidebarDescriptionFirst": "Un espacio para soltar, escuchar y elegir cómo quieres comenzar.",
+      "sidebarDescriptionGeneric": "Un espacio para avanzar con calma, escuchar lo que aparece y dar el siguiente paso.",
       "sideNote": "No busques la respuesta perfecta. Este espacio es para escuchar lo que hoy necesita tu atención.",
       "detailsLabel": "Detalles de la misión",
       "duration": "8–10 minutos",
@@ -235,6 +237,7 @@
         "incomplete": "Aún falta guardar alguna respuesta. Revisa el recorrido e inténtalo de nuevo."
       },
       "questionLabel": "Pregunta {{current}}",
+      "activityVideoTitle": "Video de la actividad de la Misión {{numero}}",
       "backendHelp": "No hay respuestas correctas. Escribe con honestidad y a tu propio ritmo.",
       "backendPlaceholder": "Escribe tu respuesta…",
       "previous": "Anterior",
