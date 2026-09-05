@@ -556,6 +556,9 @@ export default function Forest() {
                 <h2 id="mission-entry-title">
                   {selectedInfo.titulo || t('forest.modalTitle', { numero: selectedInfo.numero })}
                 </h2>
+                <div className="mission-entry-mobile-visual" aria-hidden="true">
+                  <img src={selectedPanel} alt="" draggable={false} />
+                </div>
                 <p id="mission-entry-description" className="mission-entry-description">
                   {selectedInfo.descripcion || t('forest.modalAsk')}
                 </p>

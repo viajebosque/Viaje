@@ -686,12 +686,13 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   pointer-events: none;
   user-select: none;
 }
+.mission-entry-mobile-visual { display: none; }
 .mission-entry-content {
   position: absolute;
   z-index: 2;
   top: 18.5%;
   right: 11.5%;
-  bottom: 13.5%;
+  bottom: 16.5%;
   left: 52.3%;
   display: flex;
   flex-direction: column;
@@ -922,7 +923,7 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
 @media (min-width: 761px) {
   .mission-entry-modal--long-title .mission-entry-content {
     top: 15.5%;
-    bottom: 9%;
+    bottom: 16.5%;
   }
 
   .mission-entry-modal--long-title h2 {
@@ -977,6 +978,26 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
     font-size: 0.92rem;
     line-height: 1.45;
     -webkit-line-clamp: 3;
+  }
+  .mission-entry-mobile-visual {
+    display: block;
+    flex: 0 0 auto;
+    height: clamp(5.5rem, 15svh, 8rem);
+    margin-top: .7rem;
+    overflow: hidden;
+    border: 1px solid rgba(49, 83, 59, .42);
+    border-radius: 1rem;
+    background: #dbe8ca;
+    box-shadow: inset 0 1px rgba(255, 255, 255, .48);
+  }
+  .mission-entry-mobile-visual img {
+    display: block;
+    width: 200%;
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    user-select: none;
   }
   .mission-entry-description:lang(en) {
     margin-bottom: 0.5rem;
