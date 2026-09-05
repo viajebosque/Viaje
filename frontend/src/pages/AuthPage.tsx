@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -28,10 +28,6 @@ const GoogleIcon = () => (
     <path fill="#EA4335" d="M12 5.95c1.47 0 2.78.5 3.82 1.49l2.87-2.87A9.64 9.64 0 0 0 12 2a10 10 0 0 0-8.95 5.47l3.35 2.61C7.19 7.71 9.4 5.95 12 5.95Z" />
   </svg>
 );
-
-function SkyCloudText({ children }: { children: ReactNode }) {
-  return <span className="auth-sky-cloud-text">{children}</span>;
-}
 
 export default function AuthPage() {
   const { t } = useTranslation();
@@ -94,15 +90,13 @@ export default function AuthPage() {
       <section className="auth-story" aria-labelledby="auth-brand-title">
         <div className="auth-brand">
           <h1 id="auth-brand-title" aria-label={brandTitle}>
-            <SkyCloudText>
-              <span className="auth-brand-mark" aria-hidden="true">
-                {brandTitle.charAt(0)}
-              </span>
-              {brandTitle.slice(1)}
-            </SkyCloudText>
+            <span className="auth-brand-mark" aria-hidden="true">
+              {brandTitle.charAt(0)}
+            </span>
+            {brandTitle.slice(1)}
           </h1>
-          <p><SkyCloudText>{t('auth.brandLineOne')}</SkyCloudText></p>
-          <p><SkyCloudText>{t('auth.brandLineTwo')}</SkyCloudText></p>
+          <p>{t('auth.brandLineOne')}</p>
+          <p>{t('auth.brandLineTwo')}</p>
         </div>
       </section>
 

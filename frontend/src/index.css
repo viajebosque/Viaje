@@ -670,8 +670,8 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 /* ---------- Panel de entrada a la Misión 1 ---------- */
 .mission-entry-modal {
   position: relative;
-  width: min(92vw, 1420px, calc((100svh - 2rem) * 1672 / 941));
-  max-height: calc(100svh - 2rem);
+  width: min(96vw, 1500px, calc((100svh - 1rem) * 1672 / 941));
+  max-height: calc(100svh - 1rem);
   aspect-ratio: 1672 / 941;
   flex: 0 0 auto;
   color: #193d27;
@@ -951,15 +951,13 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
     overflow: hidden;
     border: 5px double #31533b;
     border-radius: 1.7rem;
-    background: #fbf1df;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(213, 221, 185, .34), transparent 22%),
+      linear-gradient(145deg, #fff8e9, #f8ecd7);
     filter: drop-shadow(0 18px 28px rgba(7, 28, 16, 0.38));
   }
   .mission-entry-background {
-    top: 0;
-    left: -108%;
-    width: 229%;
-    height: 100%;
-    opacity: 0.34;
+    display: none;
   }
   .mission-entry-content {
     top: 3.45rem;
@@ -986,7 +984,7 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
     line-height: 1.4;
     -webkit-line-clamp: 3;
   }
-  .mission-entry-facts { gap: 0.35rem; }
+  .mission-entry-facts { gap: 0.35rem; margin-top: 1rem; }
   .mission-entry-fact {
     flex-direction: column;
     gap: 0.2rem;
@@ -1796,43 +1794,31 @@ button, input { font: inherit; }
   z-index: 2;
   width: fit-content;
   max-width: 100%;
-  padding: 0;
-  color: #123f2b;
-}
-.auth-brand h1,
-.auth-brand p,
-.auth-sky-cloud-text { max-width: 100%; }
-.auth-sky-cloud-text {
+  padding: clamp(.8rem, 1.4vw, 1.35rem) clamp(1.2rem, 2.2vw, 2.5rem) clamp(1rem, 1.8vw, 1.65rem);
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 4.8rem 5.8rem 4.5rem 5.4rem / 4rem 4.8rem 4.2rem 4.7rem;
   background: linear-gradient(
     105deg,
-    rgba(174, 225, 244, .88),
-    rgba(211, 239, 246, .86) 54%,
-    rgba(244, 241, 213, .78)
+    rgba(174, 225, 244, .52),
+    rgba(211, 239, 246, .50) 54%,
+    rgba(244, 241, 213, .44)
   );
   color: #123f2b;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  border: 1px solid rgba(255, 255, 255, .38);
+  text-align: center;
   box-shadow:
-    0 .08em .28em rgba(40, 102, 118, .14),
-    0 0 .4em rgba(199, 235, 244, .34),
-    inset 0 1px 0 rgba(255, 255, 255, .52);
+    0 .08em .28em rgba(40, 102, 118, .10),
+    0 0 .4em rgba(199, 235, 244, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .35);
   text-shadow:
     0 1px 0 rgba(255, 255, 255, .74),
     0 .04em .08em rgba(11, 53, 39, .12);
   -webkit-backdrop-filter: blur(5px) saturate(.92);
   backdrop-filter: blur(5px) saturate(.92);
 }
-.auth-brand h1 .auth-sky-cloud-text {
-  padding: .07em .28em .12em;
-  border-radius: .54em;
-}
-.auth-brand p .auth-sky-cloud-text {
-  padding: .1em .42em .14em;
-  border-radius: 999px;
-}
+.auth-brand h1,
+.auth-brand p { max-width: 100%; }
 .auth-brand h1 {
-  margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif;
+  margin: 0 0 .55rem; font-family: Georgia, "Times New Roman", serif;
   max-width: 100%; font-size: clamp(2.6rem, 3.55vw, 4.8rem); font-weight: 500; line-height: 1;
   letter-spacing: -.045em; white-space: normal; text-wrap: balance;
 }
