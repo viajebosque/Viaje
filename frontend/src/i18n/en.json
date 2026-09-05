@@ -2,7 +2,11 @@
   "lang": {
     "es": "ES",
     "en": "EN",
-    "switch": "Change language"
+    "switch": "Change language",
+    "switchTo": {
+      "es": "Switch to Spanish",
+      "en": "Switch to English"
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -45,7 +49,7 @@
     "signOut": "Sign out"
   },
   "forest": {
-    "title": "The Forest Map 🌲",
+    "title": "The Forest Map\u00a0🌲",
     "subtitle": "Choose a mission to begin.",
     "comingSoon": "Coming soon",
     "nextMission": "Your next mission",

@@ -2,7 +2,11 @@
   "lang": {
     "es": "ES",
     "en": "EN",
-    "switch": "Cambiar idioma"
+    "switch": "Cambiar idioma",
+    "switchTo": {
+      "es": "Cambiar a español",
+      "en": "Cambiar a inglés"
+    }
   },
   "common": {
     "loading": "Cargando…",
@@ -45,7 +49,7 @@
     "signOut": "Cerrar sesión"
   },
   "forest": {
-    "title": "El Mapa del Bosque 🌲",
+    "title": "El Mapa del Bosque\u00a0🌲",
     "subtitle": "Elige una misión para comenzar.",
     "comingSoon": "Próximamente",
     "nextMission": "Tu siguiente misión",

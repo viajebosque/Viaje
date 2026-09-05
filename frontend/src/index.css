@@ -18,34 +18,37 @@ body {
   gap: 0.15rem;
   background: rgba(255, 253, 246, 0.93);
   border: 1px solid rgba(37, 74, 50, 0.18);
+  min-height: 2.75rem;
   padding: 0.34rem 0.42rem;
   border-radius: 10px;
+  color: #174d31;
+  cursor: pointer;
   flex: 0 0 auto;
+  font: inherit;
   backdrop-filter: blur(9px);
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+.lang-toggle:hover { background: #fffdf6; border-color: rgba(37, 74, 50, 0.38); }
+.lang-toggle:focus-visible {
+  outline: 3px solid rgba(238, 203, 104, 0.58);
+  outline-offset: 2px;
 }
 .lang-toggle-icon {
   width: 1.15rem;
   height: 1.15rem;
-  margin: 0 0.15rem;
+  margin: 0 0.08rem;
   fill: none;
   stroke: #254b35;
   stroke-width: 1.7;
 }
-.lang-toggle button {
-  border: 0;
-  background: transparent;
+.lang-toggle-code {
+  background: #e6edde;
   padding: 0.22rem 0.36rem;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: #6a7569;
-}
-.lang-toggle button.active {
-  background: #e6edde;
   color: #174d31;
-  box-shadow: none;
 }
 
 .platform-lang-toggle {
@@ -114,6 +117,27 @@ body {
   font-weight: 700;
 }
 .forest-top-actions > button:hover { background: rgba(255, 255, 250, 0.9); border-color: #527e5b; }
+.forest-top-actions > .forest-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+.forest-top-actions > .forest-action-button:focus-visible {
+  border-color: #294d34;
+  outline: 3px solid rgba(238, 203, 104, 0.48);
+  outline-offset: 2px;
+}
+.forest-action-icon {
+  display: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
 .forest-top-actions > .forest-help-button {
   display: grid;
   width: 2rem;
@@ -350,11 +374,24 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
     min-height: 0;
     padding: 0.65rem 1rem 0.75rem;
   }
-  .forest-heading { padding-right: 4rem; }
+  .forest-heading { width: 100%; padding-right: 4rem; }
   .forest-account { align-items: flex-start; width: 100%; }
-  .forest-top-actions { flex-wrap: wrap; gap: 0.42rem; }
-  .forest-top-actions > button { padding: 0.32rem 0.62rem; font-size: 0.72rem; }
-  .forest-title { font-size: clamp(1.55rem, 8vw, 2.15rem); }
+  .forest-top-actions { flex-wrap: nowrap; gap: 0.5rem; }
+  .forest-top-actions > .forest-action-button,
+  .forest-top-actions > .forest-help-button {
+    display: grid;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    place-items: center;
+    border-radius: 50%;
+  }
+  .forest-action-icon { display: block; }
+  .forest-action-label { display: none; }
+  .forest-title {
+    font-size: clamp(1.1rem, 6vw, 2.15rem);
+  }
   .forest-sub { font-size: 0.78rem; }
   .forest-map { min-width: 980px; }
 }

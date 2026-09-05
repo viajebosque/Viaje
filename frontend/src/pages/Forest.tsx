@@ -90,6 +90,33 @@ function CloseIcon() {
   );
 }
 
+function ProfileIcon() {
+  return (
+    <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5.5 20c.5-4 2.7-6 6.5-6s6 2 6.5 6" />
+    </svg>
+  );
+}
+
+function AdminIcon() {
+  return (
+    <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3 19 6v5c0 4.5-2.7 7.7-7 10-4.3-2.3-7-5.5-7-10V6l7-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+function SignOutIcon() {
+  return (
+    <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10" />
+      <path d="m14 8 4 4-4 4M18 12H9" />
+    </svg>
+  );
+}
+
 export default function Forest() {
   const { signOut } = useAuth();
   const { role } = useRole();
@@ -258,12 +285,39 @@ export default function Forest() {
             >
               <span aria-hidden="true">?</span>
             </button>
-            <button onClick={() => navigate('/profile')}>{t('profile.link')}</button>
+            <button
+              className="forest-action-button"
+              type="button"
+              title={t('profile.link')}
+              aria-label={t('profile.link')}
+              onClick={() => navigate('/profile')}
+            >
+              <ProfileIcon />
+              <span className="forest-action-label">{t('profile.link')}</span>
+            </button>
             {/* Atajo al panel: solo para admins. La ruta igual valida el rol. */}
             {role === 'admin' && (
-              <button onClick={() => navigate('/admin')}>{t('admin.link')}</button>
+              <button
+                className="forest-action-button"
+                type="button"
+                title={t('admin.link')}
+                aria-label={t('admin.link')}
+                onClick={() => navigate('/admin')}
+              >
+                <AdminIcon />
+                <span className="forest-action-label">{t('admin.link')}</span>
+              </button>
             )}
-            <button onClick={handleSignOut}>{t('auth.signOut')}</button>
+            <button
+              className="forest-action-button"
+              type="button"
+              title={t('auth.signOut')}
+              aria-label={t('auth.signOut')}
+              onClick={handleSignOut}
+            >
+              <SignOutIcon />
+              <span className="forest-action-label">{t('auth.signOut')}</span>
+            </button>
           </div>
         </div>
       </header>
