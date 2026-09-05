@@ -630,11 +630,11 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   .reminders-return { margin-top: 0.85rem; }
 }
 
-/* ---------- Paneles de entrada a las misiones ---------- */
+/* ---------- Panel de entrada a la Misión 1 ---------- */
 .mission-entry-modal {
   position: relative;
-  width: min(96vw, 1580px, calc((100svh - 1.5rem) * 1672 / 941));
-  max-height: calc(100svh - 1.5rem);
+  width: min(92vw, 1420px, calc((100svh - 2rem) * 1672 / 941));
+  max-height: calc(100svh - 2rem);
   aspect-ratio: 1672 / 941;
   flex: 0 0 auto;
   color: #193d27;
@@ -652,26 +652,26 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 .mission-entry-content {
   position: absolute;
   z-index: 2;
-  top: 12.5%;
-  right: 4.25%;
-  bottom: 6.5%;
-  left: 52.8%;
+  top: 18.5%;
+  right: 11.5%;
+  bottom: 13.5%;
+  left: 52.3%;
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: clamp(0.65rem, 1.15vw, 1.25rem);
+  padding: clamp(0.35rem, 0.8vw, 0.85rem);
   overflow-x: hidden;
   overflow-y: auto;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   box-sizing: border-box;
   scrollbar-color: rgba(81, 100, 57, 0.55) transparent;
   scrollbar-width: thin;
 }
 .mission-entry-label {
-  margin: 0 0 clamp(0.4rem, 0.75vw, 0.8rem);
+  margin: 0 0 clamp(0.3rem, 0.7vw, 0.75rem);
   color: #234831;
-  font-size: clamp(0.82rem, 1.2vw, 1.35rem);
+  font-size: clamp(0.72rem, 1.15vw, 1.25rem);
   font-weight: 800;
   letter-spacing: 0.2em;
   line-height: 1;
@@ -683,69 +683,69 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   overflow: hidden;
   color: #193d27;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2rem, 3.25vw, 4.15rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  font-size: clamp(1.75rem, 2.95vw, 3.7rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
   text-wrap: balance;
   white-space: normal;
 }
 .mission-entry-modal h2:lang(en) {
-  font-size: clamp(1.85rem, 2.8vw, 3.55rem);
-  line-height: 1.14;
+  font-size: clamp(1.65rem, 2.5vw, 3.1rem);
+  line-height: 1.12;
 }
 .mission-entry-description {
   display: -webkit-box;
   max-width: 100%;
-  margin: clamp(0.65rem, 1.35vw, 1.35rem) 0 0;
+  margin: clamp(0.45rem, 1.15vw, 1rem) 0 0;
   overflow: hidden;
-  color: #263c2c;
-  font-size: clamp(0.92rem, 1.28vw, 1.35rem);
+  color: #203927;
+  font-size: clamp(0.86rem, 1.2vw, 1.24rem);
+  font-weight: 500;
+  letter-spacing: 0.005em;
   line-height: 1.5;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  overflow-wrap: anywhere;
   white-space: pre-line;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
 .mission-entry-description:lang(en) {
   margin-bottom: clamp(0.45rem, 0.8vw, 0.8rem);
-  font-size: clamp(0.88rem, 1.18vw, 1.22rem);
-  line-height: 1.45;
+  font-size: clamp(0.84rem, 1.12vw, 1.16rem);
+  line-height: 1.48;
   -webkit-line-clamp: 3;
 }
 .mission-entry-facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.5rem, 1vw, 1.1rem);
+  gap: clamp(0.35rem, 0.85vw, 0.9rem);
   margin-top: auto;
 }
 .mission-entry-fact {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.35rem, 0.7vw, 0.8rem);
+  gap: clamp(0.25rem, 0.6vw, 0.65rem);
   min-width: 0;
-  min-height: clamp(3.1rem, 5.4vw, 5.25rem);
-  padding: 0.65rem clamp(0.45rem, 0.9vw, 0.95rem);
+  min-height: clamp(2.7rem, 5vw, 4.6rem);
+  padding: 0.55rem clamp(0.35rem, 0.8vw, 0.8rem);
   border: 1px solid rgba(81, 100, 57, 0.36);
   border-radius: clamp(0.55rem, 1vw, 0.9rem);
   background: rgba(247, 241, 218, 0.42);
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.4);
   color: #294b34;
-  font-size: clamp(0.72rem, 1.12vw, 1.2rem);
-  line-height: 1.2;
+  font-size: clamp(0.62rem, 1.05vw, 1.12rem);
+  line-height: 1.15;
   text-align: center;
 }
 .mission-entry-fact span,
 .mission-entry-note span {
   min-width: 0;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 .mission-entry-fact svg {
-  width: clamp(1.35rem, 2.2vw, 2.35rem);
+  width: clamp(1.2rem, 2.1vw, 2.1rem);
   flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
@@ -758,16 +758,15 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.55rem, 1.1vw, 1.15rem);
-  min-height: clamp(3.25rem, 6.2vw, 5.9rem);
-  margin-top: clamp(0.7rem, 1.1vw, 1.15rem);
-  padding: 0.7rem 1.2rem;
+  gap: clamp(0.45rem, 1vw, 1rem);
+  min-height: clamp(3rem, 6vw, 5.5rem);
+  margin-top: clamp(0.55rem, 1vw, 1rem);
+  padding: 0.55rem 1rem;
   border: 1px solid rgba(81, 100, 57, 0.34);
   border-radius: clamp(0.6rem, 1vw, 0.95rem);
   background: rgba(221, 224, 190, 0.42);
   color: #314b36;
-  font-size: clamp(0.78rem, 1.12vw, 1.2rem);
-  line-height: 1.4;
+  font-size: clamp(0.68rem, 1.04vw, 1.12rem);
   text-align: center;
 }
 .mission-entry-note svg {
@@ -783,18 +782,18 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  gap: clamp(0.5rem, 0.85vw, 0.9rem);
-  margin-top: clamp(0.75rem, 1.15vw, 1.2rem);
+  gap: clamp(0.45rem, 0.8vw, 0.8rem);
+  margin-top: clamp(0.7rem, 1.3vw, 1.25rem);
 }
 .mission-entry-primary {
   align-self: center;
-  width: 96%;
-  min-height: clamp(3rem, 4.5vw, 4.65rem);
+  width: 92%;
+  min-height: clamp(2.7rem, 4.2vw, 4.2rem);
   border: 2px solid #596647;
   border-radius: clamp(0.7rem, 1.2vw, 1.15rem);
   background: #293f29;
   color: #fffdf5;
-  font-size: clamp(1rem, 1.5vw, 1.55rem);
+  font-size: clamp(0.9rem, 1.45vw, 1.45rem);
   font-weight: 700;
   cursor: pointer;
   box-shadow:
@@ -850,16 +849,16 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
   background: transparent;
   color: #254931;
   padding: 0.1rem 0;
-  font-size: clamp(0.88rem, 1.2vw, 1.28rem);
+  font-size: clamp(0.78rem, 1.15vw, 1.2rem);
   cursor: pointer;
 }
 .mission-entry-close {
   position: absolute;
   z-index: 3;
-  top: 6.8%;
-  right: 2.8%;
+  top: 16.8%;
+  right: 11.5%;
   display: grid;
-  width: clamp(2.15rem, 3vw, 3.35rem);
+  width: clamp(1.9rem, 2.8vw, 3rem);
   aspect-ratio: 1;
   place-items: center;
   padding: 0;
