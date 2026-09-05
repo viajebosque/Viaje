@@ -678,9 +678,10 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   text-transform: uppercase;
 }
 .mission-entry-modal h2 {
+  flex: 0 0 auto;
   margin: 0;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   color: #193d27;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.75rem, 2.95vw, 3.7rem);
@@ -697,6 +698,7 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 }
 .mission-entry-description {
   display: -webkit-box;
+  flex: 0 0 auto;
   max-width: 100%;
   margin: clamp(0.45rem, 1.15vw, 1rem) 0 0;
   overflow: hidden;
@@ -718,6 +720,7 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 }
 .mission-entry-facts {
   display: grid;
+  flex: 0 0 auto;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(0.35rem, 0.85vw, 0.9rem);
   margin-top: auto;
@@ -756,6 +759,7 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
 .mission-entry-fact:nth-child(3) svg { fill: currentColor; stroke: none; }
 .mission-entry-note {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   gap: clamp(0.45rem, 1vw, 1rem);
@@ -876,6 +880,27 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
   stroke: currentColor;
   stroke-linecap: round;
   stroke-width: 1.9;
+}
+
+@media (min-width: 761px) {
+  .mission-entry-modal--long-title .mission-entry-content {
+    top: 15.5%;
+    bottom: 9%;
+  }
+
+  .mission-entry-modal--long-title h2 {
+    font-size: clamp(1.65rem, 2.65vw, 3.3rem);
+    line-height: 1.06;
+  }
+
+  .mission-entry-modal--long-title h2:lang(en) {
+    font-size: clamp(1.6rem, 2.35vw, 2.9rem);
+    line-height: 1.1;
+  }
+
+  .mission-entry-modal--long-title .mission-entry-description {
+    margin-top: clamp(0.35rem, 0.8vw, 0.7rem);
+  }
 }
 
 @media (max-width: 760px) {

@@ -395,7 +395,9 @@ export default function Forest() {
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
           {selectedPanel ? (
             <section
-              className="mission-entry-modal"
+              className={`mission-entry-modal${
+                selectedInfo.titulo.length > 17 ? ' mission-entry-modal--long-title' : ''
+              }`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="mission-entry-title"
