@@ -57,6 +57,17 @@
     "modalHint": "There are no right answers. Move forward at your own pace.",
     "missionOnePreviewTitle": "Entrance to the forest",
     "missionOnePreviewDescription": "Take the first step on this journey. Breathe calmly, observe the path, and choose an intention to begin.",
+    "missionPanelDescriptions": {
+      "1": "Notice where you have come to a stop.\nWrite gently to that part of you.\nTake the first step with honesty.",
+      "2": "Explore the roots of your beliefs.\nSeparate your truth from borrowed beliefs.\nChoose which roots you want to keep.",
+      "3": "Move even without perfect clarity.\nName three possible next steps.\nChoose one and try it for seven days.",
+      "4": "Listen to the emotion you have silenced.\nLet it flow freely onto the page.\nName it without judging yourself.",
+      "5": "Clarify the goal you truly desire.\nImagine the life that reaching it opens.\nDefine how you will move toward it.",
+      "6": "Look at a storm that transformed you.\nName what it broke and revealed.\nRecognize what it also gave you.",
+      "7": "Step carefully into your own cave.\nWrite to the part you hide most.\nReceive it with compassion, without fixing it.",
+      "8": "View your path from a wider perspective.\nTell how the journey transformed you.\nRecognize its turns and lessons.",
+      "9": "Gather the pieces earned in the forest.\nChoose what to carry and leave behind.\nWrite where you want to set sail."
+    },
     "enter": "Start mission",
     "locked": "Locked",
     "lockedHint": "Complete Mission {{numero}} to unlock this one.",

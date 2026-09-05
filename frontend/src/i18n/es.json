@@ -57,6 +57,17 @@
     "modalHint": "No hay respuestas correctas. Avanza a tu propio ritmo.",
     "missionOnePreviewTitle": "Entrada al bosque",
     "missionOnePreviewDescription": "Da el primer paso hacia este recorrido. Respira con calma, observa el sendero y elige una intención para comenzar.",
+    "missionPanelDescriptions": {
+      "1": "Reconoce dónde te has detenido.\nEscribe con ternura a esa parte.\nDa el primer paso con honestidad.",
+      "2": "Explora las raíces de tus creencias.\nSepara lo propio de lo heredado.\nElige qué deseas conservar.",
+      "3": "Avanza aunque no veas todo claro.\nDefine tres pasos posibles.\nElige uno y pruébalo siete días.",
+      "4": "Escucha la emoción que has callado.\nDéjala fluir sobre la página.\nNómbrala sin juzgarte.",
+      "5": "Aclara la meta que realmente deseas.\nImagina la vida al alcanzarla.\nDefine cómo avanzarás hacia ella.",
+      "6": "Mira una tormenta que te transformó.\nNombra qué rompió y qué reveló.\nReconoce también lo que te entregó.",
+      "7": "Entra con cuidado en tu propia cueva.\nEscribe a la parte que más ocultas.\nRecíbela con compasión, sin corregirla.",
+      "8": "Contempla tu camino con perspectiva.\nNarra cómo te transformó el viaje.\nReconoce sus giros y aprendizajes.",
+      "9": "Reúne las piezas ganadas en el bosque.\nElige qué llevar y qué dejar atrás.\nEscribe hacia dónde quieres zarpar."
+    },
     "enter": "Comenzar misión",
     "locked": "Bloqueado",
     "lockedHint": "Completa la Misión {{numero}} para desbloquear esta.",

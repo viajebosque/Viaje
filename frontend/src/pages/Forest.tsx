@@ -12,7 +12,6 @@ import mapGuide from '../assets/forest/map-guide.png';
 import { getMissionPanelImage } from '../lib/missionPanels';
 import {
   getMissions,
-  getMissionDescriptions,
   getCompletedMissionIds,
   FREE_MISSIONS,
   type MissionAccess,
@@ -33,22 +32,6 @@ const missionPositions = [
 ] as const;
 
 const reminderKeys = ['honesty', 'compassion', 'play', 'raft'] as const;
-const MISSION_DESCRIPTION_LIMIT = 180;
-
-function shortenMissionDescription(value: string) {
-  const normalized = value.replace(/\s+/g, ' ').trim();
-  if (!normalized) return '';
-
-  const firstSentence = normalized.match(/^.*?[.!?](?=\s|$)/)?.[0];
-  if (firstSentence && firstSentence.length <= MISSION_DESCRIPTION_LIMIT) {
-    return firstSentence;
-  }
-  if (normalized.length <= MISSION_DESCRIPTION_LIMIT) return normalized;
-
-  const excerpt = normalized.slice(0, MISSION_DESCRIPTION_LIMIT + 1);
-  const lastWholeWord = excerpt.lastIndexOf(' ');
-  return `${excerpt.slice(0, lastWholeWord > 0 ? lastWholeWord : MISSION_DESCRIPTION_LIMIT).trim()}…`;
-}
 
 function ClockIcon() {
   return (
@@ -123,13 +106,10 @@ export default function Forest() {
   }
 
   const [missions, setMissions] = useState<MissionSummary[]>([]);
-  const [descriptions, setDescriptions] = useState<Map<number, string>>(
-    () => new Map()
-  );
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
-  // Se guarda SOLO el numero. Titulo, descripcion y isDone se resuelven al
+  // Se guarda SOLO el numero. Titulo, resumen y isDone se resuelven al
   // renderizar (selectedInfo): guardarlos acá los congelaba en el momento del
   // click, así que quedaban vacíos si los datos todavía no habían llegado y en
   // el idioma viejo si la persona movía el switch con el modal abierto.
@@ -144,22 +124,6 @@ export default function Forest() {
       })
       .catch(() => {
         if (active) setMissions([]);
-      });
-    return () => {
-      active = false;
-    };
-  }, [lang]);
-
-  // Las descripciones solo las usa el modal, así que van en su propia lectura y
-  // no demoran el dibujo del mapa.
-  useEffect(() => {
-    let active = true;
-    getMissionDescriptions(lang)
-      .then((rows) => {
-        if (active) setDescriptions(rows);
-      })
-      .catch(() => {
-        if (active) setDescriptions(new Map());
       });
     return () => {
       active = false;
@@ -246,12 +210,7 @@ export default function Forest() {
               ? t('forest.missionOnePreviewTitle')
               : ''),
           descripcion:
-            shortenMissionDescription(
-              descriptions.get(selected) ||
-                (isDesignPreview && selected === 1
-                  ? t('forest.missionOnePreviewDescription')
-                  : '')
-            ),
+            t(`forest.missionPanelDescriptions.${selected}`),
           isDone: selectedMission ? completed.has(selectedMission.id) : false,
           access: accessOf(selected),
           // Qué misión hay que terminar para abrir esta.
