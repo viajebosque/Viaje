@@ -247,6 +247,7 @@ export default function MissionPage() {
       userId={user?.id ?? null}
       isPreview={isDesignPreview}
       mapPath={mapPath}
+      lang={lang}
     />
   );
 }

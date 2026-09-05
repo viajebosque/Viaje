@@ -9,9 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import forestMap from '../assets/forest/forest-map.png';
 import MissionTokenReward from '../components/MissionTokenReward';
+import type { Lang } from '../i18n';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
 import { getMissionPanelImage } from '../lib/missionPanels';
 import { getMissionTokenImage } from '../lib/missionTokens';
+import { getMissionActivityVideoId } from '../lib/missionVideos';
 
 type GuidedAnswers = Record<string, string>;
 
@@ -24,11 +26,7 @@ type Backup = {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-const GUIDED_FLOW_VERSION = 2;
-
-const MISSION_ACTIVITY_VIDEOS: Partial<Record<number, string>> = {
-  1: 'b0-4whrjbLg',
-};
+const GUIDED_FLOW_VERSION = 3;
 
 type Props = {
   mission: Mission;
@@ -37,6 +35,7 @@ type Props = {
   userId: string | null;
   isPreview: boolean;
   mapPath: string;
+  lang: Lang;
 };
 
 function parseStructured(value: string): Record<string, unknown> | null {
@@ -115,6 +114,7 @@ export default function MissionGuided({
   userId,
   isPreview,
   mapPath,
+  lang,
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ export default function MissionGuided({
   const storageKey = mission.numero === 1
     ? `mission-one-guided:${userId ?? 'preview'}`
     : `mission-guided:${mission.id}:${userId ?? 'preview'}`;
-  const activityVideoId = MISSION_ACTIVITY_VIDEOS[mission.numero];
+  const activityVideoId = getMissionActivityVideoId(mission.numero, lang);
   const activityQuestionIndex = activityVideoId
     ? questions.findIndex((question) => question.categoria === 'actividad')
     : -1;
@@ -150,19 +150,30 @@ export default function MissionGuided({
           ])
         )
       : backendAnswers;
-    const backupStep =
+    const needsVideoStepMigration =
       backup &&
-      backup.flowVersion !== GUIDED_FLOW_VERSION &&
       hasActivityVideo &&
-      backup.step >= activityQuestionIndex
-        ? backup.step + 1
-        : backup?.step ?? 0;
+      backup.step >= activityQuestionIndex &&
+      (backup.flowVersion === undefined ||
+        (backup.flowVersion === 2 && mission.numero !== 1));
+    const backupStep = needsVideoStepMigration
+      ? backup.step + 1
+      : backup?.step ?? 0;
     return {
       answers: backup && (backup.pending || isPreview) ? backupAnswers : backendAnswers,
       step: Math.min(backupStep, Math.max(totalSteps - 1, 0)),
       hasPendingBackup: Boolean(backup?.pending),
     };
-  }, [activityQuestionIndex, hasActivityVideo, initialAnswers, isPreview, questions, storageKey, totalSteps]);
+  }, [
+    activityQuestionIndex,
+    hasActivityVideo,
+    initialAnswers,
+    isPreview,
+    mission.numero,
+    questions,
+    storageKey,
+    totalSteps,
+  ]);
 
   const [answers, setAnswers] = useState(initialState.answers);
   const [step, setStep] = useState(initialState.step);
