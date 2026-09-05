@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
@@ -136,6 +136,11 @@ export default function Forest() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
+  const mapViewportRef = useRef<HTMLDivElement>(null);
+  const missionNodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const didPositionMapRef = useRef(false);
+  const mapWasUsedRef = useRef(false);
+  const enteredOnMobileRef = useRef(window.matchMedia('(max-width: 760px)').matches);
   // Se guarda SOLO el numero. Titulo, resumen y isDone se resuelven al
   // renderizar (selectedInfo): guardarlos acá los congelaba en el momento del
   // click, así que quedaban vacíos si los datos todavía no habían llegado y en
@@ -171,6 +176,56 @@ export default function Forest() {
       active = false;
     };
   }, []);
+
+  // En teléfono, entra directamente a la última misión completada. Se hace una
+  // sola vez por visita al mapa y se cancela si la persona ya empezó a moverlo
+  // mientras terminaba de cargar su progreso.
+  useEffect(() => {
+    if (didPositionMapRef.current || mapWasUsedRef.current) return;
+    if (
+      !enteredOnMobileRef.current ||
+      !window.matchMedia('(max-width: 760px)').matches
+    ) {
+      didPositionMapRef.current = true;
+      return;
+    }
+    if (!isDesignPreview && (!completedLoaded || missions.length === 0)) return;
+
+    const rawTargetNumero = isDesignPreview
+      ? 1
+      : missions.reduce(
+          (lastNumero, mission) =>
+            completed.has(mission.id) ? Math.max(lastNumero, mission.numero) : lastNumero,
+          1
+        );
+    const targetNumero = Math.min(
+      missionPositions.length,
+      Math.max(1, rawTargetNumero)
+    );
+
+    const frame = window.requestAnimationFrame(() => {
+      if (didPositionMapRef.current || mapWasUsedRef.current) return;
+
+      const viewport = mapViewportRef.current;
+      const node = missionNodeRefs.current[targetNumero];
+      if (!viewport || !node) return;
+
+      const viewportRect = viewport.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+      const viewportCenter = viewportRect.left + viewport.clientLeft + viewport.clientWidth / 2;
+      const nodeCenter = nodeRect.left + nodeRect.width / 2;
+      const desiredScroll = viewport.scrollLeft + nodeCenter - viewportCenter;
+      const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+
+      viewport.scrollTo({
+        left: Math.min(maxScroll, Math.max(0, desiredScroll)),
+        behavior: 'auto',
+      });
+      didPositionMapRef.current = true;
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [completed, completedLoaded, isDesignPreview, missions]);
 
   useEffect(() => {
     if (selected === null && !showReminders) return;
@@ -220,6 +275,11 @@ export default function Forest() {
   async function handleSignOut() {
     await signOut();
     navigate('/', { replace: true });
+  }
+
+  function markMapAsUsed() {
+    mapWasUsedRef.current = true;
+    didPositionMapRef.current = true;
   }
 
   const selectedPanel =
@@ -323,10 +383,22 @@ export default function Forest() {
       </header>
 
       <div
+        ref={mapViewportRef}
         className="forest-map-viewport"
         role="region"
         aria-label={t('forest.title')}
         tabIndex={0}
+        onPointerDown={markMapAsUsed}
+        onWheel={markMapAsUsed}
+        onKeyDown={(event) => {
+          if (
+            ['ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(
+              event.key
+            )
+          ) {
+            markMapAsUsed();
+          }
+        }}
       >
         <div className="forest-map">
           <img src={forestMap} alt={t('forest.title')} draggable={false} />
@@ -344,6 +416,9 @@ export default function Forest() {
 
             return (
               <button
+                ref={(node) => {
+                  missionNodeRefs.current[n] = node;
+                }}
                 key={n}
                 className={`mission-node ${isDone ? 'done' : 'pending'} ${isNext ? 'next' : ''} ${closed ? 'locked' : ''}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
