@@ -33,6 +33,22 @@ const missionPositions = [
 ] as const;
 
 const reminderKeys = ['honesty', 'compassion', 'play', 'raft'] as const;
+const MISSION_DESCRIPTION_LIMIT = 180;
+
+function shortenMissionDescription(value: string) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  if (!normalized) return '';
+
+  const firstSentence = normalized.match(/^.*?[.!?](?=\s|$)/)?.[0];
+  if (firstSentence && firstSentence.length <= MISSION_DESCRIPTION_LIMIT) {
+    return firstSentence;
+  }
+  if (normalized.length <= MISSION_DESCRIPTION_LIMIT) return normalized;
+
+  const excerpt = normalized.slice(0, MISSION_DESCRIPTION_LIMIT + 1);
+  const lastWholeWord = excerpt.lastIndexOf(' ');
+  return `${excerpt.slice(0, lastWholeWord > 0 ? lastWholeWord : MISSION_DESCRIPTION_LIMIT).trim()}…`;
+}
 
 function ClockIcon() {
   return (
@@ -230,10 +246,12 @@ export default function Forest() {
               ? t('forest.missionOnePreviewTitle')
               : ''),
           descripcion:
-            descriptions.get(selected) ||
-            (isDesignPreview && selected === 1
-              ? t('forest.missionOnePreviewDescription')
-              : ''),
+            shortenMissionDescription(
+              descriptions.get(selected) ||
+                (isDesignPreview && selected === 1
+                  ? t('forest.missionOnePreviewDescription')
+                  : '')
+            ),
           isDone: selectedMission ? completed.has(selectedMission.id) : false,
           access: accessOf(selected),
           // Qué misión hay que terminar para abrir esta.
