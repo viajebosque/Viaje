@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { changeEmail, changePassword } from '../auth/auth';
+import { authErrorKey } from '../auth/authErrors';
 import { useLanguage } from '../i18n/useLanguage';
 import JourneyPageShell from './JourneyPageShell';
 import { getMissionTokenImage } from '../lib/missionTokens';
@@ -21,9 +22,11 @@ const MIN_PASSWORD = 6;
 
 // Cada bloque avisa por separado: guardar el nombre no debe borrar el mensaje
 // del correo. Se guarda la CLAVE i18n, no el texto, para que el mensaje cambie
-// si la persona mueve el switch de idioma.
+// si la persona mueve el switch de idioma. Los errores de Supabase también:
+// llegan en inglés y authErrorKey() los convierte en clave (ver 1.3 del
+// CLAUDE.md).
 type Block = 'name' | 'email' | 'password';
-type Feedback = { key: string; error?: boolean } | { raw: string; error: true };
+type Feedback = { key: string; error?: boolean };
 
 function ProfileEmblemIcon() {
   return (
@@ -158,7 +161,7 @@ export default function ProfilePage() {
       say(block, { key: 'profile.wrongPassword', error: true });
       return;
     }
-    say(block, { raw, error: true });
+    say(block, { key: authErrorKey(e), error: true });
   }
 
   async function saveName(e: FormEvent) {
@@ -221,7 +224,7 @@ export default function ProfilePage() {
   function Msg({ block }: { block: Block }) {
     const m = msg[block];
     if (!m) return null;
-    const text = 'raw' in m ? m.raw : t(m.key);
+    const text = t(m.key);
     return <p className={m.error ? 'auth-error' : 'auth-info'}>{text}</p>;
   }
 

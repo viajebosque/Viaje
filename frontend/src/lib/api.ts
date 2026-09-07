@@ -3,6 +3,21 @@ import { supabase } from './supabase';
 // URL base del backend (Railway). Ej: https://viaje-dev.up.railway.app
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Railway duerme el servicio (plan free, sleepApplication): la primera request
+// después de un rato inactivo tiene que levantar el contenedor y tarda varios
+// segundos. El panel de admin es lo único que usa el backend, así que se lo
+// despierta apenas se sabe que la persona es admin, mientras todavía está
+// mirando el mapa. Se dispara una sola vez por carga y no le importa fallar:
+// es un empujón, no un chequeo.
+let waking: Promise<void> | null = null;
+
+export function wakeBackend(): void {
+  if (waking || !API_URL) return;
+  waking = fetch(`${API_URL}/health`)
+    .then(() => undefined)
+    .catch(() => undefined);
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`);
   if (!res.ok) throw new Error(`API ${res.status}: ${path}`);

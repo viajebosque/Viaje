@@ -18,6 +18,7 @@ import {
   type MissionSummary,
 } from '../lib/missions';
 import { whatsappUrl } from '../lib/payment';
+import { wakeBackend } from '../lib/api';
 
 const missionPositions = [
   { left: 5.9, top: 55.2 },
@@ -124,6 +125,12 @@ export default function Forest() {
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  // Despierta el backend en cuanto se sabe que es admin: el panel lo va a
+  // necesitar y así no paga el arranque en frío al abrirlo.
+  useEffect(() => {
+    if (role === 'admin') wakeBackend();
+  }, [role]);
+
   const isDesignPreview =
     import.meta.env.DEV &&
     new URLSearchParams(window.location.search).get('preview') === '1';
