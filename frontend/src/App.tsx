@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './auth/AuthContext';
 import AuthPage from './pages/AuthPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import Forest from './pages/Forest';
 import MissionPage from './pages/MissionPage';
 import AdminPage from './pages/AdminPage';
@@ -27,6 +28,9 @@ export default function App() {
         path="/"
         element={session ? <Navigate to="/forest" replace /> : <AuthPage />}
       />
+      {/* Enlace del correo de recuperación. Pública a propósito: la sesión la
+          crea el propio enlace, y si venció hay que poder ver el aviso. */}
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/forest"
         element={

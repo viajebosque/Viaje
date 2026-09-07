@@ -39,17 +39,23 @@
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "passwordHelp": "La recuperación de contraseña estará disponible próximamente.",
     "processing": "Procesando…",
     "loginAction": "Iniciar sesión y entrar",
     "signupAction": "Crear mi cuenta",
     "google": "Continuar con Google",
     "legal": "Al continuar aceptas los términos y la política de privacidad.",
-    "signupDone": "Cuenta creada. Revisa tu correo si se pide confirmación, luego inicia sesión.",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "recoverWelcome": "Recupera tu contraseña",
+    "recoverSubtitle": "Escribe tu correo y te enviamos un enlace para crear una nueva.",
+    "recoverAction": "Enviarme el enlace",
+    "recoverBack": "← Volver a iniciar sesión",
+    "recoverSentTitle": "Revisa tu correo",
+    "recoverSentBody": "Si existe una cuenta con ese correo, te enviamos un enlace para crear una contraseña nueva. Busca el mensaje en tu bandeja de entrada y también en la carpeta de spam o correo no deseado. El enlace vence en una hora.",
+    "signupDoneTitle": "¡Cuenta creada! Confírmala desde tu correo",
+    "signupDoneBody": "Te enviamos un mensaje para confirmar tu cuenta. Búscalo en tu bandeja de entrada y también en la carpeta de spam o correo no deseado. Cuando lo confirmes, vuelve aquí e inicia sesión."
   },
   "forest": {
-    "title": "El Mapa del Bosque\u00a0🌲",
+    "title": "El Mapa del Bosque 🌲",
     "subtitle": "Elige una misión para comenzar.",
     "comingSoon": "Próximamente",
     "nextMission": "Tu siguiente misión",
@@ -275,5 +281,37 @@
       "rewardMeaning": "Representa el coraje de comenzar",
       "backToMap": "Volver al mapa"
     }
+  },
+  "authError": {
+    "invalidCredentials": "Correo o contraseña incorrectos. Revísalos e inténtalo de nuevo.",
+    "emailInvalid": "Ese correo no parece válido. Revisa que esté bien escrito.",
+    "emailNotConfirmed": "Todavía no confirmaste tu correo. Busca el mensaje en tu bandeja de entrada y en la carpeta de spam.",
+    "userAlreadyExists": "Ya existe una cuenta con ese correo. Inicia sesión o recupera tu contraseña.",
+    "weakPassword": "La contraseña es muy débil. Usa al menos 6 caracteres.",
+    "samePassword": "La contraseña nueva tiene que ser distinta a la anterior.",
+    "userNotFound": "No encontramos una cuenta con ese correo.",
+    "signupDisabled": "Por ahora no se pueden crear cuentas nuevas.",
+    "emailRateLimit": "Se enviaron demasiados correos seguidos. Espera unos minutos antes de pedir otro.",
+    "rateLimit": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar.",
+    "linkExpired": "Ese enlace ya venció o se usó. Pide uno nuevo.",
+    "network": "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+    "unknown": "Algo salió mal. Inténtalo de nuevo en un momento."
+  },
+  "reset": {
+    "title": "Crea tu contraseña nueva",
+    "subtitle": "Elige una contraseña que solo tú conozcas.",
+    "checking": "Validando el enlace…",
+    "newPassword": "Contraseña nueva",
+    "repeatPassword": "Repite la contraseña",
+    "hint": "Al menos {{min}} caracteres.",
+    "action": "Guardar mi contraseña",
+    "tooShort": "La contraseña debe tener al menos {{min}} caracteres.",
+    "mismatch": "Las dos contraseñas no coinciden.",
+    "doneTitle": "¡Listo! Tu contraseña quedó cambiada",
+    "doneBody": "Ya puedes entrar con tu contraseña nueva. Te dejamos la sesión abierta.",
+    "goToForest": "Entrar al bosque",
+    "invalidTitle": "Este enlace ya no sirve",
+    "invalidBody": "Los enlaces de recuperación vencen en una hora y se usan una sola vez. Vuelve al inicio y pide uno nuevo desde «¿Olvidaste tu contraseña?».",
+    "backToLogin": "Volver al inicio"
   }
 }

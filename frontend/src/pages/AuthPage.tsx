@@ -5,18 +5,34 @@ import {
   signInWithEmail,
   signUpWithEmail,
   signInWithGoogle,
+  sendPasswordReset,
 } from '../auth/auth';
+import { authErrorKey } from '../auth/authErrors';
 import forestBackground from '../assets/auth/forest-login-v5.png';
 import branchTop from '../assets/auth/branch-top.webp';
 import branchBottom from '../assets/auth/branch-bottom.webp';
 
-type Mode = 'login' | 'signup';
+// 'recover' no es otra pantalla: es la misma tarjeta con otros campos. Así la
+// persona no pierde de vista dónde está ni lo que ya había escrito.
+type Mode = 'login' | 'signup' | 'recover';
+
+// Los mensajes se guardan como CLAVE i18n, nunca como texto ya traducido: si
+// se mueve el switch ES/EN con el mensaje en pantalla, el mensaje cambia
+// también. Vale igual para los errores de Supabase (ver auth/authErrors.ts).
+type Notice = { titleKey: string; bodyKey: string };
 
 const EyeIcon = ({ crossed = false }: { crossed?: boolean }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M2.25 12s3.5-6 9.75-6 9.75 6 9.75 6-3.5 6-9.75 6S2.25 12 2.25 12Z" />
     <circle cx="12" cy="12" r="2.75" />
     {crossed && <path d="m4 4 16 16" />}
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="2.75" y="5" width="18.5" height="14" rx="2.5" />
+    <path d="m3.5 7.5 8.5 6 8.5-6" />
   </svg>
 );
 
@@ -36,49 +52,77 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(null);
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
   const isSignup = mode === 'signup';
+  const isRecover = mode === 'recover';
   const brandTitle = t('auth.title');
 
   function changeMode(nextMode: Mode) {
     setMode(nextMode);
-    setError(null);
-    setInfo(null);
+    setErrorKey(null);
+    setNotice(null);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError(null);
-    setInfo(null);
+    setErrorKey(null);
+    setNotice(null);
     setBusy(true);
     try {
-      if (isSignup) {
+      if (isRecover) {
+        await sendPasswordReset(email);
+        // A propósito no se dice si el correo existe o no: eso le diría a
+        // cualquiera qué cuentas hay registradas.
+        setNotice({
+          titleKey: 'auth.recoverSentTitle',
+          bodyKey: 'auth.recoverSentBody',
+        });
+      } else if (isSignup) {
         await signUpWithEmail(fullName, email, password);
-        setInfo(t('auth.signupDone'));
         setMode('login');
+        setNotice({
+          titleKey: 'auth.signupDoneTitle',
+          bodyKey: 'auth.signupDoneBody',
+        });
       } else {
         await signInWithEmail(email, password);
         navigate('/forest', { replace: true });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setErrorKey(authErrorKey(err));
     } finally {
       setBusy(false);
     }
   }
 
   async function handleGoogle() {
-    setError(null);
+    setErrorKey(null);
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setErrorKey(authErrorKey(err));
     }
   }
+
+  const headingTitle = isRecover
+    ? t('auth.recoverWelcome')
+    : isSignup
+      ? t('auth.signupWelcome')
+      : t('auth.welcome');
+  const headingSubtitle = isRecover
+    ? t('auth.recoverSubtitle')
+    : isSignup
+      ? t('auth.signupSubtitle')
+      : t('auth.subtitle');
+  const submitLabel = isRecover
+    ? t('auth.recoverAction')
+    : isSignup
+      ? t('auth.signupAction')
+      : t('auth.loginAction');
 
   return (
     <main
@@ -107,28 +151,42 @@ export default function AuthPage() {
 
           <div className="auth-card-content">
             <header className="auth-heading">
-              <h2>{isSignup ? t('auth.signupWelcome') : t('auth.welcome')}</h2>
-              <p>{isSignup ? t('auth.signupSubtitle') : t('auth.subtitle')}</p>
+              <h2>{headingTitle}</h2>
+              <p>{headingSubtitle}</p>
             </header>
 
-            <div className="auth-tabs" role="group" aria-label={t('auth.accessMode')}>
-              <button
-                type="button"
-                aria-pressed={!isSignup}
-                className={!isSignup ? 'active' : ''}
-                onClick={() => changeMode('login')}
-              >
-                {t('auth.login')}
-              </button>
-              <button
-                type="button"
-                aria-pressed={isSignup}
-                className={isSignup ? 'active' : ''}
-                onClick={() => changeMode('signup')}
-              >
-                {t('auth.signup')}
-              </button>
-            </div>
+            {!isRecover && (
+              <div className="auth-tabs" role="group" aria-label={t('auth.accessMode')}>
+                <button
+                  type="button"
+                  aria-pressed={!isSignup}
+                  className={!isSignup ? 'active' : ''}
+                  onClick={() => changeMode('login')}
+                >
+                  {t('auth.login')}
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={isSignup}
+                  className={isSignup ? 'active' : ''}
+                  onClick={() => changeMode('signup')}
+                >
+                  {t('auth.signup')}
+                </button>
+              </div>
+            )}
+
+            {notice && (
+              <div className="auth-notice" role="status">
+                <span className="auth-notice-icon" aria-hidden="true">
+                  <MailIcon />
+                </span>
+                <div>
+                  <strong>{t(notice.titleKey)}</strong>
+                  <p>{t(notice.bodyKey)}</p>
+                </div>
+              </div>
+            )}
 
             <div className="auth-fields">
               {isSignup && (
@@ -157,55 +215,64 @@ export default function AuthPage() {
                 />
               </label>
 
-              <label className="auth-field">
-                <span>{t('auth.password')}</span>
-                <span className="auth-password-input">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    minLength={6}
-                    autoComplete={isSignup ? 'new-password' : 'current-password'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((shown) => !shown)}
-                    aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                    aria-pressed={showPassword}
-                  >
-                    <EyeIcon crossed={showPassword} />
-                  </button>
-                </span>
-              </label>
+              {!isRecover && (
+                <label className="auth-field">
+                  <span>{t('auth.password')}</span>
+                  <span className="auth-password-input">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                      autoComplete={isSignup ? 'new-password' : 'current-password'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((shown) => !shown)}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                      aria-pressed={showPassword}
+                    >
+                      <EyeIcon crossed={showPassword} />
+                    </button>
+                  </span>
+                </label>
+              )}
             </div>
 
-            {!isSignup && (
-              <button type="button" className="auth-forgot" onClick={() => setInfo(t('auth.passwordHelp'))}>
+            {mode === 'login' && (
+              <button type="button" className="auth-forgot" onClick={() => changeMode('recover')}>
                 {t('auth.forgotPassword')}
               </button>
             )}
 
-            {error && <p className="auth-message auth-error" role="alert">{error}</p>}
-            {info && <p className="auth-message auth-info" role="status">{info}</p>}
+            {errorKey && <p className="auth-message auth-error" role="alert">{t(errorKey)}</p>}
 
             <button className="auth-primary" type="submit" disabled={busy}>
-              {busy
-                ? t('auth.processing')
-                : isSignup
-                  ? t('auth.signupAction')
-                  : t('auth.loginAction')}
+              {busy ? t('auth.processing') : submitLabel}
             </button>
 
-            <div className="auth-divider"><span>{t('common.or')}</span></div>
+            {isRecover ? (
+              <button
+                type="button"
+                className="auth-secondary-link"
+                onClick={() => changeMode('login')}
+              >
+                {t('auth.recoverBack')}
+              </button>
+            ) : (
+              <>
+                <div className="auth-divider"><span>{t('common.or')}</span></div>
 
-            <button className="auth-google" type="button" onClick={handleGoogle} disabled={busy}>
-              <GoogleIcon />
-              <span>{t('auth.google')}</span>
-            </button>
+                <button className="auth-google" type="button" onClick={handleGoogle} disabled={busy}>
+                  <GoogleIcon />
+                  <span>{t('auth.google')}</span>
+                </button>
 
-            <p className="auth-legal">{t('auth.legal')}</p>
+                <p className="auth-legal">{t('auth.legal')}</p>
+              </>
+            )}
           </div>
         </form>
       </section>

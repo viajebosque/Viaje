@@ -1866,9 +1866,13 @@ button, input { font: inherit; }
   border-radius: clamp(2.2rem, 3.2vw, 4.4rem);
   padding: clamp(2.4rem, 5vh, 4.6rem) clamp(2rem, 4.5vw, 4.7rem) clamp(2rem, 4vh, 3.2rem);
   box-shadow: 0 20px 60px rgba(35,54,29,.19), inset 0 0 0 5px rgba(255,255,255,.35);
-  backdrop-filter: blur(10px); display: block;
+  backdrop-filter: blur(10px);
+  /* Columna flexible + max-height: si la tarjeta se llena (aviso de cuenta
+     creada, error y formulario a la vez), el contenido scrollea por dentro en
+     vez de desbordar la tarjeta, que tiene overflow: hidden. */
+  display: flex; flex-direction: column; max-height: calc(100svh - 4rem);
 }
-.auth-card-content { position: relative; z-index: 2; display: flex; flex-direction: column; min-height: 100%; }
+.auth-card-content { position: relative; z-index: 2; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .auth-branch { position: absolute; z-index: 1; width: clamp(7.4rem, 11vw, 11.5rem); pointer-events: none; opacity: .95; }
 .auth-branch-top { top: -1rem; left: -1rem; }
 .auth-branch-bottom { right: -.7rem; bottom: -1rem; }
@@ -1938,6 +1942,64 @@ button, input { font: inherit; }
 .auth-error { margin-bottom: .75rem; color: #8c241e; background: #f9e8e3; }
 .auth-info { margin-bottom: .75rem; color: #245a34; background: #e6f1e5; }
 .auth-legal { max-width: 30rem; margin: 1.3rem auto 0; color: #72766e; text-align: center; font-size: .75rem; line-height: 1.4; }
+
+/* Aire entre el ultimo input y el boton. En "crear cuenta" no existe el enlace
+   de "olvidaste tu contrasena", asi que sin esto el boton quedaba pegado al
+   campo de contrasena. */
+.auth-fields + .auth-primary,
+.auth-fields + .auth-message,
+.auth-fields + .auth-hint { margin-top: 1.35rem; }
+.auth-hint + .auth-primary { margin-top: .55rem; }
+.auth-hint { margin: 0; color: #6d7268; font-size: .78rem; line-height: 1.4; }
+
+/* Aviso destacado: cuenta creada, correo de recuperacion enviado, enlace
+   vencido. Es lo primero que tiene que ver la persona, por eso pesa mas que
+   .auth-message. */
+.auth-notice {
+  display: flex; align-items: flex-start; gap: .85rem;
+  margin: 0 0 1.2rem; padding: .95rem 1.05rem;
+  border: 1.5px solid #2f7650; border-left-width: 6px; border-radius: 12px;
+  background: linear-gradient(180deg, #f3fbef, #e2f2e1);
+  color: #17492f;
+  box-shadow: 0 8px 22px rgba(21, 72, 45, .16);
+  animation: auth-notice-in 420ms ease-out both;
+}
+.auth-notice strong {
+  display: block; margin-bottom: .3rem;
+  font-size: 1.02rem; font-weight: 800; line-height: 1.25;
+}
+.auth-notice p { margin: 0; font-size: .86rem; line-height: 1.45; }
+.auth-notice-icon {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 2.35rem; height: 2.35rem; border-radius: 50%;
+  background: #165532; color: #fffdf6;
+}
+.auth-notice-icon svg {
+  width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.auth-notice--warn {
+  border-color: #a8621d; background: linear-gradient(180deg, #fdf4e8, #f7e6d2); color: #7a3d10;
+}
+.auth-notice--warn .auth-notice-icon { background: #a8621d; }
+@keyframes auth-notice-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Volver a iniciar sesion desde el paso de recuperacion. */
+.auth-secondary-link {
+  margin: .9rem auto 0; padding: 0; border: 0; background: transparent;
+  color: #214a36; font-size: .9rem; font-weight: 600; cursor: pointer;
+  border-bottom: 1px solid currentColor;
+}
+
+/* /reset-password: misma tarjeta, sin la columna del titulo. */
+.auth-wrap--single { grid-template-columns: minmax(0, 1fr); }
+.auth-wrap--single .auth-panel {
+  padding: clamp(4.8rem, 8vh, 7rem) clamp(1.5rem, 4vw, 5rem) clamp(2rem, 4vh, 3rem);
+}
+.auth-wrap--single .auth-card { max-width: 560px; min-height: min(620px, calc(100svh - 8rem)); }
 
 @media (max-width: 1080px) {
   .auth-wrap { grid-template-columns: minmax(0,.85fr) minmax(430px,1.15fr); }
@@ -2049,6 +2111,7 @@ button, input { font: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   .auth-primary, .auth-google, .auth-tabs button, .auth-field input { transition: none; }
+  .auth-notice { animation: none; }
 }
 
 /* ---------- Mision 1: formulario guiado ---------- */

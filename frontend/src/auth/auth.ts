@@ -66,3 +66,26 @@ export async function signInWithGoogle() {
   });
   if (error) throw error;
 }
+
+// Pedir el correo de recuperación de contraseña.
+//
+// El enlace vuelve a /reset-password (ver ResetPasswordPage). Esa URL tiene que
+// estar declarada en Supabase → Authentication → URL Configuration, o el correo
+// llega apuntando al Site URL y la persona nunca ve el formulario.
+export async function sendPasswordReset(email: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+  if (error) throw error;
+}
+
+// Fijar una contraseña nueva cuando ya se entró por el enlace del correo.
+//
+// A diferencia de changePassword(), acá NO se pide la contraseña anterior: la
+// persona llegó justamente porque no la recuerda. Lo que autoriza el cambio es
+// la sesión de recuperación que creó el enlace, que Supabase da por buena una
+// sola vez y por tiempo limitado.
+export async function setNewPassword(newPassword: string) {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw error;
+}

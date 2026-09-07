@@ -39,17 +39,23 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "forgotPassword": "Forgot your password?",
-    "passwordHelp": "Password recovery will be available soon.",
     "processing": "Processing…",
     "loginAction": "Sign in and enter",
     "signupAction": "Create my account",
     "google": "Continue with Google",
     "legal": "By continuing, you accept the terms and privacy policy.",
-    "signupDone": "Account created. Check your email if confirmation is required, then sign in.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "recoverWelcome": "Recover your password",
+    "recoverSubtitle": "Enter your email and we will send you a link to create a new one.",
+    "recoverAction": "Send me the link",
+    "recoverBack": "← Back to sign in",
+    "recoverSentTitle": "Check your email",
+    "recoverSentBody": "If an account exists for that email, we sent a link to create a new password. Look for the message in your inbox and also in your spam or junk folder. The link expires in one hour.",
+    "signupDoneTitle": "Account created! Confirm it from your email",
+    "signupDoneBody": "We sent you a message to confirm your account. Look for it in your inbox and also in your spam or junk folder. Once you confirm it, come back here and sign in."
   },
   "forest": {
-    "title": "The Forest Map\u00a0🌲",
+    "title": "The Forest Map 🌲",
     "subtitle": "Choose a mission to begin.",
     "comingSoon": "Coming soon",
     "nextMission": "Your next mission",
@@ -275,5 +281,37 @@
       "rewardMeaning": "It represents the courage to begin",
       "backToMap": "Back to map"
     }
+  },
+  "authError": {
+    "invalidCredentials": "Wrong email or password. Check them and try again.",
+    "emailInvalid": "That email does not look valid. Check that it is spelled correctly.",
+    "emailNotConfirmed": "You have not confirmed your email yet. Look for the message in your inbox and in your spam folder.",
+    "userAlreadyExists": "An account already exists for that email. Sign in or recover your password.",
+    "weakPassword": "That password is too weak. Use at least 6 characters.",
+    "samePassword": "The new password must be different from the previous one.",
+    "userNotFound": "We could not find an account with that email.",
+    "signupDisabled": "New accounts cannot be created right now.",
+    "emailRateLimit": "Too many emails were sent in a row. Wait a few minutes before asking for another one.",
+    "rateLimit": "Too many attempts in a row. Wait a few minutes and try again.",
+    "linkExpired": "That link has expired or was already used. Request a new one.",
+    "network": "We could not reach the server. Check your connection and try again.",
+    "unknown": "Something went wrong. Please try again in a moment."
+  },
+  "reset": {
+    "title": "Create your new password",
+    "subtitle": "Choose a password only you know.",
+    "checking": "Validating the link…",
+    "newPassword": "New password",
+    "repeatPassword": "Repeat the password",
+    "hint": "At least {{min}} characters.",
+    "action": "Save my password",
+    "tooShort": "The password must be at least {{min}} characters long.",
+    "mismatch": "The two passwords do not match.",
+    "doneTitle": "Done! Your password has been changed",
+    "doneBody": "You can now sign in with your new password. We left your session open.",
+    "goToForest": "Enter the forest",
+    "invalidTitle": "This link no longer works",
+    "invalidBody": "Recovery links expire after one hour and can be used only once. Go back to the start and request a new one from \"Forgot your password?\".",
+    "backToLogin": "Back to the start"
   }
 }
