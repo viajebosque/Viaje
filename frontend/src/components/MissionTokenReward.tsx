@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
 
 type Props = {
   src: string;
@@ -7,6 +8,7 @@ type Props = {
 };
 
 const STAR_COUNT = 10;
+const GOLD_COLORS = ['#D4A329', '#F4C95D', '#FFE599', '#FFF4CC', '#B8860B'];
 
 export default function MissionTokenReward({ src, alt, large = false }: Props) {
   const rewardRef = useRef<HTMLDivElement>(null);
@@ -18,17 +20,49 @@ export default function MissionTokenReward({ src, alt, large = false }: Props) {
     if (!reward || !tokenImage) return;
 
     let cancelled = false;
+    let imageReady = false;
+    let visible = false;
+    let started = false;
+    let canvas: HTMLCanvasElement | undefined;
+    let celebration: ReturnType<typeof confetti.create> | undefined;
+    let burstTimer: number | undefined;
 
-    const replayAnimation = () => {
+    const startAnimation = () => {
+      if (cancelled || started || !imageReady || !visible || document.visibilityState !== 'visible') return;
+      started = true;
+      reward.classList.remove('mission-token-reveal--pending');
       reward.classList.remove('mission-token-reveal--animate');
       void reward.offsetWidth;
       reward.classList.add('mission-token-reveal--animate');
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // A viewport canvas lets particles travel beyond the reward card without clipping.
+      canvas = document.createElement('canvas');
+      canvas.className = 'mission-token-confetti';
+      canvas.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(canvas);
+      celebration = confetti.create(canvas, { resize: true, disableForReducedMotion: true });
+
+      const burst = () => {
+        const rect = reward.getBoundingClientRect();
+        if (document.visibilityState !== 'visible' || rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+        void celebration?.({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: GOLD_COLORS,
+        });
+      };
+
+      // Fire the Basic Cannon once, in sync with the token's entrance.
+      burstTimer = window.setTimeout(burst, 420);
     };
 
     const startFirstAnimation = () => {
       if (cancelled) return;
-      reward.classList.remove('mission-token-reveal--pending');
-      replayAnimation();
+      imageReady = true;
+      startAnimation();
     };
 
     if (tokenImage.complete) {
@@ -38,35 +72,22 @@ export default function MissionTokenReward({ src, alt, large = false }: Props) {
       tokenImage.addEventListener('error', startFirstAnimation, { once: true });
     }
 
-    let hasObserved = false;
-    let wasVisible = false;
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry) return;
-
-      if (!hasObserved) {
-        hasObserved = true;
-        wasVisible = entry.isIntersecting;
-        return;
-      }
-
-      if (entry.isIntersecting && !wasVisible) replayAnimation();
-      wasVisible = entry.isIntersecting;
+      visible = entry.isIntersecting && entry.intersectionRatio >= 0.35;
+      startAnimation();
     }, { threshold: 0.35 });
 
-    const replayWhenTabReturns = () => {
-      if (document.visibilityState !== 'visible') return;
-      const rect = reward.getBoundingClientRect();
-      const isOnScreen = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (isOnScreen) replayAnimation();
-    };
-
     observer.observe(reward);
-    document.addEventListener('visibilitychange', replayWhenTabReturns);
+    document.addEventListener('visibilitychange', startAnimation);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(burstTimer);
+      celebration?.reset();
+      canvas?.remove();
       observer.disconnect();
-      document.removeEventListener('visibilitychange', replayWhenTabReturns);
+      document.removeEventListener('visibilitychange', startAnimation);
       tokenImage.removeEventListener('load', startFirstAnimation);
       tokenImage.removeEventListener('error', startFirstAnimation);
     };

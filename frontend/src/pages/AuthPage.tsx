@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,6 +8,7 @@ import {
   sendPasswordReset,
 } from '../auth/auth';
 import { authErrorKey } from '../auth/authErrors';
+import AuthIntroduction from '../components/AuthIntroduction';
 import forestBackground from '../assets/auth/forest-login-v5.png';
 import branchTop from '../assets/auth/branch-top.webp';
 import branchBottom from '../assets/auth/branch-bottom.webp';
@@ -47,6 +48,8 @@ const GoogleIcon = () => (
 
 export default function AuthPage() {
   const { t } = useTranslation();
+  const [introComplete, setIntroComplete] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [mode, setMode] = useState<Mode>('login');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,6 +63,10 @@ export default function AuthPage() {
   const isSignup = mode === 'signup';
   const isRecover = mode === 'recover';
   const brandTitle = t('auth.title');
+
+  useEffect(() => {
+    if (introComplete) headingRef.current?.focus({ preventScroll: true });
+  }, [introComplete]);
 
   function changeMode(nextMode: Mode) {
     setMode(nextMode);
@@ -145,13 +152,16 @@ export default function AuthPage() {
       </section>
 
       <section className="auth-panel" aria-label={t('auth.accessArea')}>
-        <form className="auth-card" onSubmit={handleSubmit}>
+        <div className="auth-card">
           <img className="auth-branch auth-branch-top" src={branchTop} alt="" aria-hidden="true" />
           <img className="auth-branch auth-branch-bottom" src={branchBottom} alt="" aria-hidden="true" />
 
-          <div className="auth-card-content">
+          {!introComplete ? (
+            <AuthIntroduction onContinue={() => setIntroComplete(true)} />
+          ) : (
+          <form className="auth-card-content" onSubmit={handleSubmit}>
             <header className="auth-heading">
-              <h2>{headingTitle}</h2>
+              <h2 ref={headingRef} tabIndex={-1}>{headingTitle}</h2>
               <p>{headingSubtitle}</p>
             </header>
 
@@ -273,8 +283,9 @@ export default function AuthPage() {
                 <p className="auth-legal">{t('auth.legal')}</p>
               </>
             )}
-          </div>
-        </form>
+          </form>
+          )}
+        </div>
       </section>
     </main>
   );

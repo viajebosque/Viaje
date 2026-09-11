@@ -19,11 +19,33 @@
     "close": "Cerrar"
   },
   "auth": {
-    "title": "Un Viaje por el Bosque",
-    "brandLineOne": "Un espacio para caminar a tu ritmo, recordar y transformar.",
+    "intro": {
+      "stepsLabel": "Antes de entrar al Bosque",
+      "steps": { "video": "Introducción", "about": "El viaje", "access": "Acceso" },
+      "title": "El Bosque te da la bienvenida",
+      "subtitle": "Antes de comenzar, descubre el viaje que te espera.",
+      "videoTitle": "Introducción a Tu viaje de Transformación por el Bosque en español",
+      "loading": "Cargando el video…",
+      "watchToContinue": "Reproduce el video hasta el final para continuar.",
+      "videoComplete": "Ya puedes dar el siguiente paso.",
+      "videoError": "No pudimos reproducir el video. Revisa tu conexión y vuelve a intentarlo.",
+      "retry": "Volver a cargar el video",
+      "continue": "Continuar",
+      "aboutTitle": "¿Quién Debería Realizar Este Viaje?",
+      "paragraphs": {
+        "purpose": "Este viaje es para quienes desean transformar la confusión en claridad, para quienes sienten que repiten patrones y están listos para mirarse hacia adentro y cambiar — o romper — rutinas que ya no les sirven. Si llevas dentro un poco de responsabilidad, curiosidad, honestidad, constancia y un deseo genuino de encontrar tu propósito, el Bosque te está llamando.",
+        "missions": "También es para quienes simplemente quieren conocerse mejor, descubrir algo que no sabían que vivía dentro. A lo largo de 9 misiones recorrerás distintos paisajes del Bosque, y con cada misión ganarás un token: un pequeño artefacto de crecimiento que se convertirá en parte de la balsa que te llevará a tu próximo capítulo.",
+        "presence": "Este viaje no pide perfección. Pide presencia y honestidad contigo mismo. Algunos pasos serán ligeros; otros se sentirán como caminar en barro. Ambos importan. Ambos transforman. El Bosque se abre para quienes están dispuestos.",
+        "calling": "Si sientes, aunque sea un pequeño llamado, el Bosque ya está esperando."
+      },
+      "enter": "Continuar al inicio de sesión",
+      "back": "← Volver al video"
+    },
+    "title": "Tu viaje de Transformación por el Bosque",
+    "brandLineOne": "Un espacio para mirar hacia adentro y renacer.",
     "brandLineTwo": "Tu recorrido comienza aquí.",
     "guideAlt": "El guía luminoso del bosque te da la bienvenida",
-    "accessArea": "Acceso a Un Viaje por el Bosque",
+    "accessArea": "Acceso a Tu viaje de Transformación por el Bosque",
     "welcome": "Bienvenido/a",
     "subtitle": "Ingresa para continuar tu recorrido.",
     "signupWelcome": "Comienza tu viaje",

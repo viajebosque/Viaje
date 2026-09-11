@@ -19,11 +19,33 @@
     "close": "Close"
   },
   "auth": {
-    "title": "A Journey Through the Forest",
-    "brandLineOne": "A space to walk at your own pace, remember and transform.",
+    "intro": {
+      "stepsLabel": "Before entering the Forest",
+      "steps": { "video": "Introduction", "about": "The journey", "access": "Access" },
+      "title": "The Forest welcomes you",
+      "subtitle": "Before you begin, discover the journey that awaits you.",
+      "videoTitle": "Introduction to Your Forest Transformation Journey in English",
+      "loading": "Loading the video…",
+      "watchToContinue": "Watch the video to the end to continue.",
+      "videoComplete": "You are ready to take the next step.",
+      "videoError": "We couldn't play the video. Check your connection and try again.",
+      "retry": "Reload the video",
+      "continue": "Continue",
+      "aboutTitle": "Who Should Take This Journey?",
+      "paragraphs": {
+        "purpose": "This journey is for those who want to turn confusion into clarity, for those who feel they keep repeating patterns and are ready to look inward and change — or break — routines that no longer serve them. If you carry a little responsibility, curiosity, honesty, perseverance, and a genuine desire to find your purpose, the Forest is calling you.",
+        "missions": "It is also for those who simply want to know themselves better, to discover something they never knew lived within them. Across 9 missions, you will explore different landscapes of the Forest, and with each mission you will earn a token: a small artifact of growth that will become part of the raft that carries you into your next chapter.",
+        "presence": "This journey does not ask for perfection. It asks for presence and honesty with yourself. Some steps will feel light; others will feel like walking through mud. Both matter. Both transform you. The Forest opens to those who are willing.",
+        "calling": "If you feel even the faintest call, the Forest is already waiting."
+      },
+      "enter": "Continue to sign in",
+      "back": "← Back to the video"
+    },
+    "title": "Your Forest Transformation Journey",
+    "brandLineOne": "A space to look within and rise again.",
     "brandLineTwo": "Your journey begins here.",
     "guideAlt": "The forest's glowing guide welcomes you",
-    "accessArea": "Access A Journey Through the Forest",
+    "accessArea": "Access Your Forest Transformation Journey",
     "welcome": "Welcome",
     "subtitle": "Sign in to continue your journey.",
     "signupWelcome": "Begin your journey",

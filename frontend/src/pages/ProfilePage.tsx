@@ -245,6 +245,54 @@ export default function ProfilePage() {
       )}
     >
       <div className="profile-grid">
+        <section className="profile-card profile-card--amulets" aria-labelledby="profile-amulets-title">
+          <div className="profile-card-heading profile-amulets-heading">
+            <span className="profile-card-icon"><AmuletsIcon /></span>
+            <div>
+              <h2 id="profile-amulets-title">{t('profile.amuletsSection')}</h2>
+              <p className="profile-hint">{t('profile.amuletsIntro')}</p>
+            </div>
+            {!amuletsLoading && !amuletsError && (
+              <span className="profile-amulets-count">
+                {t('profile.amuletsCount', { count: amulets.length })}
+              </span>
+            )}
+          </div>
+
+          {amuletsLoading ? (
+            <p className="profile-amulets-state">{t('common.loading')}</p>
+          ) : amuletsError ? (
+            <p className="profile-amulets-state profile-amulets-state--error">
+              {t('profile.amuletsLoadError')}
+            </p>
+          ) : amulets.length === 0 ? (
+            <p className="profile-amulets-state">{t('profile.amuletsEmpty')}</p>
+          ) : (
+            <ul className="profile-amulets-grid">
+              {amulets.map((mission) => {
+                const image = getMissionTokenImage(mission.numero);
+                return (
+                  <li className="profile-amulet" key={mission.id}>
+                    <div className="profile-amulet-visual">
+                      <img
+                        src={image}
+                        alt={t('profile.amuletImageAlt', { numero: mission.numero })}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                      />
+                    </div>
+                    <p className="profile-amulet-mission">
+                      {t('profile.amuletMission', { numero: mission.numero })}
+                    </p>
+                    <p className="profile-amulet-title">{mission.titulo}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
         <form className="profile-card" onSubmit={saveName}>
           <div className="profile-card-heading">
             <span className="profile-card-icon"><ProfileSectionIcon kind="name" /></span>
@@ -335,54 +383,6 @@ export default function ProfilePage() {
             <p className="profile-hint profile-google-note">{t('profile.googleOnly')}</p>
           )}
         </form>
-
-        <section className="profile-card profile-card--amulets" aria-labelledby="profile-amulets-title">
-          <div className="profile-card-heading profile-amulets-heading">
-            <span className="profile-card-icon"><AmuletsIcon /></span>
-            <div>
-              <h2 id="profile-amulets-title">{t('profile.amuletsSection')}</h2>
-              <p className="profile-hint">{t('profile.amuletsIntro')}</p>
-            </div>
-            {!amuletsLoading && !amuletsError && (
-              <span className="profile-amulets-count">
-                {t('profile.amuletsCount', { count: amulets.length })}
-              </span>
-            )}
-          </div>
-
-          {amuletsLoading ? (
-            <p className="profile-amulets-state">{t('common.loading')}</p>
-          ) : amuletsError ? (
-            <p className="profile-amulets-state profile-amulets-state--error">
-              {t('profile.amuletsLoadError')}
-            </p>
-          ) : amulets.length === 0 ? (
-            <p className="profile-amulets-state">{t('profile.amuletsEmpty')}</p>
-          ) : (
-            <ul className="profile-amulets-grid">
-              {amulets.map((mission) => {
-                const image = getMissionTokenImage(mission.numero);
-                return (
-                  <li className="profile-amulet" key={mission.id}>
-                    <div className="profile-amulet-visual">
-                      <img
-                        src={image}
-                        alt={t('profile.amuletImageAlt', { numero: mission.numero })}
-                        loading="lazy"
-                        decoding="async"
-                        fetchPriority="low"
-                      />
-                    </div>
-                    <p className="profile-amulet-mission">
-                      {t('profile.amuletMission', { numero: mission.numero })}
-                    </p>
-                    <p className="profile-amulet-title">{mission.titulo}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
       </div>
 
       <button className="profile-signout" type="button" onClick={() => void signOut()}>
