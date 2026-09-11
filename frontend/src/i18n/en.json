@@ -26,8 +26,6 @@
       "subtitle": "Before you begin, discover the journey that awaits you.",
       "videoTitle": "Introduction to Your Forest Transformation Journey in English",
       "loading": "Loading the video…",
-      "watchToContinue": "Watch the video to the end to continue.",
-      "videoComplete": "You are ready to take the next step.",
       "videoError": "We couldn't play the video. Check your connection and try again.",
       "retry": "Reload the video",
       "continue": "Continue",
@@ -62,7 +60,7 @@
     "hidePassword": "Hide password",
     "forgotPassword": "Forgot your password?",
     "processing": "Processing…",
-    "loginAction": "Sign in and enter",
+    "loginAction": "Sign in",
     "signupAction": "Create my account",
     "google": "Continue with Google",
     "legal": "By continuing, you accept the terms and privacy policy.",
@@ -78,7 +76,7 @@
   },
   "forest": {
     "title": "The Forest Map 🌲",
-    "subtitle": "Choose a mission to begin.",
+    "subtitle": "Click on Mission 1 to begin.",
     "comingSoon": "Coming soon",
     "nextMission": "Your next mission",
     "modalTitle": "Mission {{numero}}",
@@ -109,7 +107,7 @@
     "paywallMessage": "Hi! I completed the open missions of the Journey Through the Forest, I would like to unlock the other missions",
     "paywallNode": "requires full access",
     "reminders": {
-      "open": "Open gentle reminders",
+      "open": "Privacy and Reminders",
       "eyebrow": "Before you continue",
       "title": "A Few Gentle Reminders",
       "intro": "This journey asks for neither haste nor perfection. Keep these words close as you make your way through the forest.",
@@ -133,9 +131,9 @@
       },
       "privacy": {
         "title": "A Note on Confidentiality",
-        "body": "You may write your reflections on the platform or on paper, if you prefer. Reflections saved on the platform are linked to your account and can only be viewed by you throughout your journey."
+        "body": "You may write your reflections on the platform or on paper, if you prefer. Reflections saved on the platform are linked to your account and can only be viewed by you throughout your journey. Your privacy is protected."
       },
-      "return": "Got it, return to the map"
+      "return": "The forest awaits. Back to the map."
     }
   },
   "profile": {

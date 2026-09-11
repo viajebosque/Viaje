@@ -26,8 +26,6 @@
       "subtitle": "Antes de comenzar, descubre el viaje que te espera.",
       "videoTitle": "Introducción a Tu viaje de Transformación por el Bosque en español",
       "loading": "Cargando el video…",
-      "watchToContinue": "Reproduce el video hasta el final para continuar.",
-      "videoComplete": "Ya puedes dar el siguiente paso.",
       "videoError": "No pudimos reproducir el video. Revisa tu conexión y vuelve a intentarlo.",
       "retry": "Volver a cargar el video",
       "continue": "Continuar",
@@ -62,7 +60,7 @@
     "hidePassword": "Ocultar contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "processing": "Procesando…",
-    "loginAction": "Iniciar sesión y entrar",
+    "loginAction": "Iniciar sesión",
     "signupAction": "Crear mi cuenta",
     "google": "Continuar con Google",
     "legal": "Al continuar aceptas los términos y la política de privacidad.",
@@ -78,7 +76,7 @@
   },
   "forest": {
     "title": "El Mapa del Bosque 🌲",
-    "subtitle": "Elige una misión para comenzar.",
+    "subtitle": "Clic en la Misión 1 para comenzar.",
     "comingSoon": "Próximamente",
     "nextMission": "Tu siguiente misión",
     "modalTitle": "Misión {{numero}}",
@@ -109,7 +107,7 @@
     "paywallMessage": "Hola! Completé las misiones abiertas del Viaje en el Bosque, quisiera desbloquear las otras misiones",
     "paywallNode": "requiere acceso completo",
     "reminders": {
-      "open": "Abrir recordatorios amables",
+      "open": "Privacidad y Recordatorios",
       "eyebrow": "Antes de continuar",
       "title": "Algunos Recordatorios Amables",
       "intro": "Este recorrido no exige prisa ni perfección. Guarda estas palabras cerca mientras atraviesas el bosque.",
@@ -133,9 +131,9 @@
       },
       "privacy": {
         "title": "Una Nota sobre Confidencialidad",
-        "body": "Puedes escribir tus reflexiones en la plataforma o en papel si lo prefieres. Las reflexiones guardadas en la plataforma quedan asociadas a tu cuenta y solo tú puedes consultarlas durante tu recorrido."
+        "body": "Puedes escribir tus reflexiones en la plataforma o en papel si lo prefieres. Las reflexiones guardadas en la plataforma quedan asociadas a tu cuenta y solo tú puedes consultarlas durante tu recorrido. Tu privacidad está protegida."
       },
-      "return": "Entendido, volver al mapa"
+      "return": "El bosque espera. Volver al mapa."
     }
   },
   "profile": {

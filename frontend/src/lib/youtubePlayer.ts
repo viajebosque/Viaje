@@ -3,14 +3,12 @@ type YouTubePlayer = { destroy: () => void };
 type PlayerOptions = {
   events: {
     onReady: () => void;
-    onStateChange: (event: { data: number }) => void;
     onError: () => void;
   };
 };
 
 type YouTubeAPI = {
   Player: new (element: HTMLIFrameElement, options: PlayerOptions) => YouTubePlayer;
-  PlayerState: { ENDED: number };
 };
 
 const youtubeWindow = window as Window & {

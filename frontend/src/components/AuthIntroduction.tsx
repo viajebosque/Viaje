@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { currentLang, type Lang } from '../i18n';
 import { loadYouTubePlayer } from '../lib/youtubePlayer';
@@ -8,7 +8,7 @@ const INTRO_VIDEOS: Record<Lang, string> = {
   en: 'M0qIKmD4vXw',
 };
 
-function IntroductionVideo({ lang, onComplete }: { lang: Lang; onComplete: () => void }) {
+function IntroductionVideo({ lang }: { lang: Lang }) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -51,9 +51,6 @@ function IntroductionVideo({ lang, onComplete }: { lang: Lang; onComplete: () =>
             window.clearTimeout(readyTimeout);
             if (!cancelled) setStatus('ready');
           },
-          onStateChange: ({ data }) => {
-            if (!cancelled && data === api.PlayerState.ENDED) onComplete();
-          },
           onError: fail,
         },
       });
@@ -67,7 +64,7 @@ function IntroductionVideo({ lang, onComplete }: { lang: Lang; onComplete: () =>
       player?.destroy();
       container.replaceChildren();
     };
-  }, [attempt, lang, onComplete, t]);
+  }, [attempt, lang, t]);
 
   return (
     <>
@@ -89,10 +86,8 @@ export default function AuthIntroduction({ onContinue }: { onContinue: () => voi
   const { t } = useTranslation();
   const lang = currentLang();
   const [step, setStep] = useState<'video' | 'about'>('video');
-  const [watched, setWatched] = useState<Partial<Record<Lang, boolean>>>({});
   const headingRef = useRef<HTMLHeadingElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const completeVideo = useCallback(() => setWatched((value) => ({ ...value, [lang]: true })), [lang]);
 
   useEffect(() => {
     if (contentRef.current) contentRef.current.scrollTop = 0;
@@ -118,15 +113,10 @@ export default function AuthIntroduction({ onContinue }: { onContinue: () => voi
 
       {step === 'video' ? (
         <>
-          <IntroductionVideo key={lang} lang={lang} onComplete={completeVideo} />
-          <p id="auth-video-progress" className="auth-intro-status" role="status">
-            {t(watched[lang] ? 'auth.intro.videoComplete' : 'auth.intro.watchToContinue')}
-          </p>
+          <IntroductionVideo key={lang} lang={lang} />
           <button
             className="auth-primary"
             type="button"
-            disabled={!watched[lang]}
-            aria-describedby="auth-video-progress"
             onClick={() => setStep('about')}
           >
             {t('auth.intro.continue')}

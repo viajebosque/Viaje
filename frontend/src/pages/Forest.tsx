@@ -350,7 +350,8 @@ export default function Forest() {
                 setShowReminders(true);
               }}
             >
-              <span aria-hidden="true">?</span>
+              <span className="forest-help-icon" aria-hidden="true">?</span>
+              <span className="forest-action-label">{t('forest.reminders.open')}</span>
             </button>
             <button
               className="forest-action-button"
