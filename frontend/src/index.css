@@ -737,26 +737,22 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   line-height: 1.12;
 }
 .mission-entry-description {
-  display: -webkit-box;
+  display: block;
   flex: 0 0 auto;
   max-width: 100%;
-  margin: clamp(0.45rem, 1.15vw, 1rem) 0 0;
-  overflow: hidden;
+  margin: clamp(1rem, 2vw, 1.8rem) 0 0;
   color: #203927;
-  font-size: clamp(0.86rem, 1.2vw, 1.24rem);
+  font-size: clamp(1.05rem, 1.55vw, 1.6rem);
   font-weight: 500;
   letter-spacing: 0.005em;
   line-height: 1.5;
   overflow-wrap: anywhere;
   white-space: pre-line;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 .mission-entry-description:lang(en) {
   margin-bottom: clamp(0.45rem, 0.8vw, 0.8rem);
-  font-size: clamp(0.84rem, 1.12vw, 1.16rem);
+  font-size: clamp(1rem, 1.45vw, 1.5rem);
   line-height: 1.48;
-  -webkit-line-clamp: 3;
 }
 .mission-entry-facts {
   display: grid;
@@ -764,20 +760,18 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(0.35rem, 0.85vw, 0.9rem);
   margin-top: auto;
+  padding-top: clamp(0.8rem, 1.2vw, 1.2rem);
 }
 .mission-entry-fact {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.25rem, 0.6vw, 0.65rem);
+  gap: clamp(0.45rem, 0.8vw, 0.8rem);
   min-width: 0;
   min-height: clamp(2.7rem, 5vw, 4.6rem);
   padding: 0.55rem clamp(0.35rem, 0.8vw, 0.8rem);
-  border: 1px solid rgba(81, 100, 57, 0.36);
-  border-radius: clamp(0.55rem, 1vw, 0.9rem);
-  background: rgba(247, 241, 218, 0.42);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.4);
-  color: #294b34;
+  color: #315d3e;
   font-size: clamp(0.62rem, 1.05vw, 1.12rem);
   line-height: 1.15;
   text-align: center;
@@ -788,7 +782,8 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   overflow-wrap: anywhere;
 }
 .mission-entry-fact svg {
-  width: clamp(1.2rem, 2.1vw, 2.1rem);
+  width: clamp(2.2rem, 3.6vw, 3.5rem);
+  height: clamp(2.2rem, 3.6vw, 3.5rem);
   flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
@@ -796,7 +791,6 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   stroke-linejoin: round;
   stroke-width: 1.7;
 }
-.mission-entry-fact:nth-child(3) svg { fill: currentColor; stroke: none; }
 .mission-entry-note {
   display: flex;
   flex: 0 0 auto;
@@ -821,6 +815,9 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.4;
+}
+.mission-entry-note span {
+  white-space: pre-line;
 }
 .mission-entry-actions {
   display: flex;
@@ -939,7 +936,7 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
   }
 
   .mission-entry-modal--long-title .mission-entry-description {
-    margin-top: clamp(0.35rem, 0.8vw, 0.7rem);
+    margin-top: clamp(1rem, 2vw, 1.8rem);
   }
 }
 
@@ -976,10 +973,9 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
     line-height: 1.14;
   }
   .mission-entry-description {
-    margin-top: 0.7rem;
-    font-size: 0.92rem;
+    margin-top: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1.45;
-    -webkit-line-clamp: 3;
   }
   .mission-entry-mobile-visual {
     display: block;
@@ -1005,19 +1001,18 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
   }
   .mission-entry-description:lang(en) {
     margin-bottom: 0.5rem;
-    font-size: 0.84rem;
+    font-size: 1.05rem;
     line-height: 1.4;
-    -webkit-line-clamp: 3;
   }
-  .mission-entry-facts { gap: 0.35rem; margin-top: 1rem; }
+  .mission-entry-facts { gap: 0.35rem; margin-top: 1rem; padding-top: 0; }
   .mission-entry-fact {
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.5rem;
     min-height: 4.2rem;
     padding: 0.45rem 0.25rem;
-    font-size: 0.68rem;
+    font-size: 0.78rem;
   }
-  .mission-entry-fact svg { width: 1.45rem; }
+  .mission-entry-fact svg { width: 2.5rem; height: 2.5rem; }
   .mission-entry-note { min-height: 4rem; margin-top: 0.6rem; padding: 0.5rem 0.7rem; font-size: 0.75rem; }
   .mission-entry-note svg { width: 2rem; }
   .mission-entry-actions { margin-top: 0.7rem; }
@@ -1033,8 +1028,8 @@ a.modal-primary { display: block; text-align: center; text-decoration: none; }
 
 @media (max-width: 380px) {
   .mission-entry-content { padding-inline: 0.55rem; }
-  .mission-entry-description { font-size: 0.78rem; }
-  .mission-entry-description:lang(en) { font-size: 0.74rem; }
+  .mission-entry-description { font-size: 1rem; }
+  .mission-entry-description:lang(en) { font-size: 1rem; }
 }
 
 /* ---------- Páginas de perfil y administración ---------- */
@@ -2685,8 +2680,13 @@ body:has(.guided-mission) .platform-lang-toggle { display: none; }
   isolation: isolate;
   display: block;
   min-width: 0;
+  min-height: 0;
   padding: 76px 48px 48px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d4c782 #173f2d;
+  overscroll-behavior: contain;
   background-image: var(--guided-panel);
   background-position: 14% center;
   background-repeat: no-repeat;
@@ -2716,6 +2716,21 @@ body:has(.guided-mission) .platform-lang-toggle { display: none; }
   max-width: 350px;
   color: #f8f5e9;
   text-shadow: none;
+}
+.guided-illustration:focus-visible {
+  outline: 3px solid #f1ce63;
+  outline-offset: -5px;
+}
+.guided-illustration-copy .guided-sidebar-importance {
+  padding: 1rem;
+  border: 1px solid rgba(241, 206, 99, 0.25);
+  border-radius: 0.85rem;
+  background: #173f2d;
+  color: #fffdf5;
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
 
 .guided-illustration-copy > span {
@@ -2764,6 +2779,8 @@ body:has(.guided-mission) .platform-lang-toggle { display: none; }
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.98rem;
   font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 .guided-features li > span {
   display: grid;
@@ -3333,4 +3350,29 @@ body:has(.guided-mission),
   .guided-actions { grid-template-columns: 0.8fr 1.2fr; }
   .guided-actions .guided-primary,
   .guided-actions .guided-secondary { grid-row: auto; }
+}
+
+/* En móvil, el lateral y la actividad comparten un recorrido desplazable. */
+@media (max-width: 700px) {
+  .guided-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .guided-illustration {
+    display: block;
+    padding: 28px 22px;
+    overflow: visible;
+  }
+  .guided-illustration-copy { max-width: 36rem; margin-inline: auto; }
+  .guided-illustration-copy h2 {
+    max-width: none;
+    margin-block: 18px;
+    font-size: clamp(2rem, 8vw, 2.6rem);
+    overflow-wrap: anywhere;
+  }
+  .guided-illustration-copy > span { font-size: 0.75rem; letter-spacing: 0.12em; }
+  .guided-features { margin-top: 24px; gap: 14px; }
+  .guided-features li { font-size: 0.9rem; }
+  .guided-panel { overflow: visible; }
 }

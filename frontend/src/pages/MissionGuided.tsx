@@ -388,9 +388,8 @@ export default function MissionGuided({
   const tokenImage = getMissionTokenImage(mission.numero);
   const missionPanel = getMissionPanelImage(mission.numero) ?? forestMap;
   const isFirstMission = mission.numero === 1;
-  const sidebarDescription = isFirstMission
-    ? t('mission.guided.sidebarDescriptionFirst')
-    : t('mission.guided.sidebarDescriptionGeneric');
+  // Textos definitivos del cliente para el lateral, independientes del cierre.
+  const sidebarImportance = t(`mission.guided.sidebarImportance.${mission.numero}`);
 
   if (completed) {
     return (
@@ -456,6 +455,7 @@ export default function MissionGuided({
         <div className="guided-content">
           <aside
             className="guided-illustration"
+            tabIndex={0}
             style={{ '--guided-panel': `url(${missionPanel})` } as React.CSSProperties}
             aria-label={
               isFirstMission
@@ -470,17 +470,10 @@ export default function MissionGuided({
                   : t('mission.guided.thresholdGeneric')}
               </span>
               <h2>{mission.titulo}</h2>
-              <p>{sidebarDescription}</p>
+              {sidebarImportance && (
+                <p className="guided-sidebar-importance">{sidebarImportance}</p>
+              )}
               <ul className="guided-features" aria-label={t('mission.guided.detailsLabel')}>
-                <li>
-                  <span aria-hidden="true" className="guided-feature-icon">
-                    <svg viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="8" />
-                      <path d="M12 7v5h5" />
-                    </svg>
-                  </span>
-                  {t('mission.guided.duration')}
-                </li>
                 <li>
                   <span aria-hidden="true" className="guided-feature-icon">
                     <svg viewBox="0 0 24 24">

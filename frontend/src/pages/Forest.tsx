@@ -34,11 +34,11 @@ const missionPositions = [
 
 const reminderKeys = ['honesty', 'compassion', 'play', 'raft'] as const;
 
-function ClockIcon() {
+function LeafIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7v5l3.5 2" />
+      <path d="M20 3c-3 4-8 2-12 5a7 7 0 0 0 9 11c5-4 4-11 3-16Z" />
+      <path d="M3 21c0-5 5-8 11-11" />
     </svg>
   );
 }
@@ -52,13 +52,11 @@ function PencilIcon() {
   );
 }
 
-function StepsIcon() {
+function HonestyIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <ellipse cx="8" cy="8" rx="2.5" ry="4" transform="rotate(-18 8 8)" />
-      <ellipse cx="15.5" cy="15.5" rx="2.5" ry="4" transform="rotate(22 15.5 15.5)" />
-      <circle cx="6.4" cy="14.2" r="1.2" />
-      <circle cx="17" cy="9.5" r="1.2" />
+      <path d="M12 21 3.8 12.8a5.8 5.8 0 0 1 8.2-8.2 5.8 5.8 0 0 1 8.2 8.2Z" />
+      <path d="m12 4.6-3.6 3.6a2 2 0 0 0 2.8 2.8l2.2-2.2a2 2 0 0 1 2.8 0l4 4M16 14l2 2M13 17l2 2" />
     </svg>
   );
 }
@@ -319,7 +317,7 @@ export default function Forest() {
       : selectedInfo.access === 'paywall'
         ? t('forest.paywallHint', { numero: FREE_MISSIONS })
         : selectedInfo.access === 'open'
-          ? t('forest.modalHint')
+          ? t(lang === 'es' ? `forest.missionPanelHints.${selectedInfo.numero}` : 'forest.modalHint')
           : t('forest.lockedHint', { numero: selectedInfo.requiredNumero });
 
   const primaryText =
@@ -573,21 +571,16 @@ export default function Forest() {
 
                 <div className="mission-entry-facts">
                   <div className="mission-entry-fact">
-                    <ClockIcon />
-                    <span>{t('forest.modalDuration')}</span>
-                  </div>
-                  <div className="mission-entry-fact">
                     <PencilIcon />
                     <span>{t('forest.modalMaterials')}</span>
                   </div>
                   <div className="mission-entry-fact">
-                    <StepsIcon />
-                    <span>
-                      {t('forest.modalSteps', {
-                        current: selectedInfo.isDone ? 3 : 0,
-                        total: 3,
-                      })}
-                    </span>
+                    <LeafIcon />
+                    <span>{t('forest.modalQuietPlace')}</span>
+                  </div>
+                  <div className="mission-entry-fact">
+                    <HonestyIcon />
+                    <span>{t('forest.modalHonesty')}</span>
                   </div>
                 </div>
 
