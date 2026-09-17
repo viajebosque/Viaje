@@ -3352,6 +3352,72 @@ body:has(.guided-mission),
   .guided-actions .guided-secondary { grid-row: auto; }
 }
 
+/* Un solo bloque de lectura A–D, seguido de una única respuesta. */
+.guided-initial-reading {
+  margin-bottom: 1.4rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-left: 4px solid #38633e;
+  background: #f0f5ec;
+}
+.guided-initial-reading h1 {
+  margin: 0;
+  color: #315d35;
+  font-family: inherit;
+  font-size: clamp(1.4rem, 2vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+.guided-initial-reading .guided-help {
+  margin: 1.1rem 0;
+  color: #526548;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.65;
+}
+.guided-initial-options {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.guided-initial-option {
+  display: grid;
+  grid-template-columns: 1.15rem 1.3rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: #203d2b;
+  font-size: 1rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.guided-initial-option--selected {
+  border-color: #346546;
+  background: #e8efd9;
+  box-shadow: inset 4px 0 #346546;
+}
+.guided-initial-option:focus-within { outline: 3px solid #b68b28; outline-offset: 3px; }
+.guided-initial-option input { width: 1.15rem; height: 1.15rem; margin: 0.2rem 0 0; accent-color: #346546; }
+.guided-initial-letter { font-weight: 700; }
+.guided-initial-response { gap: 0.65rem; color: #203d2b; font-size: 1rem; }
+.guided-initial-response textarea {
+  min-height: 13rem;
+  max-height: none;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+.guided-initial-history { margin-block: 1rem; color: #36523d; font-size: 0.95rem; }
+.guided-initial-history summary { cursor: pointer; padding-block: 0.5rem; }
+.guided-initial-history dt { margin-top: 1rem; font-weight: 600; }
+.guided-initial-history dd { margin: 0.5rem 0 1rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+
 /* En móvil, el lateral y la actividad comparten un recorrido desplazable. */
 @media (max-width: 700px) {
   .guided-content {

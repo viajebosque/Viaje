@@ -14,6 +14,11 @@ import { completeMission, saveAnswers, type Mission, type Question } from '../li
 import { getMissionPanelImage } from '../lib/missionPanels';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { getMissionActivityVideoId } from '../lib/missionVideos';
+import {
+  GUIDED_FLOW_VERSION, buildGuidedSteps, initialQuestions, readInitialChoice,
+  changeInitialChoice, initialChoiceIsValid, migrateGuidedStep, initialOptionText,
+  serializeGuidedEntries,
+} from '../lib/initialChoice';
 
 type GuidedAnswers = Record<string, string>;
 
@@ -25,8 +30,6 @@ type Backup = {
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-
-const GUIDED_FLOW_VERSION = 3;
 
 type Props = {
   mission: Mission;
@@ -70,7 +73,7 @@ function answersFromBackend(
   return Object.fromEntries(
     questions.map((question) => [
       question.id,
-      normalizeLegacyAnswer(answers[question.id] ?? ''),
+      answers[question.id] ?? '',
     ])
   );
 }
@@ -100,13 +103,6 @@ function writeBackup(storageKey: string, backup: Backup) {
   }
 }
 
-function serializedEntries(questions: Question[], answers: GuidedAnswers) {
-  return questions.map((question) => ({
-    question_id: question.id,
-    respuesta: answers[question.id]?.trim() ?? '',
-  }));
-}
-
 export default function MissionGuided({
   mission,
   questions,
@@ -128,16 +124,15 @@ export default function MissionGuided({
     ? questions.findIndex((question) => question.categoria === 'actividad')
     : -1;
   const hasActivityVideo = Boolean(activityVideoId && activityQuestionIndex >= 0);
-  const totalSteps = questions.length + (hasActivityVideo ? 1 : 0);
+  const initialOptions = useMemo(() => initialQuestions(questions), [questions]);
+  const steps = useMemo(() => buildGuidedSteps(questions, hasActivityVideo), [questions, hasActivityVideo]);
+  const totalSteps = steps.length;
   const questionForStep = useCallback(
     (stepToMap: number) => {
-      if (!hasActivityVideo || stepToMap < activityQuestionIndex) {
-        return questions[stepToMap];
-      }
-      if (stepToMap === activityQuestionIndex) return undefined;
-      return questions[stepToMap - 1];
+      const mapped = steps[stepToMap];
+      return mapped?.kind === 'question' ? mapped.question : undefined;
     },
-    [activityQuestionIndex, hasActivityVideo, questions]
+    [steps]
   );
   const initialState = useMemo(() => {
     const backendAnswers = answersFromBackend(questions, initialAnswers);
@@ -150,15 +145,9 @@ export default function MissionGuided({
           ])
         )
       : backendAnswers;
-    const needsVideoStepMigration =
-      backup &&
-      hasActivityVideo &&
-      backup.step >= activityQuestionIndex &&
-      (backup.flowVersion === undefined ||
-        (backup.flowVersion === 2 && mission.numero !== 1));
-    const backupStep = needsVideoStepMigration
-      ? backup.step + 1
-      : backup?.step ?? 0;
+    const backupStep = migrateGuidedStep(
+      backup?.step ?? 0, backup?.flowVersion, questions, hasActivityVideo, mission.numero
+    );
     return {
       answers: backup && (backup.pending || isPreview) ? backupAnswers : backendAnswers,
       step: Math.min(backupStep, Math.max(totalSteps - 1, 0)),
@@ -198,10 +187,13 @@ export default function MissionGuided({
 
   const isStepValid = useCallback(
     (stepToCheck: number, value = answersRef.current) => {
+      if (steps[stepToCheck]?.kind === 'initial') {
+        return initialChoiceIsValid(value[initialOptions[0].id] ?? '', initialOptions);
+      }
       const question = questionForStep(stepToCheck);
-      return !question || Boolean(value[question.id]?.trim());
+      return !question || Boolean(normalizeLegacyAnswer(value[question.id] ?? '').trim());
     },
-    [questionForStep]
+    [questionForStep, steps, initialOptions]
   );
 
   const performSave = useCallback(async (): Promise<boolean> => {
@@ -226,7 +218,7 @@ export default function MissionGuided({
             if (questions.length === 0) {
               throw new Error('mission-content-incomplete');
             }
-            await saveAnswers(userId, serializedEntries(questions, snapshot));
+            await saveAnswers(userId, serializeGuidedEntries(questions, snapshot));
           }
           savedVersionRef.current = targetVersion;
 
@@ -288,22 +280,26 @@ export default function MissionGuided({
   }, [completed, step]);
 
   function updateAnswer(questionId: string, value: string) {
-    setAnswers((current) => {
-      const next = { ...current, [questionId]: value };
-      answersRef.current = next;
-      dirtyVersionRef.current += 1;
-      writeBackup(storageKey, {
-        answers: next,
-        pending: true,
-        step: stepRef.current,
-        flowVersion: GUIDED_FLOW_VERSION,
-      });
-      return next;
+    const next = { ...answersRef.current, [questionId]: value };
+    answersRef.current = next;
+    setAnswers(next);
+    dirtyVersionRef.current += 1;
+    writeBackup(storageKey, {
+      answers: next,
+      pending: true,
+      step: stepRef.current,
+      flowVersion: GUIDED_FLOW_VERSION,
     });
     setSaveStatus('saving');
     setSaveError('');
     setValidation('');
     scheduleSave();
+  }
+
+  function updateInitialChoice(change: Parameters<typeof changeInitialChoice>[2]) {
+    const anchor = initialOptions[0];
+    if (!anchor) return;
+    updateAnswer(anchor.id, changeInitialChoice(answersRef.current[anchor.id] ?? '', initialOptions, change));
   }
 
   function goToStep(nextStep: number) {
@@ -322,7 +318,8 @@ export default function MissionGuided({
 
   function continueToNextStep() {
     if (!isStepValid(step)) {
-      setValidation(t('mission.guided.validation.required'));
+      setValidation(t(steps[step]?.kind === 'initial'
+        ? 'mission.guided.initialValidation' : 'mission.guided.validation.required'));
       return;
     }
     goToStep(step + 1);
@@ -336,6 +333,11 @@ export default function MissionGuided({
   }
 
   async function finishMission() {
+    if (initialOptions.length && !isStepValid(0)) {
+      goToStep(0);
+      setValidation(t('mission.guided.initialValidation'));
+      return;
+    }
     if (!isStepValid(step)) {
       setValidation(t('mission.guided.validation.required'));
       return;
@@ -349,7 +351,7 @@ export default function MissionGuided({
 
     try {
       if (!isPreview) {
-        const awarded = await completeMission(mission.id);
+        const awarded = await completeMission(mission.id, initialOptions.length === 4);
         if (!awarded) {
           setValidation(t('mission.guided.validation.incomplete'));
           setCompleting(false);
@@ -375,8 +377,17 @@ export default function MissionGuided({
           ? t('mission.guided.saveFailed')
           : t('mission.guided.ready');
   const currentQuestion = questionForStep(step);
-  const isActivityVideoStep = hasActivityVideo && step === activityQuestionIndex;
-  const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? '' : '';
+  const currentQuestionNumber = steps.slice(0, step + 1).filter((item) => item.kind !== 'video').length;
+  const previewContentUnavailable = isPreview && mission.numero !== 1;
+  const isActivityVideoStep = steps[step]?.kind === 'video';
+  const isInitialStep = steps[step]?.kind === 'initial';
+  const choice = initialOptions.length
+    ? readInitialChoice(answers[initialOptions[0].id] ?? '', initialOptions) : null;
+  const hasPhraseHeading = /Frase Inicial de Pensamiento Profundo|Initial Deep Thought Phrase/i.test(
+    [mission.descripcion, ...initialOptions.map((q) => q.enunciado)].join('\n')
+  );
+  const initialTitle = t(hasPhraseHeading ? 'mission.guided.initialPhraseTitle' : 'mission.guided.initialTitle');
+  const currentAnswer = currentQuestion ? normalizeLegacyAnswer(answers[currentQuestion.id] ?? '') : '';
   const questionText = currentQuestion?.enunciado.trim() ?? '';
   const questionLineCount = questionText ? questionText.split(/\r?\n/).length : 0;
   const questionTitleClass =
@@ -495,7 +506,7 @@ export default function MissionGuided({
           </aside>
 
           <section className="guided-panel" aria-labelledby="guided-question-title">
-            <div className="guided-progress-area">
+            {!previewContentUnavailable && <div className="guided-progress-area">
               <div className="guided-progress-meta">
                 <div className="guided-progress-copy" aria-live="polite">
                   {t('mission.guided.step', { current: step + 1, total: totalSteps })}
@@ -520,17 +531,87 @@ export default function MissionGuided({
               >
                 <span style={{ width: `${totalSteps ? ((step + 1) / totalSteps) * 100 : 0}%` }} />
               </div>
-            </div>
+            </div>}
 
             <article
               className="guided-question-card"
-              data-question-category={isActivityVideoStep ? 'actividad-video' : currentQuestion?.categoria}
+              data-question-category={isInitialStep ? 'iniciacion' : isActivityVideoStep ? 'actividad-video' : currentQuestion?.categoria}
               data-question-order={currentQuestion?.orden}
             >
               <div
                 className={`guided-question-wrap${isActivityVideoStep ? ' guided-question-wrap--video-only' : ''}`}
               >
-                {isActivityVideoStep && activityVideoId ? (
+                {previewContentUnavailable ? (
+                  <div className="guided-question-body">
+                    <h1 ref={headingRef} id="guided-question-title" tabIndex={-1}>
+                      {t('mission.guided.previewContentTitle')}
+                    </h1>
+                    <p className="guided-help">{t('mission.guided.previewContentUnavailable')}</p>
+                  </div>
+                ) : isInitialStep ? (
+                  <div className="guided-question-body guided-initial-choice">
+                    <div className="guided-initial-reading">
+                    <h1 ref={headingRef} id="guided-question-title" tabIndex={-1}>
+                      {initialTitle}
+                    </h1>
+                    <p id="guided-initial-instructions" className="guided-help">
+                      {t('mission.guided.initialInstructions')}
+                    </p>
+                    <fieldset className="guided-initial-options" aria-describedby="guided-initial-instructions guided-validation">
+                      <legend className="sr-only">{t('mission.guided.initialSelectionLabel')}</legend>
+                      {initialOptions.map((option, index) => (
+                        <label key={option.id} className={`guided-initial-option${
+                          choice?.selectedQuestionId === option.id ? ' guided-initial-option--selected' : ''
+                        }`}>
+                          <input
+                            type="radio"
+                            name={`initial-choice-${mission.id}`}
+                            value={option.id}
+                            checked={choice?.selectedQuestionId === option.id}
+                            onChange={() => updateInitialChoice({ selectedQuestionId: option.id })}
+                          />
+                          <span className="guided-initial-letter">{String.fromCharCode(65 + index)}.</span>
+                          <span>{initialOptionText(option.enunciado)}</span>
+                        </label>
+                      ))}
+                    </fieldset>
+                    </div>
+                    <label className="guided-field guided-initial-response">
+                      <span>{t('mission.guided.initialAnswerLabel')}</span>
+                      <textarea
+                        rows={8}
+                        value={choice?.text ?? ''}
+                        onChange={(event) => updateInitialChoice({ text: event.target.value })}
+                        placeholder={t('mission.guided.backendPlaceholder')}
+                        aria-describedby="guided-validation"
+                        aria-invalid={Boolean(validation)}
+                      />
+                    </label>
+                    <div id="guided-validation" className="guided-validation" aria-live="assertive">
+                      {validation}
+                    </div>
+                    {initialOptions.some((option, index) => Boolean(
+                      (index === 0 && choice ? choice.legacyAnswer : answers[option.id])?.trim()
+                    )) && (
+                      <details className="guided-initial-history">
+                        <summary>{t('mission.guided.initialPreviousAnswers')}</summary>
+                        <dl>
+                          {initialOptions.map((option, index) => {
+                            const previous = normalizeLegacyAnswer(
+                              (index === 0 && choice ? choice.legacyAnswer : answers[option.id]) ?? ''
+                            );
+                            return previous.trim() ? (
+                              <div key={option.id}>
+                                <dt>{String.fromCharCode(65 + index)}. {initialOptionText(option.enunciado)}</dt>
+                                <dd>{previous}</dd>
+                              </div>
+                            ) : null;
+                          })}
+                        </dl>
+                      </details>
+                    )}
+                  </div>
+                ) : isActivityVideoStep && activityVideoId ? (
                   <>
                     <h1 ref={headingRef} id="guided-question-title" className="sr-only" tabIndex={-1}>
                       {t('mission.guided.activityVideoTitle', { numero: mission.numero })}
@@ -548,7 +629,7 @@ export default function MissionGuided({
                 ) : (
                   <div className="guided-question-body">
                   <p className="guided-eyebrow">
-                    {t('mission.guided.questionLabel', { current: currentQuestion?.orden ?? step + 1 })}
+                    {t('mission.guided.questionLabel', { current: currentQuestionNumber })}
                   </p>
                   <h1
                     ref={headingRef}
@@ -580,7 +661,7 @@ export default function MissionGuided({
                 )}
               </div>
 
-              <footer className="guided-footer">
+              {!previewContentUnavailable && <footer className="guided-footer">
             {saveError && <p className="guided-save-error" aria-live="polite">{saveError}</p>}
 
             <div className="guided-actions">
@@ -605,7 +686,7 @@ export default function MissionGuided({
                   : t('mission.guided.continue')}
               </button>
             </div>
-              </footer>
+              </footer>}
             </article>
           </section>
         </div>

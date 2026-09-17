@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
 import LangToggle from './i18n/LangToggle';
+import TokenPreview from './pages/TokenPreview';
 
 export default function App() {
   const { session, loading } = useAuth();
@@ -23,6 +24,7 @@ export default function App() {
         <LangToggle />
       </div>
       <Routes>
+      <Route path="/preview/token" element={<TokenPreview />} />
       {/* Raíz: si ya hay sesión, al bosque; si no, login/registro. */}
       <Route
         path="/"

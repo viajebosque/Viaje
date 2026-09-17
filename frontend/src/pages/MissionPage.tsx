@@ -60,7 +60,10 @@ function createPreviewMission(missionNumber: number, lang: Lang) {
       ? 'Cada respuesta es una pequeña huella de tu recorrido.'
       : 'Each answer is a small footprint along your journey.',
   };
-  const questions: Question[] = PREVIEW_QUESTION_TEXTS[lang].map((enunciado, index) => ({
+  // Solo se dispone del contenido de la misión 1 en la vista previa sin conexión.
+  // Las demás muestran su lateral y un aviso; nunca reutilizan estas preguntas.
+  const previewTexts = isFirstMission ? PREVIEW_QUESTION_TEXTS[lang] : [''];
+  const questions: Question[] = previewTexts.map((enunciado, index) => ({
     id: `preview-question-${missionNumber}-${index + 1}`,
     mission_id: missionId,
     categoria: index < 4 ? 'iniciacion' : index === 4 ? 'actividad' : 'reflexion',
