@@ -526,18 +526,6 @@ export default function MissionGuided({
                   <svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5" /></svg>
                 </span>
               </summary>
-              {/* Encuadrado sobre el dibujo: el archivo trae además el
-                  pergamino donde en desktop se apoya el texto (ver index.css). */}
-              <div
-                className="guided-illustration-photo"
-                role="img"
-                style={{ '--guided-panel': `url(${missionPanel})` } as React.CSSProperties}
-                aria-label={
-                  isFirstMission
-                    ? t('mission.guided.illustrationAlt')
-                    : t('mission.guided.illustrationAltGeneric', { numero: mission.numero })
-                }
-              />
               <div className="guided-illustration-copy">{illustrationCopy}</div>
             </details>
           ) : (
