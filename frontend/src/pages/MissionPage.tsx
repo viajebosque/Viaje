@@ -94,6 +94,8 @@ export default function MissionPage() {
   // Evita mostrar campos vacíos durante el instante entre cargar las preguntas
   // y recuperar las respuestas guardadas para ese conjunto.
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const [answersLoadError, setAnswersLoadError] = useState(false);
+  const [answersRetry, setAnswersRetry] = useState(0);
   const [errText, setErrText] = useState<string | null>(null);
 
   // El contenido viene de columnas bilingües en la base y se vuelve a pedir
@@ -168,11 +170,14 @@ export default function MissionPage() {
   const missionId = mission?.id ?? '';
   useEffect(() => {
     if (isDesignPreview || !questionsKey || !missionId) {
+      setAnswersLoadError(false);
       setLoadedKey(questionsKey);
       return;
     }
 
     let cancelled = false;
+    setLoadedKey(null);
+    setAnswersLoadError(false);
     getAnswers(questionsKey.split(','))
       .then((savedAnswers) => {
         if (cancelled) return;
@@ -180,17 +185,33 @@ export default function MissionPage() {
         setLoadedKey(questionsKey);
       })
       .catch(() => {
-        // La actividad sigue disponible aunque no se puedan recuperar respuestas.
-        if (!cancelled) setLoadedKey(questionsKey);
+        if (cancelled) return;
+        // Sin esta lectura, guardar un formulario vacío podría borrar respuestas previas.
+        setAnswersLoadError(true);
+        setLoadedKey(questionsKey);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [questionsKey, missionId, isDesignPreview]);
+  }, [questionsKey, missionId, isDesignPreview, answersRetry]);
 
   if (loading || access === null || loadedKey !== questionsKey) {
     return <div className="auth-loading">{t('mission.loading')}</div>;
+  }
+
+  if (answersLoadError) {
+    return (
+      <main className="mission mission-locked">
+        <p className="auth-error">{t('mission.answersLoadError')}</p>
+        <button className="mission-back" onClick={() => setAnswersRetry((attempt) => attempt + 1)}>
+          {t('mission.retryAnswers')}
+        </button>
+        <button className="mission-back" onClick={() => navigate(mapPath)}>
+          {t('common.backToMapArrow')}
+        </button>
+      </main>
+    );
   }
 
   if (access === 'paywall') {

@@ -198,6 +198,8 @@
   },
   "mission": {
     "loading": "Loading mission…",
+    "answersLoadError": "We couldn't load your answers. Try again to continue without losing what you've written.",
+    "retryAnswers": "Try loading again",
     "notAvailable": "This mission isn't available yet.",
     "heading": "Mission {{numero}}: {{titulo}}",
     "answerPlaceholder": "Write your answer…",

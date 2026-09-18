@@ -209,6 +209,8 @@
   },
   "mission": {
     "loading": "Cargando misión…",
+    "answersLoadError": "No pudimos recuperar tus respuestas. Reintenta para continuar sin perder lo que ya escribiste.",
+    "retryAnswers": "Reintentar carga",
     "notAvailable": "Esta misión aún no está disponible.",
     "heading": "Misión {{numero}}: {{titulo}}",
     "answerPlaceholder": "Escribe tu respuesta…",
