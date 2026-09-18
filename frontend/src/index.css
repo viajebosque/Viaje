@@ -3519,11 +3519,19 @@ body:has(.guided-mission),
 /* ---------------------------------------------------------------------------
    Lateral de misión en móvil: desplegable, cerrado por defecto.
 
-   Antes ocupaba la primera pantalla entera y la ilustración entraba con
-   `background-size: auto 128%` y foco en `14% center`, pensado para una
-   columna alta y angosta: en un bloque ancho y bajo recortaba la imagen y el
-   texto quedaba encima. Plegado no hay imagen — solo una barra — y al abrirlo
-   la ilustración entra con `cover`, centrada y completa.
+   Antes ocupaba la primera pantalla entera y la ilustración entraba como
+   `background-size: auto 128%` con foco en `14% center`: un recorte pensado
+   para la columna alta y angosta del desktop. Los paneles son 16:9 apaisados
+   (1672x941), así que en móvil cualquier recorte los parte por la mitad.
+
+   Y el archivo no es solo ilustración: es una lámina partida en dos. El dibujo
+   ocupa el 47,4% izquierdo y el resto es un pergamino vacío, que en desktop es
+   donde se apoya el texto. Por eso mostrarla entera en móvil deja medio bloque
+   beige vacío. Medido en los 9 paneles: el corte está en el mismo 47,4%.
+
+   Acá la ilustración NO es fondo: es un <img> a lo ancho recortado justo en esa
+   línea, así que se ve el dibujo completo y nada de pergamino. El texto va
+   debajo, sobre color plano: nada se monta encima.
 
    El punto de corte es el mismo que SIDEBAR_COLLAPSE_QUERY en MissionGuided.
    --------------------------------------------------------------------------- */
@@ -3594,19 +3602,31 @@ body:has(.guided-mission),
     .guided-illustration-chevron { transition: none; }
   }
 
-  /* Abierto: la ilustración como fondo del bloque, completa y centrada. */
-  details.guided-illustration--collapsible[open] {
+  /* Encuadre sobre el dibujo, a sangre y sin pergamino.
+
+     Geometría medida en los 9 paneles (1672x941, idénticos entre sí):
+       lámina        x  8,9% .. 90,9%   y  10,4% .. 88,6%
+       corte al pergamino x 47,4%
+     O sea el dibujo ocupa x 8,9%..47,4% (38,5% de ancho) e y 10,4%..88,6%
+     (78,2% de alto) → 644 x 736 px, de donde sale el aspect-ratio.
+
+     Va como fondo y no como <img> porque hace falta acercar más de lo que
+     permite `cover`: los porcentajes de background-size sí escalan libre.
+       ancho:  100 / 38,5 = 259,7%      alto: 100 / 78,2 = 127,9%
+     Las dos mantienen la proporción original, así que no deforma.
+     La posición alinea el punto 8,9% / 10,4% del archivo con el borde de la
+     caja: 8,9 / (259,7 - 100) = 14,5%   y   10,4·1,279 / (127,9 - 100) = 47,7% */
+  .guided-illustration-photo {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    aspect-ratio: 644 / 736;
+    background-color: #0b2c20;
     background-image: var(--guided-panel);
     background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-  }
-  details.guided-illustration--collapsible[open]::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: linear-gradient(180deg, rgba(7, 66, 44, 0.82), rgba(4, 52, 33, 0.9));
+    background-size: 259.7% 127.9%;
+    background-position: 14.5% 47.7%;
   }
   details.guided-illustration--collapsible > .guided-illustration-copy {
     position: relative;
@@ -3617,5 +3637,9 @@ body:has(.guided-mission),
   }
   details.guided-illustration--collapsible .guided-illustration-copy h2 {
     margin: 10px 0 12px;
+  }
+  /* Sin imagen de fondo detrás, el recuadro necesita su propio contraste. */
+  details.guided-illustration--collapsible .guided-sidebar-importance {
+    background: #12392a;
   }
 }
