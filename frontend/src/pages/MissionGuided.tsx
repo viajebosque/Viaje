@@ -11,9 +11,11 @@ import forestMap from '../assets/forest/forest-map.png';
 import MissionTokenReward from '../components/MissionTokenReward';
 import type { Lang } from '../i18n';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
+import { MissionCompletionSetupError } from '../lib/missionCompletion';
 import { getMissionPanelImage } from '../lib/missionPanels';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { getMissionActivityVideoId } from '../lib/missionVideos';
+import { editPaperAnswer, isPaperAnswer, paperAnswerText, setPaperAnswer } from '../lib/paperAnswer';
 import {
   GUIDED_FLOW_VERSION, buildGuidedSteps, initialQuestions, readInitialChoice,
   changeInitialChoice, initialChoiceIsValid, migrateGuidedStep, initialOptionText,
@@ -191,6 +193,10 @@ export default function MissionGuided({
         return initialChoiceIsValid(value[initialOptions[0].id] ?? '', initialOptions);
       }
       const question = questionForStep(stepToCheck);
+      if (question?.categoria === 'actividad') {
+        const answer = value[question.id] ?? '';
+        return isPaperAnswer(answer) || Boolean(normalizeLegacyAnswer(answer).trim());
+      }
       return !question || Boolean(normalizeLegacyAnswer(value[question.id] ?? '').trim());
     },
     [questionForStep, steps, initialOptions]
@@ -302,6 +308,16 @@ export default function MissionGuided({
     updateAnswer(anchor.id, changeInitialChoice(answersRef.current[anchor.id] ?? '', initialOptions, change));
   }
 
+  function updateActivityAnswer(questionId: string, text: string) {
+    updateAnswer(questionId, editPaperAnswer(answersRef.current[questionId] ?? '', text));
+  }
+
+  function updateActivityPaper(questionId: string, checked: boolean) {
+    const previous = answersRef.current[questionId] ?? '';
+    const text = isPaperAnswer(previous) ? paperAnswerText(previous) : normalizeLegacyAnswer(previous);
+    updateAnswer(questionId, setPaperAnswer(text, checked));
+  }
+
   function goToStep(nextStep: number) {
     const bounded = Math.min(Math.max(nextStep, 0), Math.max(totalSteps - 1, 0));
     const hasPendingChanges = dirtyVersionRef.current > savedVersionRef.current;
@@ -360,9 +376,10 @@ export default function MissionGuided({
       }
       window.localStorage.removeItem(storageKey);
       setCompleted(true);
-    } catch {
+    } catch (error) {
       setSaveStatus('error');
-      setSaveError(t('mission.guided.completeError'));
+      setSaveError(t(error instanceof MissionCompletionSetupError
+        ? 'mission.guided.completeSetupError' : 'mission.guided.completeError'));
     } finally {
       setCompleting(false);
     }
@@ -387,7 +404,13 @@ export default function MissionGuided({
     [mission.descripcion, ...initialOptions.map((q) => q.enunciado)].join('\n')
   );
   const initialTitle = t(hasPhraseHeading ? 'mission.guided.initialPhraseTitle' : 'mission.guided.initialTitle');
-  const currentAnswer = currentQuestion ? normalizeLegacyAnswer(answers[currentQuestion.id] ?? '') : '';
+  const currentAnswer = currentQuestion
+    ? currentQuestion.categoria === 'actividad'
+      ? isPaperAnswer(answers[currentQuestion.id] ?? '')
+        ? paperAnswerText(answers[currentQuestion.id] ?? '')
+        : normalizeLegacyAnswer(answers[currentQuestion.id] ?? '')
+      : normalizeLegacyAnswer(answers[currentQuestion.id] ?? '')
+    : '';
   const questionText = currentQuestion?.enunciado.trim() ?? '';
   const questionLineCount = questionText ? questionText.split(/\r?\n/).length : 0;
   const questionTitleClass =
@@ -639,14 +662,30 @@ export default function MissionGuided({
                   >
                     {currentQuestion?.enunciado ?? ''}
                   </h1>
-                  <p className="guided-help">{t('mission.guided.backendHelp')}</p>
+                  <p className="guided-help">{t(currentQuestion?.categoria === 'actividad'
+                    ? 'mission.guided.activityHelp' : 'mission.guided.backendHelp')}</p>
+
+                  {currentQuestion?.categoria === 'actividad' && (
+                    <label className="guided-checkbox guided-paper-choice">
+                      <input
+                        type="checkbox"
+                        checked={isPaperAnswer(answers[currentQuestion.id] ?? '')}
+                        onChange={(event) => updateActivityPaper(currentQuestion.id, event.target.checked)}
+                        aria-describedby="guided-validation"
+                      />
+                      <span aria-hidden="true">✓</span>
+                      {t('mission.guided.completedOnPaper')}
+                    </label>
+                  )}
 
                   {currentQuestion && (
                     <label className="guided-field">
                       <span className="sr-only">{currentQuestion.enunciado}</span>
                       <textarea
                         value={currentAnswer}
-                        onChange={(event) => updateAnswer(currentQuestion.id, event.target.value)}
+                        onChange={(event) => currentQuestion.categoria === 'actividad'
+                          ? updateActivityAnswer(currentQuestion.id, event.target.value)
+                          : updateAnswer(currentQuestion.id, event.target.value)}
                         rows={8}
                         placeholder={t('mission.guided.backendPlaceholder')}
                         aria-describedby="guided-validation"

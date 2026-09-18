@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { completeMissionWithFallback } from './missionCompletion';
 import { DEFAULT_LANG, type Lang } from '../i18n';
 
 export type Categoria = 'iniciacion' | 'actividad' | 'reflexion';
@@ -193,11 +194,10 @@ export async function saveAnswers(
 // Reclama el token de la misión. La función de la BD valida que TODO
 // esté respondido; devuelve true si el token quedó otorgado.
 export async function completeMission(missionId: string, hasInitialChoice = false): Promise<boolean> {
-  const { data, error } = await supabase.rpc(hasInitialChoice ? 'complete_mission_initial_choice' : 'complete_mission', {
-    p_mission_id: missionId,
-  });
-  if (error) throw error;
-  return Boolean(data);
+  return completeMissionWithFallback(
+    async (name) => supabase.rpc(name, { p_mission_id: missionId }),
+    hasInitialChoice
+  );
 }
 
 // IDs de misiones que el usuario ya completó (tiene token).

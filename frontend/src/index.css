@@ -2417,6 +2417,7 @@ button, input { font: inherit; }
 }
 .guided-checkbox input:checked + span { border-color: #1f603b; color: #fff; background: #1f603b; }
 .guided-checkbox input:focus-visible + span { outline: 3px solid #d9b24f; outline-offset: 3px; }
+.guided-paper-choice { margin-bottom: 0.75rem; }
 
 .guided-validation {
   min-height: 1.5rem;
