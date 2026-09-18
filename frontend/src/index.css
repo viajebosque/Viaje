@@ -3515,3 +3515,107 @@ body:has(.guided-mission),
     font-size: clamp(1.8rem, 7vw, 2.15rem);
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Lateral de misión en móvil: desplegable, cerrado por defecto.
+
+   Antes ocupaba la primera pantalla entera y la ilustración entraba con
+   `background-size: auto 128%` y foco en `14% center`, pensado para una
+   columna alta y angosta: en un bloque ancho y bajo recortaba la imagen y el
+   texto quedaba encima. Plegado no hay imagen — solo una barra — y al abrirlo
+   la ilustración entra con `cover`, centrada y completa.
+
+   El punto de corte es el mismo que SIDEBAR_COLLAPSE_QUERY en MissionGuided.
+   --------------------------------------------------------------------------- */
+@media (max-width: 700px) {
+  details.guided-illustration--collapsible {
+    position: relative;
+    isolation: isolate;
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(241, 206, 99, 0.22);
+    background-color: #0d3325;
+    background-image: none;
+  }
+  details.guided-illustration--collapsible::before,
+  details.guided-illustration--collapsible::after {
+    content: none;
+  }
+
+  .guided-illustration-summary {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 22px;
+    color: #f8f5e9;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+  }
+  /* Safari pinta su propio triángulo si no se quita por las dos vías. */
+  .guided-illustration-summary::-webkit-details-marker { display: none; }
+  .guided-illustration-summary::marker { content: ""; }
+  .guided-illustration-summary:focus-visible {
+    outline: 3px solid #f1ce63;
+    outline-offset: -3px;
+  }
+
+  .guided-illustration-chevron {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(241, 206, 99, 0.35);
+    border-radius: 50%;
+    transition: transform 0.18s ease;
+  }
+  .guided-illustration-chevron svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #f1ce63;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  details.guided-illustration--collapsible[open] .guided-illustration-chevron {
+    transform: rotate(180deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .guided-illustration-chevron { transition: none; }
+  }
+
+  /* Abierto: la ilustración como fondo del bloque, completa y centrada. */
+  details.guided-illustration--collapsible[open] {
+    background-image: var(--guided-panel);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+  details.guided-illustration--collapsible[open]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, rgba(7, 66, 44, 0.82), rgba(4, 52, 33, 0.9));
+  }
+  details.guided-illustration--collapsible > .guided-illustration-copy {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+    margin: 0;
+    padding: 2px 22px 24px;
+  }
+  details.guided-illustration--collapsible .guided-illustration-copy h2 {
+    margin: 10px 0 12px;
+  }
+}

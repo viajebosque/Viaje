@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  buildGuidedSteps, initialQuestions, readInitialChoice, changeInitialChoice,
-  initialChoiceIsValid, migrateGuidedStep, serializeGuidedEntries, initialOptionText,
+  buildGuidedSteps, initialQuestions, initialChoiceIsValid, initialOptionText,
+  selectedInitialQuestionId, chooseInitialQuestion, guidedEntries,
 } from '../src/lib/initialChoice.ts';
 
 function questions(mission = 1) {
@@ -11,6 +11,10 @@ function questions(mission = 1) {
     categoria: index < 4 ? 'iniciacion' : index === 4 ? 'actividad' : 'reflexion',
     enunciado: `Contenido propio ${mission}/${index + 1}`,
   }));
+}
+
+function empty(source) {
+  return Object.fromEntries(source.map((q) => [q.id, '']));
 }
 
 test('each of the nine missions keeps its own four choices and subsequent content', () => {
@@ -25,111 +29,114 @@ test('each of the nine missions keeps its own four choices and subsequent conten
   }
 });
 
-test('video follows the combined step, followed by the unchanged activity and reflections', () => {
+test('video precedes the activity question', () => {
   const source = questions();
   const steps = buildGuidedSteps(source, true);
   assert.equal(steps.length, 6);
+  assert.equal(steps[0].kind, 'initial');
   assert.equal(steps[1].kind, 'video');
-  assert.deepEqual(steps.slice(2).map((step) => step.question), source.slice(4));
+  assert.equal(steps[2].question.categoria, 'actividad');
 });
 
-test('only a leading block of four initial questions is combined', () => {
-  const source = questions();
-  source[0].categoria = 'actividad';
+test('a question set that is not four iniciacion has no choice block', () => {
+  const source = questions().map((q, i) => (i === 3 ? { ...q, categoria: 'reflexion' } : q));
   assert.deepEqual(initialQuestions(source), []);
-  assert.equal(buildGuidedSteps(source, false).length, 8);
+  const steps = buildGuidedSteps(source, false);
+  assert.equal(steps.length, 8);
+  assert.ok(steps.every((step) => step.kind === 'question'));
 });
 
-test('new and legacy users have no default selected option', () => {
-  const options = initialQuestions(questions());
-  assert.equal(readInitialChoice('', options), null);
-  assert.equal(readInitialChoice('Respuesta anterior', options), null);
-  const draft = changeInitialChoice('', options, { text: 'Borrador antes de elegir' });
-  assert.equal(readInitialChoice(draft, options).selectedQuestionId, null);
-  assert.equal(initialChoiceIsValid(draft, options), false);
+test('the selected option is the initial question holding text', () => {
+  const source = questions();
+  assert.equal(selectedInitialQuestionId(source, empty(source)), null);
+  const answers = { ...empty(source), [source[2].id]: 'mi respuesta' };
+  assert.equal(selectedInitialQuestionId(source, answers), source[2].id);
 });
 
-test('changing a single selection retains the response and its legacy answer', () => {
-  const options = initialQuestions(questions());
-  let saved = changeInitialChoice('Mi respuesta antigua', options, {
-    selectedQuestionId: options[0].id, text: 'Texto que estoy desarrollando',
-  });
-  saved = changeInitialChoice(saved, options, { selectedQuestionId: options[3].id });
-  assert.deepEqual(readInitialChoice(saved, options), {
-    kind: 'initial-choice', version: 1, selectedQuestionId: options[3].id,
-    text: 'Texto que estoy desarrollando', legacyAnswer: 'Mi respuesta antigua',
-  });
-  assert.equal(initialChoiceIsValid(saved, options), true);
+test('whitespace alone does not count as a selected option', () => {
+  const source = questions();
+  const answers = { ...empty(source), [source[1].id]: '   \n  ' };
+  assert.equal(selectedInitialQuestionId(source, answers), null);
+  assert.equal(initialChoiceIsValid(source, answers), false);
 });
 
-test('requires a valid selection and response, as in the current written-response flow', () => {
-  const options = initialQuestions(questions());
-  for (const text of ['', '  \n ']) {
-    const draft = changeInitialChoice('', options, { selectedQuestionId: options[1].id, text });
-    assert.equal(initialChoiceIsValid(draft, options), false);
+test('switching option clears what was written on the previous one', () => {
+  const source = questions();
+  let answers = { ...empty(source), [source[1].id]: 'respuesta sobre la B' };
+  answers = chooseInitialQuestion(source, answers, source[2].id);
+
+  assert.equal(answers[source[1].id], '', 'la B queda vacia');
+  assert.equal(answers[source[2].id], '', 'la C arranca en blanco');
+  assert.equal(selectedInitialQuestionId(source, answers), null);
+});
+
+test('only one initial question ever holds text', () => {
+  const source = questions();
+  let answers = empty(source);
+  for (const index of [0, 3, 1]) {
+    answers = chooseInitialQuestion(source, answers, source[index].id);
+    answers = { ...answers, [source[index].id]: `respuesta ${index}` };
+    const withText = source.slice(0, 4).filter((q) => answers[q.id].trim());
+    assert.deepEqual(withText.map((q) => q.id), [source[index].id]);
   }
-  const invalid = changeInitialChoice('', options, { selectedQuestionId: 'another-mission', text: 'Answer' });
-  assert.equal(initialChoiceIsValid(invalid, options), false);
 });
 
-test('saving and reopening restores selection and exact text without touching three historical rows', () => {
+test('switching option never touches answers outside the initial block', () => {
   const source = questions();
-  const options = initialQuestions(source);
-  const legacyRaw = JSON.stringify({ option: 'old option', reflection: 'old reflection' });
-  const backend = Object.fromEntries(source.map((q) => [q.id, `Original ${q.id}`]));
-  backend[options[0].id] = legacyRaw;
-  const answers = { ...backend, [options[0].id]: changeInitialChoice(legacyRaw, options, {
-    selectedQuestionId: options[2].id, text: 'Mi respuesta\ncon dos líneas y emoji 🌲',
-  }) };
-  const entries = serializeGuidedEntries(source, answers);
-  assert.equal(entries.length, 5);
-  for (const q of options.slice(1)) assert.equal(entries.some((e) => e.question_id === q.id), false);
-  for (const entry of entries) backend[entry.question_id] = entry.respuesta;
-  const restored = readInitialChoice(backend[options[0].id], options);
-  assert.equal(restored.selectedQuestionId, options[2].id);
-  assert.equal(restored.text, 'Mi respuesta\ncon dos líneas y emoji 🌲');
-  assert.equal(restored.legacyAnswer, legacyRaw);
-  for (const q of options.slice(1)) assert.equal(backend[q.id], `Original ${q.id}`);
-  assert.deepEqual(serializeGuidedEntries(source, backend), entries);
+  const answers = {
+    ...empty(source),
+    [source[0].id]: 'inicial',
+    [source[4].id]: 'actividad',
+    [source[5].id]: 'reflexion',
+  };
+  const next = chooseInitialQuestion(source, answers, source[3].id);
+  assert.equal(next[source[4].id], 'actividad');
+  assert.equal(next[source[5].id], 'reflexion');
 });
 
-test('pending local backup round trip retains partial drafts and old responses', () => {
-  const options = initialQuestions(questions());
-  const draft = changeInitialChoice('Respuesta antigua', options, { text: 'Borrador sin seleccionar' });
-  const backup = JSON.parse(JSON.stringify({ answers: { [options[0].id]: draft }, pending: true, step: 0, flowVersion: 4 }));
-  const restored = readInitialChoice(backup.answers[options[0].id], options);
-  assert.equal(restored.selectedQuestionId, null);
-  assert.equal(restored.text, 'Borrador sin seleccionar');
-  assert.equal(restored.legacyAnswer, 'Respuesta antigua');
-});
-
-test('previous independent answers are preserved byte for byte until intentionally edited', () => {
+test('the choice step is valid once any initial question has text', () => {
   const source = questions();
-  const answers = Object.fromEntries(source.map((q) => [q.id, `  Original ${q.id}\n`]));
-  assert.deepEqual(serializeGuidedEntries(source, answers), source.map((q) => ({
-    question_id: q.id, respuesta: answers[q.id],
-  })));
+  assert.equal(initialChoiceIsValid(source, empty(source)), false);
+  assert.equal(
+    initialChoiceIsValid(source, { ...empty(source), [source[3].id]: 'algo' }),
+    true
+  );
 });
 
-test('migrates version 3 progress across the initial block and video', () => {
+test('a mission without a choice block does not block on it', () => {
+  const source = questions().map((q) => ({ ...q, categoria: 'reflexion' }));
+  assert.equal(initialChoiceIsValid(source, empty(source)), true);
+});
+
+test('every question is written, including the three left blank', () => {
   const source = questions();
-  assert.deepEqual(Array.from({ length: 9 }, (_, step) => migrateGuidedStep(step, 3, source, true, 1)),
-    [0, 0, 0, 0, 1, 2, 3, 4, 5]);
-  assert.equal(migrateGuidedStep(4, 3, source, false, 1), 1);
+  const answers = { ...empty(source), [source[2].id]: 'elegida' };
+  const entries = guidedEntries(source, answers);
+
+  assert.equal(entries.length, 8);
+  assert.deepEqual(entries[2], { question_id: source[2].id, respuesta: 'elegida' });
+  // Escribir '' es lo que borra la opcion anterior en la base.
+  for (const index of [0, 1, 3]) {
+    assert.deepEqual(entries[index], { question_id: source[index].id, respuesta: '' });
+  }
 });
 
-test('preserves older video migration and current saved navigation', () => {
+test('a question never answered is written as empty text, not undefined', () => {
   const source = questions();
-  assert.equal(migrateGuidedStep(4, undefined, source, true, 1), 2);
-  assert.equal(migrateGuidedStep(4, 2, source, true, 2), 2);
-  assert.equal(migrateGuidedStep(4, 2, source, true, 1), 1);
-  for (let step = 0; step < 6; step++) assert.equal(migrateGuidedStep(step, 4, source, true, 1), step);
-  assert.equal(migrateGuidedStep(100, 4, source, true, 1), 5);
+  const entries = guidedEntries(source, {});
+  assert.ok(entries.every((entry) => entry.respuesta === ''));
 });
 
-test('strips only option labels and preserves full questions and phrase content', () => {
-  assert.equal(initialOptionText('B. ¿Cuándo fue la última vez? ¿Qué estabas haciendo?'),
-    '¿Cuándo fue la última vez? ¿Qué estabas haciendo?');
-  assert.equal(initialOptionText('Frase Inicial de Pensamiento Profundo\nA. Una frase propia.'), 'Una frase propia.');
-  assert.equal(initialOptionText('¿Qué estás fingiendo no saber?'), '¿Qué estás fingiendo no saber?');
+test('option text drops the letter prefix and the phrase heading', () => {
+  assert.equal(initialOptionText('A. ¿Dónde te sientes estancada?'), '¿Dónde te sientes estancada?');
+  assert.equal(initialOptionText('B) Segunda opción'), 'Segunda opción');
+  assert.equal(
+    initialOptionText('Frase Inicial de Pensamiento Profundo:\nC. Tercera opción'),
+    'Tercera opción'
+  );
+  assert.equal(
+    initialOptionText('Initial Deep Thought Phrase\nD. Fourth option'),
+    'Fourth option'
+  );
+  assert.equal(initialOptionText('  Sin prefijo  '), 'Sin prefijo');
 });

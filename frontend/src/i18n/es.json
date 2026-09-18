@@ -238,6 +238,7 @@
       "sidebarDescriptionGeneric": "Un espacio para avanzar con calma, escuchar lo que aparece y dar el siguiente paso.",
       "sideNote": "No busques la respuesta perfecta. Este espacio es para escuchar lo que hoy necesita tu atención.",
       "detailsLabel": "Detalles de la misión",
+      "aboutMission": "Sobre esta misión",
       "duration": "8–10 minutos",
       "sidebarImportance": {
         "1": "Es importante atravesar esta misión porque, sin este paso, el bosque permanece imaginario — un miedo en lugar de un lugar que puedes navegar. El estancamiento sigue siendo teórico, lo que significa que permanece para siempre. El borde solo asusta hasta que lo cruzas.",
@@ -323,7 +324,6 @@
       "initialSelectionLabel": "Elige una de las cuatro opciones",
       "initialAnswerLabel": "Tu respuesta",
       "initialValidation": "Elige una opción y escribe tu respuesta para continuar.",
-      "initialPreviousAnswers": "Tus respuestas del formato anterior",
       "previewContentTitle": "Vista previa del panel",
       "previewContentUnavailable": "Las preguntas propias de esta misión están disponibles en la aplicación conectada. Esta vista previa local permite revisar el panel lateral; el formulario completo puede probarse en la misión 1.",
       "previous": "Anterior",
@@ -338,7 +338,6 @@
       "retry": "Reintentar",
       "saveError": "Tu respuesta está segura en este dispositivo. Reintenta cuando vuelva la conexión.",
       "completeError": "No pudimos completar la misión todavía. Tus respuestas están a salvo; inténtalo nuevamente.",
-      "completeSetupError": "Tus respuestas están guardadas. Falta habilitar la entrega del token para este formato de misión.",
       "completeKicker": "Misión completada",
       "completeTitle": "Has ganado el Primer Tablón",
       "completeTitleGeneric": "Has completado la Misión {{numero}}",
