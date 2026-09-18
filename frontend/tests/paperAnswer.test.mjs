@@ -1,18 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  editPaperAnswer, isPaperAnswer, paperAnswerIsValid, paperAnswerText, setPaperAnswer,
+  editPaperAnswer, isPaperAnswer, paperAnswerText, setPaperAnswer,
 } from '../src/lib/paperAnswer.ts';
 
 test('paper checkbox completes an empty activity and survives a save/reload round trip', () => {
-  assert.equal(paperAnswerIsValid(''), false);
+  assert.equal(isPaperAnswer(''), false);
   const saved = setPaperAnswer('', true);
   assert.equal(isPaperAnswer(saved), true);
   assert.equal(paperAnswerText(saved), '');
-  assert.equal(paperAnswerIsValid(saved), true);
+  assert.ok(saved.trim().length > 0);
   assert.equal(isPaperAnswer(JSON.parse(JSON.stringify(saved))), true);
   assert.equal(setPaperAnswer(saved, false), '');
-  assert.equal(paperAnswerIsValid(setPaperAnswer(saved, false)), false);
+  assert.equal(isPaperAnswer(setPaperAnswer(saved, false)), false);
 });
 
 test('checking, editing and unchecking preserve an existing written answer', () => {
@@ -22,6 +22,6 @@ test('checking, editing and unchecking preserve an existing written answer', () 
   saved = editPaperAnswer(saved, `${written}\ny una más`);
   assert.equal(isPaperAnswer(saved), true);
   assert.equal(setPaperAnswer(saved, false), `${written}\ny una más`);
-  assert.equal(paperAnswerIsValid(setPaperAnswer(saved, false)), true);
+  assert.ok(setPaperAnswer(saved, false).trim().length > 0);
   assert.equal(editPaperAnswer(written, 'Otro texto'), 'Otro texto');
 });

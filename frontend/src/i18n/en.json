@@ -323,7 +323,7 @@
       "retry": "Try again",
       "saveError": "Your answer is safe on this device. Try again when your connection returns.",
       "completeError": "We couldn't complete the mission yet. Your answers are safe; please try again.",
-      "completeSetupError": "Your answers are saved, but token delivery for this mission format is not enabled yet. We're fixing it.",
+      "completeSetupError": "Your answers are saved. Token delivery for this mission format still needs to be enabled.",
       "completeKicker": "Mission completed",
       "completeTitle": "You earned the First Plank",
       "completeTitleGeneric": "You completed Mission {{numero}}",

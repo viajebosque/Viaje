@@ -36,7 +36,3 @@ export function setPaperAnswer(value: string, onPaper: boolean): string {
 export function editPaperAnswer(value: string, text: string): string {
   return isPaperAnswer(value) ? setPaperAnswer(text, true) : text;
 }
-
-export function paperAnswerIsValid(value: string): boolean {
-  return isPaperAnswer(value) || Boolean(paperAnswerText(value).trim());
-}

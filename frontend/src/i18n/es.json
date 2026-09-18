@@ -334,7 +334,7 @@
       "retry": "Reintentar",
       "saveError": "Tu respuesta está segura en este dispositivo. Reintenta cuando vuelva la conexión.",
       "completeError": "No pudimos completar la misión todavía. Tus respuestas están a salvo; inténtalo nuevamente.",
-      "completeSetupError": "Tus respuestas están guardadas, pero falta habilitar la entrega del token para este formato de misión. Estamos corrigiéndolo.",
+      "completeSetupError": "Tus respuestas están guardadas. Falta habilitar la entrega del token para este formato de misión.",
       "completeKicker": "Misión completada",
       "completeTitle": "Has ganado el Primer Tablón",
       "completeTitleGeneric": "Has completado la Misión {{numero}}",

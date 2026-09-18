@@ -377,7 +377,8 @@ export default function MissionGuided({
       window.localStorage.removeItem(storageKey);
       setCompleted(true);
     } catch (error) {
-      setSaveStatus('error');
+      // flushSave ya terminó bien; el fallo pertenece solo a la entrega del token.
+      setSaveStatus('saved');
       setSaveError(t(error instanceof MissionCompletionSetupError
         ? 'mission.guided.completeSetupError' : 'mission.guided.completeError'));
     } finally {
