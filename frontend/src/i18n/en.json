@@ -198,6 +198,11 @@
   },
   "mission": {
     "loading": "Loading mission…",
+    "loadingScene": {
+      "eyebrow": "Your forest journey",
+      "title": "The forest is getting ready for you",
+      "message": "Take a breath. Your next step is about to begin."
+    },
     "answersLoadError": "We couldn't load your answers. Try again to continue without losing what you've written.",
     "retryAnswers": "Try loading again",
     "notAvailable": "This mission isn't available yet.",

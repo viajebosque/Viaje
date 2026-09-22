@@ -209,6 +209,11 @@
   },
   "mission": {
     "loading": "Cargando misión…",
+    "loadingScene": {
+      "eyebrow": "Tu viaje por el bosque",
+      "title": "El bosque se prepara para ti",
+      "message": "Respira. Tu próximo paso está por comenzar."
+    },
     "answersLoadError": "No pudimos recuperar tus respuestas. Reintenta para continuar sin perder lo que ya escribiste.",
     "retryAnswers": "Reintentar carga",
     "notAvailable": "Esta misión aún no está disponible.",

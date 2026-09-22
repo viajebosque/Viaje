@@ -16,6 +16,7 @@ import {
 } from '../lib/missions';
 import { isSupabaseConfigured } from '../lib/supabase';
 import MissionGuided from './MissionGuided';
+import MissionLoading from '../components/MissionLoading';
 
 const PREVIEW_QUESTION_TEXTS: Record<Lang, readonly string[]> = {
   es: [
@@ -209,7 +210,7 @@ export default function MissionPage() {
   }, [questionsKey, missionId, isDesignPreview, answersRetry]);
 
   if (loading || access === null || loadedKey !== questionsKey) {
-    return <div className="auth-loading">{t('mission.loading')}</div>;
+    return <MissionLoading numero={Number(numero)} />;
   }
 
   if (answersLoadError) {

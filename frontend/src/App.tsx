@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './auth/AuthContext';
 import AuthPage from './pages/AuthPage';
@@ -11,12 +11,16 @@ import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
 import LangToggle from './i18n/LangToggle';
 import TokenPreview from './pages/TokenPreview';
+import MissionLoading from './components/MissionLoading';
 
 export default function App() {
   const { session, loading } = useAuth();
   const { t } = useTranslation();
+  const missionRoute = useMatch('/mission/:numero');
 
-  if (loading) return <div className="auth-loading">{t('common.loading')}</div>;
+  if (loading) return missionRoute
+    ? <MissionLoading numero={Number(missionRoute.params.numero)} />
+    : <div className="auth-loading">{t('common.loading')}</div>;
 
   return (
     <>
@@ -25,6 +29,7 @@ export default function App() {
       </div>
       <Routes>
       <Route path="/preview/token" element={<TokenPreview />} />
+      <Route path="/preview/loading" element={<MissionLoading numero={1} />} />
       {/* Raíz: si ya hay sesión, al bosque; si no, login/registro. */}
       <Route
         path="/"
