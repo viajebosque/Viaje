@@ -251,6 +251,23 @@
         "8": "Es importante atravesar esta misión porque quedarse a nivel del suelo en el bosque significa nunca ver qué tan lejos has llegado realmente. El progreso es real, incluso cuando es invisible desde donde estás parado. Sin perspectiva, el coraje se vuelve más difícil de sostener — porque no puedes ver para qué has estado construyendo con tanto esfuerzo.",
         "9": "Es importante atravesar esta misión porque, sin completar el cruce, el bosque se convierte en un hogar en lugar de un pasaje — y algunas personas se quedan perdidas no porque no puedan encontrar la salida, sino porque nunca creyeron que había una. Has hecho el trabajo. La orilla está detrás de ti. El río espera. Lo único que queda es alejarte."
       },
+      "consequence": {
+        "title": "Consecuencia Suave",
+        "firstTitle": "Consecuencia amable",
+        "previewTitle": "Vista previa de las recompensas",
+        "previewMission": "Elige una misión",
+        "texts": {
+          "1": "Sin este paso, el bosque permanece imaginario — un miedo en lugar de un lugar que puedes navegar. El estancamiento sigue siendo teórico, lo que significa que permanece para siempre. El borde solo asusta hasta que lo cruzas.",
+          "2": "Las raíces no examinadas dirigen silenciosamente nuestras elecciones — seguimos rodeando los mismos árboles, tomando los mismos caminos, llegando al mismo claro y preguntándonos por qué siempre se ve familiar. Entender las raíces no cambia de dónde vienes. Cambia adónde vas.",
+          "3": "Quedarse demasiado tiempo en la niebla convierte la confusión en parálisis — el bosque comienza a sentirse interminable, y las opciones que alguna vez tuviste se cierran silenciosamente. La niebla es temporal. El hábito de esperar a que se levante por sí sola puede volverse permanente.",
+          "4": "Los ríos suprimidos encuentran otras salidas — ansiedad, tensión, inundaciones repentinas en momentos inesperados y con personas inesperadas. Lo que nos negamos a nombrar amablemente eventualmente se nombrará a sí mismo en voz alta. Es mejor elegir el momento que ser sorprendida por él.",
+          "5": "Sin una meta, el esfuerzo se convierte en movimiento sin dirección — ocupado, sincero y agotador, pero sin construir hacia nada. Podemos ser muy productivas en el bosque y nunca encontrar nuestro camino al claro, si nunca nos detenemos a preguntar adónde estamos realmente intentando ir.",
+          "6": "Las tormentas no procesadas dejan heridas invisibles — empezamos a evitar el tiempo en general, eligiendo vidas más pequeñas con la esperanza de evitar futuras disrupciones. Pero la evasión tiene su propio costo: una vida vivida bajo refugio constante es una vida nunca completamente vivida al aire libre.",
+          "7": "Lo que vive en la cueva eventualmente encontrará su camino afuera — a menudo en momentos que menos esperamos y con personas que menos pretendemos. La sombra que nos negamos a poseer comienza a poseernos. Encontrarla conscientemente siempre es más gentil que ser sorprendida por ella.",
+          "8": "Quedarse a nivel del suelo en el bosque significa nunca ver qué tan lejos has llegado realmente. El progreso es real, incluso cuando es invisible desde donde estás parado. Sin perspectiva, el coraje se vuelve más difícil de sostener — porque no puedes ver para qué has estado construyendo con tanto esfuerzo.",
+          "9": "Sin completar el cruce, el bosque se convierte en un hogar en lugar de un pasaje — y algunas personas se quedan perdidas no porque no puedan encontrar la salida, sino porque nunca creyeron que había una. Has hecho el trabajo. La orilla está detrás de ti. El río espera. Lo único que queda es alejarte."
+        }
+      },
       "autoSave": "Tus respuestas se guardan automáticamente",
       "private": "Tus respuestas son privadas",
       "illustrationAlt": "El guía luminoso camina por la entrada del bosque",

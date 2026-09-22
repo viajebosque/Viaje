@@ -2500,7 +2500,14 @@ button, input { font: inherit; }
   outline-offset: 3px;
 }
 
-.guided-mission--complete { text-align: center; }
+.guided-mission.guided-mission--complete {
+  text-align: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  align-content: start;
+  gap: 1.25rem;
+  padding-block: clamp(1.5rem, 4vh, 3rem);
+}
 .guided-celebration {
   width: min(620px, 100%);
   padding: clamp(2.4rem, 7vw, 5rem);
@@ -2522,6 +2529,25 @@ button, input { font: inherit; }
 .guided-celebration .guided-primary { min-width: min(100%, 260px); margin-top: 1.5rem; }
 .guided-reward { margin: 0.85rem 0 0.25rem; color: #8a651d; font-weight: 800; }
 .guided-reward-meaning { margin: 0; color: #5f6c5d; font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; font-style: italic; }
+.guided-consequence {
+  margin-top: 1.75rem;
+  padding: 1.25rem clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(142, 119, 56, 0.25);
+  border-left: 3px solid #9b853e;
+  border-radius: 4px 18px 18px 4px;
+  background: rgba(255, 252, 244, 0.65);
+  text-align: left;
+}
+.guided-consequence-heading { display: flex; align-items: center; gap: 0.65rem; color: #36583d; }
+.guided-consequence-heading svg { width: 24px; height: 24px; flex-shrink: 0; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.guided-consequence h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.22rem; font-weight: 500; line-height: 1.35; }
+.guided-consequence p { margin: 0.85rem 0 0; color: #525b48; font-size: 1rem; line-height: 1.75; overflow-wrap: break-word; }
+.token-preview-controls { width: min(620px, 100%); padding: 1.25rem; border: 1px solid #cbb578; border-radius: 20px; background: #fffaf0; }
+.token-preview-controls h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+.token-preview-controls p { font-size: 0.85rem; line-height: 1.5; }
+.token-preview-controls summary { cursor: pointer; }
+.token-preview-selection { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.75rem; }
+.token-preview-selection select { padding: 0.55rem; border: 1px solid #9b853e; border-radius: 8px; background: #fffdf6; color: #17442d; font: inherit; }
 @keyframes guided-pulse {
   50% { opacity: 0.35; transform: scale(0.76); }
 }

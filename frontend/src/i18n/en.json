@@ -240,6 +240,23 @@
         "8": "It is important to move through this mission because staying at ground level in the forest means never seeing how far you have actually come. Progress is real, even when it is invisible from where you stand. Without perspective, courage becomes harder to sustain — because you cannot see what you have been building toward with so much effort.",
         "9": "It is important to move through this mission because, without completing the crossing, the forest becomes a home rather than a passage — and some people stay lost not because they cannot find the way out, but because they never believed there was one. You have done the work. The shore is behind you. The river waits. The only thing left is to move away."
       },
+      "consequence": {
+        "title": "Gentle Consequence",
+        "firstTitle": "Gentle Consequence",
+        "previewTitle": "Reward preview",
+        "previewMission": "Choose a mission",
+        "texts": {
+          "1": "Without this step, the forest remains imaginary — a fear rather than a place you can navigate. Stagnation remains theoretical, which means it remains forever. The edge is only frightening until you cross it.",
+          "2": "Unexamined roots silently direct our choices — we keep circling the same trees, taking the same paths, arriving at the same clearing and wondering why it always looks familiar. Understanding the roots does not change where you come from. It changes where you go.",
+          "3": "Staying in the fog too long turns confusion into paralysis — the forest begins to feel endless, and the options you once had quietly close. The fog is temporary. The habit of waiting for it to lift on its own can become permanent.",
+          "4": "Suppressed rivers find other outlets — anxiety, tension, sudden floods at unexpected moments and with unexpected people. What we refuse to name gently will eventually name itself out loud. It is better to choose the moment than to be surprised by it.",
+          "5": "Without a goal, effort becomes movement without direction — busy, sincere and exhausting, but building toward nothing. We can be very productive in the forest and never find our way to the clearing if we never stop to ask where we are really trying to go.",
+          "6": "Unprocessed storms leave invisible wounds — we begin to avoid the weather altogether, choosing smaller lives in the hope of avoiding future disruptions. But avoidance has its own cost: a life lived under constant shelter is a life never fully lived in the open air.",
+          "7": "What lives in the cave will eventually find its way out — often at the moments we least expect and with the people we least intend. The shadow we refuse to own begins to own us. Meeting it consciously is always gentler than being surprised by it.",
+          "8": "Staying at ground level in the forest means never seeing how far you have actually come. Progress is real, even when it is invisible from where you stand. Without perspective, courage becomes harder to sustain — because you cannot see what you have been building toward with so much effort.",
+          "9": "Without completing the crossing, the forest becomes a home rather than a passage — and some people stay lost not because they cannot find the way out, but because they never believed there was one. You have done the work. The shore is behind you. The river waits. The only thing left is to move away."
+        }
+      },
       "autoSave": "Your answers are saved automatically",
       "private": "Your answers are private",
       "illustrationAlt": "The glowing guide walks through the entrance to the forest",

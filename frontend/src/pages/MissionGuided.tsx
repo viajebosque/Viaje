@@ -8,11 +8,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import forestMap from '../assets/forest/forest-map.png';
-import MissionTokenReward from '../components/MissionTokenReward';
+import MissionCompletion from '../components/MissionCompletion';
 import type { Lang } from '../i18n';
 import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
 import { getMissionPanelImage } from '../lib/missionPanels';
-import { getMissionTokenImage } from '../lib/missionTokens';
 import { getMissionActivityVideoId } from '../lib/missionVideos';
 import { editPaperAnswer, isPaperAnswer, paperAnswerText, setPaperAnswer } from '../lib/paperAnswer';
 import {
@@ -415,7 +414,6 @@ export default function MissionGuided({
       : questionText.length > 90 || questionLineCount > 1
         ? 'guided-question-title--long'
         : undefined;
-  const tokenImage = getMissionTokenImage(mission.numero);
   const missionPanel = getMissionPanelImage(mission.numero) ?? forestMap;
   const isFirstMission = mission.numero === 1;
   // Textos definitivos del cliente para el lateral, independientes del cierre.
@@ -456,37 +454,11 @@ export default function MissionGuided({
 
   if (completed) {
     return (
-      <main
-        className="guided-mission guided-mission--complete"
-        style={{ '--guided-forest': `url(${forestMap})` } as React.CSSProperties}
-      >
-        <section className="guided-celebration" aria-labelledby="guided-complete-title">
-          <span className="guided-celebration-kicker">{t('mission.guided.completeKicker')}</span>
-          {tokenImage && (
-            <MissionTokenReward
-              src={tokenImage}
-              alt={t('mission.tokenImageAlt', { numero: mission.numero })}
-              large
-            />
-          )}
-          <h1 id="guided-complete-title">
-            {isFirstMission
-              ? t('mission.guided.completeTitle')
-              : t('mission.guided.completeTitleGeneric', { numero: mission.numero })}
-          </h1>
-          <p className="guided-reward">
-            {isFirstMission
-              ? t('mission.guided.reward')
-              : t('mission.guided.rewardGeneric')}
-          </p>
-          <p className="guided-reward-meaning">
-            {isFirstMission ? t('mission.guided.rewardMeaning') : mission.texto_final}
-          </p>
-          <button className="guided-primary" type="button" onClick={() => navigate(mapPath)}>
-            {t('mission.guided.backToMap')}
-          </button>
-        </section>
-      </main>
+      <MissionCompletion
+        numero={mission.numero}
+        closingText={mission.texto_final}
+        onContinue={() => navigate(mapPath)}
+      />
     );
   }
 
