@@ -61,7 +61,7 @@ export default function MissionCompletion({ numero, closingText, onContinue, rep
           <p>{t(`mission.guided.consequence.texts.${numero}`)}</p>
         </section>
         <button className="guided-primary" type="button" onClick={onContinue}>
-          {t('mission.guided.backToMap')}
+          {t('mission.guided.completionContinue')}
         </button>
       </section>
     </main>
