@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import confetti from 'canvas-confetti';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MissionCompletion from '../components/MissionCompletion';
 import LangToggle from '../i18n/LangToggle';
@@ -13,8 +12,6 @@ export default function TokenPreview() {
   const requestedMission = Number(params.get('mission') || 1);
   const numero = Number.isInteger(requestedMission) && requestedMission >= 1 && requestedMission <= 9 ? requestedMission : 1;
   const [replay, setReplay] = useState(0);
-  const manualCanvas = useRef<HTMLCanvasElement>();
-  const manualConfetti = useRef<ReturnType<typeof confetti.create>>();
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
@@ -24,30 +21,6 @@ export default function TokenPreview() {
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
   }, []);
-
-  useEffect(() => () => {
-    manualConfetti.current?.reset();
-    manualCanvas.current?.remove();
-  }, []);
-
-  const launchConfetti = () => {
-    if (!manualCanvas.current) {
-      const canvas = document.createElement('canvas');
-      canvas.className = 'mission-token-confetti';
-      canvas.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(canvas);
-      manualCanvas.current = canvas;
-      // Solo esta acción explícita permite probar el movimiento con la preferencia activada.
-      manualConfetti.current = confetti.create(canvas, { resize: true, disableForReducedMotion: false });
-    }
-    manualConfetti.current?.reset();
-    void manualConfetti.current?.({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#D4A329', '#F4C95D', '#FFE599', '#FFF4CC', '#B8860B'],
-    });
-  };
 
   return (
     <MissionCompletion
@@ -72,9 +45,6 @@ export default function TokenPreview() {
           <p id="token-preview-motion" role="status">
             {t(reducedMotion ? 'mission.guided.tokenPreviewReduced' : 'mission.guided.tokenPreviewEnabled')}
           </p>
-          <button className="guided-primary" type="button" aria-describedby="token-preview-motion" onClick={launchConfetti}>
-            {t('mission.guided.tokenPreviewLaunch')}
-          </button>
           <button className="guided-secondary" style={{ marginTop: '1rem' }} type="button" onClick={() => setReplay((value) => value + 1)}>
             {t('mission.guided.tokenPreviewReplay')}
           </button>

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import MissionTokenReward from './MissionTokenReward';
+import CelebrateButton from './CelebrateButton';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import forestMap from '../assets/forest/forest-map.png';
 
@@ -46,6 +47,7 @@ export default function MissionCompletion({ numero, closingText, onContinue, rep
             {isFirstMission ? t('mission.guided.rewardMeaning') : closingText}
           </p>
         )}
+        <CelebrateButton key={numero} />
         <section className="guided-consequence" aria-labelledby="guided-consequence-title">
           <div className="guided-consequence-heading">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">

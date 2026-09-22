@@ -331,7 +331,7 @@
       "backendPlaceholder": "Escribe tu respuesta…",
       "initialTitle": "Pregunta Inicial",
       "tokenPreviewTitle": "Prueba de confeti",
-      "tokenPreviewReduced": "Tu navegador solicita reducir el movimiento: el confeti automático está desactivado. Si deseas ver la animación, pulsa «Lanzar confeti».",
+      "tokenPreviewReduced": "Tu navegador solicita reducir el movimiento: el confeti automático está desactivado. Si deseas ver la animación, pulsa «Celebrar con confeti» en la tarjeta de recompensa.",
       "tokenPreviewEnabled": "Las animaciones están habilitadas. El confeti debe aparecer al mostrarse el token.",
       "tokenPreviewReplay": "Repetir animación",
       "tokenPreviewLaunch": "Lanzar confeti",
@@ -361,6 +361,7 @@
       "reward": "Tu primera recompensa del bosque",
       "rewardGeneric": "Has ganado un nuevo amuleto del bosque",
       "rewardMeaning": "Representa el coraje de comenzar",
+      "celebrate": "Celebrar con confeti",
       "backToMap": "Volver al mapa"
     }
   },

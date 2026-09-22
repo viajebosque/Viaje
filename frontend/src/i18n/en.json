@@ -320,7 +320,7 @@
       "backendPlaceholder": "Write your answer…",
       "initialTitle": "Initial Question",
       "tokenPreviewTitle": "Confetti preview",
-      "tokenPreviewReduced": "Your browser requests reduced motion: automatic confetti is disabled. If you want to see the animation, select “Launch confetti”.",
+      "tokenPreviewReduced": "Your browser requests reduced motion: automatic confetti is disabled. To see the animation, select “Celebrate with confetti” on the reward card.",
       "tokenPreviewEnabled": "Animations are enabled. Confetti should appear when the token is revealed.",
       "tokenPreviewReplay": "Replay animation",
       "tokenPreviewLaunch": "Launch confetti",
@@ -350,6 +350,7 @@
       "reward": "Your first forest reward",
       "rewardGeneric": "You earned a new forest amulet",
       "rewardMeaning": "It represents the courage to begin",
+      "celebrate": "Celebrate with confetti",
       "backToMap": "Back to map"
     }
   },
