@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate, useMatch } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from './auth/AuthContext';
 import AuthPage from './pages/AuthPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
@@ -11,16 +10,21 @@ import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
 import LangToggle from './i18n/LangToggle';
 import TokenPreview from './pages/TokenPreview';
-import MissionLoading from './components/MissionLoading';
+import ScreenLoader from './components/ScreenLoader';
 
 export default function App() {
   const { session, loading } = useAuth();
-  const { t } = useTranslation();
   const missionRoute = useMatch('/mission/:numero');
+  const rootRoute = useMatch('/');
+  const resetRoute = useMatch('/reset-password');
 
-  if (loading) return missionRoute
-    ? <MissionLoading numero={Number(missionRoute.params.numero)} />
-    : <div className="auth-loading">{t('common.loading')}</div>;
+  // Las pantallas públicas cargan con el fondo del login, el resto con el mapa.
+  if (loading) return (
+    <ScreenLoader
+      numero={missionRoute ? Number(missionRoute.params.numero) : undefined}
+      background={rootRoute || resetRoute ? 'login' : 'forest'}
+    />
+  );
 
   return (
     <>
@@ -29,7 +33,7 @@ export default function App() {
       </div>
       <Routes>
       <Route path="/preview/token" element={<TokenPreview />} />
-      <Route path="/preview/loading" element={<MissionLoading numero={1} />} />
+      <Route path="/preview/loading" element={<ScreenLoader numero={1} />} />
       {/* Raíz: si ya hay sesión, al bosque; si no, login/registro. */}
       <Route
         path="/"

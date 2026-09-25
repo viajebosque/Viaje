@@ -219,7 +219,8 @@
     "loadingScene": {
       "eyebrow": "Your forest journey",
       "title": "The forest is getting ready for you",
-      "message": "Take a breath. Your next step is about to begin."
+      "message": "Take a breath. Your next step is about to begin.",
+      "messageGeneric": "Take a breath. We are preparing your path."
     },
     "answersLoadError": "We couldn't load your answers. Try again to continue without losing what you've written.",
     "retryAnswers": "Try loading again",

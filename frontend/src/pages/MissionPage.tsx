@@ -16,7 +16,7 @@ import {
 } from '../lib/missions';
 import { isSupabaseConfigured } from '../lib/supabase';
 import MissionGuided from './MissionGuided';
-import MissionLoading from '../components/MissionLoading';
+import ScreenLoader from '../components/ScreenLoader';
 
 const PREVIEW_QUESTION_TEXTS: Record<Lang, readonly string[]> = {
   es: [
@@ -198,7 +198,7 @@ export default function MissionPage() {
   }, [questionsKey, missionId, isDesignPreview, answersRetry]);
 
   if (loading || access === null || loadedKey !== questionsKey) {
-    return <MissionLoading numero={Number(numero)} />;
+    return <ScreenLoader numero={Number(numero)} />;
   }
 
   if (answersLoadError) {

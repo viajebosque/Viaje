@@ -5,6 +5,7 @@ import { changeEmail, changePassword } from '../auth/auth';
 import { authErrorKey } from '../auth/authErrors';
 import { useLanguage } from '../i18n/useLanguage';
 import JourneyPageShell from './JourneyPageShell';
+import ScreenLoader from '../components/ScreenLoader';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import {
   getCompletedMissionIds,
@@ -228,7 +229,7 @@ export default function ProfilePage() {
     return <p className={m.error ? 'auth-error' : 'auth-info'}>{text}</p>;
   }
 
-  if (loading) return <div className="auth-loading">{t('common.loading')}</div>;
+  if (loading) return <ScreenLoader />;
 
   return (
     <JourneyPageShell

@@ -230,7 +230,8 @@
     "loadingScene": {
       "eyebrow": "Tu viaje por el bosque",
       "title": "El bosque se prepara para ti",
-      "message": "Respira. Tu próximo paso está por comenzar."
+      "message": "Respira. Tu próximo paso está por comenzar.",
+      "messageGeneric": "Respira. Estamos preparando tu camino."
     },
     "answersLoadError": "No pudimos recuperar tus respuestas. Reintenta para continuar sin perder lo que ya escribiste.",
     "retryAnswers": "Reintentar carga",

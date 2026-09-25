@@ -67,15 +67,8 @@ body {
   box-shadow: 0 5px 18px rgba(27, 42, 27, 0.15);
 }
 
-.auth-loading {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  color: #3a4a3a;
-}
-
 /* ---------- Forest ---------- */
-/* Carga de actividades: los mismos materiales y colores del recorrido. */
+/* Pantalla de carga (ScreenLoader): los mismos materiales y colores del recorrido. */
 .mission-loading {
   position: relative;
   isolation: isolate;
