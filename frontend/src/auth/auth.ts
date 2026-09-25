@@ -1,8 +1,12 @@
 import { supabase } from '../lib/supabase';
+import { currentLang } from '../i18n';
 
 // Crear cuenta con nombre, correo y contraseña.
 // El nombre se guarda en user_metadata.full_name -> el trigger de la BD
 // lo copia a la tabla profiles.
+// El idioma activo va en user_metadata.lang: la plantilla del correo de
+// confirmación lo lee como {{ .Data.lang }} para escribir en ese idioma, y el
+// trigger lo copia a profiles.lang (SQL/019).
 export async function signUpWithEmail(
   fullName: string,
   email: string,
@@ -11,7 +15,7 @@ export async function signUpWithEmail(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName } },
+    options: { data: { full_name: fullName, lang: currentLang() } },
   });
   if (error) throw error;
   return data;
