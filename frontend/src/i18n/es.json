@@ -330,8 +330,6 @@
       "activityVideoTitle": "Video de la actividad de la Misión {{numero}}",
       "backendHelp": "No hay respuestas correctas. Escribe con honestidad y a tu propio ritmo.",
       "activityHelp": "Escribe aquí tu respuesta o marca la casilla si hiciste la miniacción en papel.",
-      "legacyDeviceWritingPhrase": "en tu computadora",
-      "deviceWritingPhrase": "en tu dispositivo",
       "completedOnPaper": "Ya hice esta miniacción en papel",
       "backendPlaceholder": "Escribe tu respuesta…",
       "initialTitle": "Pregunta Inicial",

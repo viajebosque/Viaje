@@ -319,8 +319,6 @@
       "activityVideoTitle": "Mission {{numero}} activity video",
       "backendHelp": "There are no right answers. Write honestly and at your own pace.",
       "activityHelp": "Write your answer here, or check the box if you completed this activity on paper.",
-      "legacyDeviceWritingPhrase": "on your computer",
-      "deviceWritingPhrase": "on your device",
       "completedOnPaper": "I completed this activity on paper",
       "backendPlaceholder": "Write your answer…",
       "initialTitle": "Initial Question",

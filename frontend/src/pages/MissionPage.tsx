@@ -125,19 +125,7 @@ export default function MissionPage() {
       .then((result) => {
         if (cancelled) return;
         setMission(result?.mission ?? null);
-        // La corrección definitiva está en SQL/015. Muéstrala también mientras
-        // el contenido antiguo siga publicado en la base de datos.
-        setQuestions((result?.questions ?? []).map((question) =>
-          missionNumber === 1 && question.categoria === 'actividad'
-            ? {
-                ...question,
-                enunciado: question.enunciado.replace(
-                  t('mission.guided.legacyDeviceWritingPhrase'),
-                  t('mission.guided.deviceWritingPhrase'),
-                ),
-              }
-            : question,
-        ));
+        setQuestions(result?.questions ?? []);
         setLoading(false);
       })
       .catch((error) => {
@@ -151,7 +139,7 @@ export default function MissionPage() {
     return () => {
       cancelled = true;
     };
-  }, [numero, lang, isDesignPreview, t]);
+  }, [numero, lang, isDesignPreview]);
 
   // La autorización es independiente del idioma. Mantiene el bloqueo
   // secuencial y el acceso de pago antes de renderizar cualquier actividad.
