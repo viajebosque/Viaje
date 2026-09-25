@@ -1699,7 +1699,9 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   .journey-emblem { width: 3.5rem; }
   .journey-heading h1 { font-size: clamp(2.05rem, 10vw, 2.8rem); }
   .journey-subtitle { margin-top: 0.5rem; font-size: 0.88rem; }
-  .journey-header-badge { position: static; margin-top: 1rem; }
+  /* relative, no static: el ::after del header (fondo semitransparente,
+     posicionado) se pinta encima de lo que no esta posicionado y tapaba el tag. */
+  .journey-header-badge { position: relative; right: auto; bottom: auto; margin-top: 1rem; }
   .journey-content { padding: 1rem; }
   .profile-grid { grid-template-columns: 1fr; }
   .profile-card--password,
@@ -3778,10 +3780,10 @@ body:has(.guided-mission),
 }
 
 /* ---------- Cierre del viaje (modal del mapa al terminar la Misión 9) ---------- */
-.journey-modal { width: min(94vw, 860px); text-align: center; }
-.journey-header { margin-bottom: clamp(1rem, 2.5vw, 1.6rem); }
-.journey-header h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
-.journey-tokens {
+.journey-end-modal { width: min(94vw, 860px); text-align: center; }
+.journey-end-header { margin-bottom: clamp(1rem, 2.5vw, 1.6rem); }
+.journey-end-header h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
+.journey-end-tokens {
   display: grid;
   grid-template-columns: repeat(9, minmax(0, 1fr));
   gap: clamp(0.35rem, 1vw, 0.8rem);
@@ -3790,14 +3792,14 @@ body:has(.guided-mission),
   padding: 0;
   list-style: none;
 }
-.journey-token img {
+.journey-end-token img {
   display: block;
   width: 100%;
   aspect-ratio: 1;
   object-fit: contain;
   filter: drop-shadow(0 6px 10px rgba(35, 58, 30, 0.22));
 }
-.journey-closing {
+.journey-end-closing {
   max-width: 560px;
   margin: clamp(1rem, 2.5vw, 1.6rem) auto 0;
   color: #586451;
@@ -3806,15 +3808,15 @@ body:has(.guided-mission),
   font-style: italic;
   line-height: 1.55;
 }
-.journey-actions {
+.journey-end-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.55rem;
   margin-top: 1.1rem;
 }
-.journey-actions .journey-primary { margin: 0; }
-.journey-secondary {
+.journey-end-actions .journey-end-primary { margin: 0; }
+.journey-end-secondary {
   border: 0;
   border-bottom: 1px solid currentColor;
   background: transparent;
@@ -3824,23 +3826,23 @@ body:has(.guided-mission),
   font-size: 0.95rem;
   cursor: pointer;
 }
-.journey-secondary:disabled { opacity: 0.55; cursor: not-allowed; }
-.journey-confirm { width: min(94vw, 560px); }
-.journey-confirm-body {
+.journey-end-secondary:disabled { opacity: 0.55; cursor: not-allowed; }
+.journey-end-confirm { width: min(94vw, 560px); }
+.journey-end-confirm-body {
   max-width: 460px;
   margin: 0 auto;
   color: #3d4a37;
   line-height: 1.6;
 }
-.journey-confirm-body p { margin: 0 0 0.6rem; }
-.journey-confirm-keep { color: #586451; font-style: italic; }
-.journey-error {
+.journey-end-confirm-body p { margin: 0 0 0.6rem; }
+.journey-end-confirm-keep { color: #586451; font-style: italic; }
+.journey-end-error {
   min-height: 1.4em;
   margin: 0.4rem 0 0;
   color: #8a2f22;
   font-size: 0.9rem;
 }
-.journey-danger {
+.journey-end-danger {
   min-width: min(100%, 260px);
   min-height: 3rem;
   padding: 0.7rem 1.35rem;
@@ -3852,37 +3854,37 @@ body:has(.guided-mission),
   font-weight: 750;
   cursor: pointer;
 }
-.journey-danger:hover,
-.journey-danger:focus-visible {
+.journey-end-danger:hover,
+.journey-end-danger:focus-visible {
   background: #733224;
   outline: 3px solid rgba(138, 63, 46, 0.28);
 }
-.journey-danger:disabled { opacity: 0.7; cursor: progress; }
+.journey-end-danger:disabled { opacity: 0.7; cursor: progress; }
 
 /* Los tokens aparecen de uno en uno; texto y botones llegan al final. */
 @media (prefers-reduced-motion: no-preference) {
-  .journey-tokens--animate .journey-token {
-    animation: journey-token-in 520ms cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
-    animation-delay: calc(300ms + var(--journey-index) * 220ms);
+  .journey-end-tokens--animate .journey-end-token {
+    animation: journey-end-token-in 520ms cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+    animation-delay: calc(300ms + var(--journey-end-index) * 220ms);
   }
-  .journey-tokens--animate ~ .journey-closing,
-  .journey-tokens--animate ~ .journey-actions {
-    animation: journey-fade-in 600ms ease both;
+  .journey-end-tokens--animate ~ .journey-end-closing,
+  .journey-end-tokens--animate ~ .journey-end-actions {
+    animation: journey-end-fade-in 600ms ease both;
     animation-delay: 2.3s;
   }
 }
-@keyframes journey-token-in {
+@keyframes journey-end-token-in {
   from { opacity: 0; transform: translateY(12px) scale(0.6); }
   to { opacity: 1; transform: none; }
 }
-@keyframes journey-fade-in {
+@keyframes journey-end-fade-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
 }
 
 @media (max-width: 700px) {
-  .journey-modal { width: 100%; }
-  .journey-tokens {
+  .journey-end-modal { width: 100%; }
+  .journey-end-tokens {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     max-width: 280px;
   }

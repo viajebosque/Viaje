@@ -68,14 +68,14 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
 
   return (
     <div
-      className="modal-backdrop reminders-backdrop journey-backdrop"
+      className="modal-backdrop reminders-backdrop journey-end-backdrop"
       onClick={() => {
         if (view === 'celebrate') onClose();
       }}
     >
       {view === 'celebrate' ? (
         <section
-          className="reminders-modal journey-modal"
+          className="reminders-modal journey-end-modal"
           style={{ '--reminders-forest': `url(${forestImage})` } as React.CSSProperties}
           role="dialog"
           aria-modal="true"
@@ -92,7 +92,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
             <CloseIcon />
           </button>
 
-          <header className="reminders-header journey-header">
+          <header className="reminders-header journey-end-header">
             <p className="reminders-eyebrow">{t('forest.journeyEnd.eyebrow')}</p>
             <h2 id="journey-end-title">{t('forest.journeyEnd.title')}</h2>
             <p id="journey-end-intro" className="reminders-intro">
@@ -101,14 +101,14 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           </header>
 
           <ol
-            className={`journey-tokens${animateTokens ? ' journey-tokens--animate' : ''}`}
+            className={`journey-end-tokens${animateTokens ? ' journey-end-tokens--animate' : ''}`}
             aria-label={t('forest.journeyEnd.tokensLabel', { total: TOTAL_MISSIONS })}
           >
             {missionNumbers.map((numero, index) => (
               <li
                 key={numero}
-                className="journey-token"
-                style={{ '--journey-index': index } as React.CSSProperties}
+                className="journey-end-token"
+                style={{ '--journey-end-index': index } as React.CSSProperties}
               >
                 <img
                   src={getMissionTokenImage(numero)}
@@ -119,42 +119,42 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
             ))}
           </ol>
 
-          <p className="journey-closing">{t('forest.journeyEnd.closing')}</p>
+          <p className="journey-end-closing">{t('forest.journeyEnd.closing')}</p>
 
-          <div className="journey-actions">
-            <button className="reminders-return journey-primary" type="button" autoFocus onClick={onClose}>
+          <div className="journey-end-actions">
+            <button className="reminders-return journey-end-primary" type="button" autoFocus onClick={onClose}>
               {t('common.backToMap')}
             </button>
-            <button className="journey-secondary" type="button" onClick={() => setView('confirm')}>
+            <button className="journey-end-secondary" type="button" onClick={() => setView('confirm')}>
               {t('forest.journeyEnd.restart')}
             </button>
           </div>
         </section>
       ) : (
         <section
-          className="reminders-modal journey-modal journey-confirm"
+          className="reminders-modal journey-end-modal journey-end-confirm"
           style={{ '--reminders-forest': `url(${forestImage})` } as React.CSSProperties}
           role="alertdialog"
           aria-modal="true"
-          aria-labelledby="journey-confirm-title"
-          aria-describedby="journey-confirm-body"
+          aria-labelledby="journey-end-confirm-title"
+          aria-describedby="journey-end-confirm-body"
           onClick={(event) => event.stopPropagation()}
         >
-          <header className="reminders-header journey-header">
-            <h2 id="journey-confirm-title">{t('forest.journeyEnd.confirmTitle')}</h2>
+          <header className="reminders-header journey-end-header">
+            <h2 id="journey-end-confirm-title">{t('forest.journeyEnd.confirmTitle')}</h2>
           </header>
-          <div id="journey-confirm-body" className="journey-confirm-body">
+          <div id="journey-end-confirm-body" className="journey-end-confirm-body">
             <p>{t('forest.journeyEnd.confirmBody')}</p>
-            <p className="journey-confirm-keep">{t('forest.journeyEnd.confirmKeep')}</p>
+            <p className="journey-end-confirm-keep">{t('forest.journeyEnd.confirmKeep')}</p>
           </div>
 
-          <p className="journey-error" role="alert">
+          <p className="journey-end-error" role="alert">
             {errorKey ? t(errorKey) : ''}
           </p>
 
-          <div className="journey-actions">
+          <div className="journey-end-actions">
             <button
-              className="journey-danger"
+              className="journey-end-danger"
               type="button"
               disabled={resetting}
               onClick={confirmReset}
@@ -162,7 +162,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
               {t(resetting ? 'forest.journeyEnd.restarting' : 'forest.journeyEnd.confirmYes')}
             </button>
             <button
-              className="journey-secondary"
+              className="journey-end-secondary"
               type="button"
               autoFocus
               disabled={resetting}
