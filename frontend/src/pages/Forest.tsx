@@ -93,6 +93,14 @@ function CloseIcon() {
   );
 }
 
+function JourneyIcon() {
+  return (
+    <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m12 3.5 2.5 5.1 5.6.8-4 4 1 5.6-5.1-2.7L6.9 19l1-5.6-4-4 5.6-.8L12 3.5Z" />
+    </svg>
+  );
+}
+
 function ProfileIcon() {
   return (
     <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -204,6 +212,10 @@ export default function Forest() {
     }
     navigate(`${location.pathname}${location.search}`, { replace: true, state: null });
   }, [journeyFlag, completedLoaded, completed, isDesignPreview, navigate, location.pathname, location.search]);
+
+  // Acceso fijo al cierre del viaje: quien cerró el modal lo puede volver a
+  // abrir (y reiniciar) mientras tenga las 9 misiones completas.
+  const journeyDone = isDesignPreview || (completedLoaded && completed.size >= TOTAL_MISSIONS);
 
   async function handleResetJourney(): Promise<boolean> {
     if (isDesignPreview) {
@@ -388,6 +400,24 @@ export default function Forest() {
               <span className="forest-help-icon" aria-hidden="true">?</span>
               <span className="forest-action-label">{t('forest.reminders.open')}</span>
             </button>
+            {journeyDone && (
+              <button
+                className="forest-action-button"
+                type="button"
+                title={t('forest.journeyEnd.open')}
+                aria-label={t('forest.journeyEnd.open')}
+                aria-haspopup="dialog"
+                aria-expanded={showJourneyEnd}
+                onClick={() => {
+                  setSelected(null);
+                  setShowReminders(false);
+                  setShowJourneyEnd(true);
+                }}
+              >
+                <JourneyIcon />
+                <span className="forest-action-label">{t('forest.journeyEnd.open')}</span>
+              </button>
+            )}
             <button
               className="forest-action-button"
               type="button"

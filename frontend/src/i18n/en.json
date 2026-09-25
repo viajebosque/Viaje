@@ -76,6 +76,7 @@
   },
   "forest": {
     "journeyEnd": {
+      "open": "My completed journey",
       "eyebrow": "Journey complete",
       "title": "Congratulations, you completed the journey",
       "intro": "You walked the forest from beginning to end. Each token is a footprint of what you dared to look at along the way.",
