@@ -5,6 +5,11 @@
 
 * { box-sizing: border-box; }
 
+/* Títulos que reciben el foco por código (tabIndex=-1) para que el lector de
+   pantalla los anuncie al cambiar de paso. No son interactivos: sin esto el
+   navegador les dibuja el borde de foco y parecen seleccionados. */
+[tabindex="-1"]:focus { outline: none; }
+
 body {
   margin: 0;
   background: linear-gradient(160deg, #e8f3e6 0%, #cfe6cf 100%);
