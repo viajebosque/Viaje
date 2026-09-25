@@ -75,6 +75,21 @@
     "signupDoneBody": "We sent you a message to confirm your account. Look for it in your inbox and also in your spam or junk folder. Once you confirm it, come back here and sign in."
   },
   "forest": {
+    "journeyEnd": {
+      "eyebrow": "Journey complete",
+      "title": "Congratulations, you completed the journey",
+      "intro": "You walked the forest from beginning to end. Each token is a footprint of what you dared to look at along the way.",
+      "tokensLabel": "The {{total}} tokens of your journey",
+      "closing": "What you found here stays with you. You can return to these paths whenever you need to.",
+      "restart": "Restart my journey",
+      "confirmTitle": "Restart your journey?",
+      "confirmBody": "All your answers and all the tokens you earned will be deleted, and you will start again from Mission 1. This cannot be undone.",
+      "confirmKeep": "Your account and your access stay as they are.",
+      "confirmYes": "Yes, restart everything",
+      "confirmCancel": "Cancel",
+      "restarting": "Restarting…",
+      "error": "We couldn't restart your journey. Please try again."
+    },
     "title": "The Forest Map 🌲",
     "subtitle": "Click on Mission 1 to begin.",
     "comingSoon": "Coming soon",
@@ -355,6 +370,7 @@
       "rewardMeaning": "It represents the courage to begin",
       "celebrate": "Celebrate with confetti",
       "completionContinue": "Congratulations!! Your next mission awaits.",
+      "completionFinish": "Congratulations!! You completed the journey.",
       "backToMap": "Back to map"
     }
   },

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import { useRole } from '../auth/useRole';
@@ -13,12 +13,16 @@ import { getMissionPanelImage } from '../lib/missionPanels';
 import {
   getMissions,
   getCompletedMissionIds,
+  resetJourney,
   FREE_MISSIONS,
+  TOTAL_MISSIONS,
+  type ForestLocationState,
   type MissionAccess,
   type MissionSummary,
 } from '../lib/missions';
 import { whatsappUrl } from '../lib/payment';
 import { wakeBackend } from '../lib/api';
+import JourneyCompleteModal from '../components/JourneyCompleteModal';
 
 const missionPositions = [
   { left: 5.9, top: 55.2 },
@@ -123,6 +127,7 @@ export default function Forest() {
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   // Despierta el backend en cuanto se sabe que es admin: el panel lo va a
   // necesitar y así no paga el arranque en frío al abrirlo.
   useEffect(() => {
@@ -141,6 +146,7 @@ export default function Forest() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
+  const [showJourneyEnd, setShowJourneyEnd] = useState(false);
   const mapViewportRef = useRef<HTMLDivElement>(null);
   const missionNodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const didPositionMapRef = useRef(false);
@@ -181,6 +187,37 @@ export default function Forest() {
       active = false;
     };
   }, []);
+
+  // Cierre del viaje. La última misión vuelve al mapa con journeyComplete en el
+  // estado de navegación, pero el modal sale solo si los tokens lo confirman:
+  // el estado dice "vengo del final", los tokens dicen "terminó de verdad".
+  // Se limpia el estado para que recargar o volver atrás no lo repita.
+  const journeyFlag =
+    (location.state as ForestLocationState | null)?.journeyComplete === true;
+  useEffect(() => {
+    if (!journeyFlag) return;
+    if (!isDesignPreview && !completedLoaded) return;
+    if (isDesignPreview || completed.size >= TOTAL_MISSIONS) {
+      setSelected(null);
+      setShowReminders(false);
+      setShowJourneyEnd(true);
+    }
+    navigate(`${location.pathname}${location.search}`, { replace: true, state: null });
+  }, [journeyFlag, completedLoaded, completed, isDesignPreview, navigate, location.pathname, location.search]);
+
+  async function handleResetJourney(): Promise<boolean> {
+    if (isDesignPreview) {
+      setShowJourneyEnd(false);
+      return true;
+    }
+    const ok = await resetJourney();
+    if (ok) {
+      setCompleted(new Set());
+      setShowJourneyEnd(false);
+      mapViewportRef.current?.scrollTo({ left: 0, behavior: 'auto' });
+    }
+    return ok;
+  }
 
   // En teléfono, entra directamente a la última misión completada. Se hace una
   // sola vez por visita al mapa y se cancela si la persona ya empezó a moverlo
@@ -457,6 +494,14 @@ export default function Forest() {
           })}
         </div>
       </div>
+
+      {showJourneyEnd && (
+        <JourneyCompleteModal
+          forestImage={forestMap}
+          onClose={() => setShowJourneyEnd(false)}
+          onReset={handleResetJourney}
+        />
+      )}
 
       {showReminders && (
         <div

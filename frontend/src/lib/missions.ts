@@ -200,6 +200,23 @@ export async function completeMission(missionId: string): Promise<boolean> {
   return Boolean(data);
 }
 
+// Cuántas misiones tiene el viaje. La última es la que cierra el recorrido:
+// su botón final lleva al mapa con el aviso de viaje completado.
+export const TOTAL_MISSIONS = 9;
+
+// Estado de navegación con el que la última misión vuelve al mapa. El mapa
+// igual confirma con los tokens antes de mostrar el cierre del viaje.
+export type ForestLocationState = { journeyComplete?: boolean };
+
+// Reinicia el viaje: borra TODAS las respuestas y tokens de la persona. Lo hace
+// la función de la BD (SQL/018), que solo lo permite con las 9 misiones
+// completadas y nunca toca is_paid. Devuelve false si no se pudo reiniciar.
+export async function resetJourney(): Promise<boolean> {
+  const { data, error } = await supabase.rpc('reset_journey');
+  if (error) throw error;
+  return Boolean(data);
+}
+
 // IDs de misiones que el usuario ya completó (tiene token).
 export async function getCompletedMissionIds(): Promise<Set<string>> {
   const { data, error } = await supabase

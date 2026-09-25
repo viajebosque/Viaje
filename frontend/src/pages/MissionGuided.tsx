@@ -10,7 +10,14 @@ import { useTranslation } from 'react-i18next';
 import forestMap from '../assets/forest/forest-map.png';
 import MissionCompletion from '../components/MissionCompletion';
 import type { Lang } from '../i18n';
-import { completeMission, saveAnswers, type Mission, type Question } from '../lib/missions';
+import {
+  completeMission,
+  saveAnswers,
+  TOTAL_MISSIONS,
+  type ForestLocationState,
+  type Mission,
+  type Question,
+} from '../lib/missions';
 import { getMissionPanelImage } from '../lib/missionPanels';
 import { getMissionActivityVideoId } from '../lib/missionVideos';
 import { editPaperAnswer, isPaperAnswer, paperAnswerText, setPaperAnswer } from '../lib/paperAnswer';
@@ -457,7 +464,9 @@ export default function MissionGuided({
       <MissionCompletion
         numero={mission.numero}
         closingText={mission.texto_final}
-        onContinue={() => navigate(mapPath)}
+        onContinue={() => navigate(mapPath, {
+          state: { journeyComplete: mission.numero === TOTAL_MISSIONS } satisfies ForestLocationState,
+        })}
       />
     );
   }

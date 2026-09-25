@@ -75,6 +75,21 @@
     "signupDoneBody": "Te enviamos un mensaje para confirmar tu cuenta. Búscalo en tu bandeja de entrada y también en la carpeta de spam o correo no deseado. Cuando lo confirmes, vuelve aquí e inicia sesión."
   },
   "forest": {
+    "journeyEnd": {
+      "eyebrow": "Viaje completado",
+      "title": "Felicidades, completaste el viaje",
+      "intro": "Recorriste el bosque de principio a fin. Cada token es una huella de lo que te animaste a mirar en el camino.",
+      "tokensLabel": "Los {{total}} tokens de tu viaje",
+      "closing": "Lo que encontraste aquí sigue contigo. Puedes volver a estos senderos cuando lo necesites.",
+      "restart": "Reiniciar mi viaje",
+      "confirmTitle": "¿Reiniciar tu viaje?",
+      "confirmBody": "Se eliminarán todas tus respuestas y todos los tokens que ganaste, y volverás a empezar desde la Misión 1. Esta acción no se puede deshacer.",
+      "confirmKeep": "Tu cuenta y tu acceso se mantienen.",
+      "confirmYes": "Sí, reiniciar todo",
+      "confirmCancel": "Cancelar",
+      "restarting": "Reiniciando…",
+      "error": "No pudimos reiniciar tu viaje. Inténtalo de nuevo."
+    },
     "title": "El Mapa del Bosque 🌲",
     "subtitle": "Clic en la Misión 1 para comenzar.",
     "comingSoon": "Próximamente",
@@ -366,6 +381,7 @@
       "rewardMeaning": "Representa el coraje de comenzar",
       "celebrate": "Celebrar con confeti",
       "completionContinue": "Felicidades!! La siguiente misión te espera.",
+      "completionFinish": "Felicidades!! Completaste el viaje.",
       "backToMap": "Volver al mapa"
     }
   },

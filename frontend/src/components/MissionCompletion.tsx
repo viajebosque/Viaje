@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import MissionTokenReward from './MissionTokenReward';
 import CelebrateButton from './CelebrateButton';
 import { getMissionTokenImage } from '../lib/missionTokens';
+import { TOTAL_MISSIONS } from '../lib/missions';
 import forestMap from '../assets/forest/forest-map.png';
 
 type Props = {
@@ -17,6 +18,7 @@ export default function MissionCompletion({ numero, closingText, onContinue, rep
   const { t } = useTranslation();
   const tokenImage = getMissionTokenImage(numero);
   const isFirstMission = numero === 1;
+  const isFinalMission = numero === TOTAL_MISSIONS;
 
   return (
     <main
@@ -61,7 +63,7 @@ export default function MissionCompletion({ numero, closingText, onContinue, rep
           <p>{t(`mission.guided.consequence.texts.${numero}`)}</p>
         </section>
         <button className="guided-primary" type="button" onClick={onContinue}>
-          {t('mission.guided.completionContinue')}
+          {t(isFinalMission ? 'mission.guided.completionFinish' : 'mission.guided.completionContinue')}
         </button>
       </section>
     </main>
