@@ -93,6 +93,8 @@
     },
     "title": "The Forest Map 🌲",
     "subtitle": "Click on Mission 1 to begin.",
+    "subtitleContinue": "Click on Mission {{numero}} to continue.",
+    "subtitleDone": "You completed the journey. You can return to any mission whenever you like.",
     "comingSoon": "Coming soon",
     "nextMission": "Your next mission",
     "modalTitle": "Mission {{numero}}",

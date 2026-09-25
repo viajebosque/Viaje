@@ -93,6 +93,8 @@
     },
     "title": "El Mapa del Bosque 🌲",
     "subtitle": "Clic en la Misión 1 para comenzar.",
+    "subtitleContinue": "Clic en la Misión {{numero}} para continuar.",
+    "subtitleDone": "Completaste el viaje. Puedes volver a cualquier misión cuando quieras.",
     "comingSoon": "Próximamente",
     "nextMission": "Tu siguiente misión",
     "modalTitle": "Misión {{numero}}",

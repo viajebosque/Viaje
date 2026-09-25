@@ -326,6 +326,22 @@ export default function Forest() {
     return numero > nextMissionNumber ? 'locked' : 'open';
   }
 
+  // Subtítulo según el avance: comenzar (Misión 1), continuar (la siguiente
+  // pendiente) o viaje completo. Hasta que llegan tokens y misiones no se
+  // decide: se reserva el espacio invisible para no mostrar "Misión 1" y
+  // cambiarlo un instante después.
+  const subtitle = isDesignPreview
+    ? t('forest.subtitle')
+    : !completedLoaded
+      ? null
+      : completed.size >= TOTAL_MISSIONS
+        ? t('forest.subtitleDone')
+        : missions.length === 0 || nextMissionNumber === null
+          ? null
+          : nextMissionNumber === 1
+            ? t('forest.subtitle')
+            : t('forest.subtitleContinue', { numero: nextMissionNumber });
+
   async function handleSignOut() {
     await signOut();
     navigate('/', { replace: true });
@@ -381,7 +397,9 @@ export default function Forest() {
       <header className="forest-top">
         <div className="forest-heading">
           <h1 className="forest-title">{t('forest.title')}</h1>
-          <p className="forest-sub">{t('forest.subtitle')}</p>
+          <p className={`forest-sub${subtitle === null ? ' forest-sub--pending' : ''}`}>
+            {subtitle ?? t('forest.subtitle')}
+          </p>
         </div>
         <div className="forest-account">
           <div className="forest-top-actions">
