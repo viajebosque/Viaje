@@ -3600,21 +3600,27 @@ body:has(.guided-mission),
   .guided-panel { overflow: visible; }
 }
 
-/* Preguntas de reflexión: más títulos caben en una línea sin perder legibilidad. */
-.guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1 {
+/* Preguntas de reflexión y de actividad: mismo tamaño de letra. Sin esto la
+   actividad (texto largo, varios párrafos) caía en --very-long, que en
+   pantallas grandes llega a 1.95rem, y se veía gigante al lado del resto. */
+.guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1,
+.guided-question-card[data-question-category="actividad"] .guided-question-wrap h1 {
   max-width: none;
   font-size: clamp(1.3rem, 1.7vw, 1.5rem);
   line-height: 1.2;
 }
-.guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1.guided-question-title--long {
+.guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1.guided-question-title--long,
+.guided-question-card[data-question-category="actividad"] .guided-question-wrap h1.guided-question-title--long {
   font-size: clamp(1.25rem, 1.5vw, 1.4rem);
 }
 
 @media (max-width: 900px) {
-  .guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1 {
+  .guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1,
+  .guided-question-card[data-question-category="actividad"] .guided-question-wrap h1 {
     font-size: clamp(1.3rem, 4.7vw, 1.5rem);
   }
-  .guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1.guided-question-title--long {
+  .guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1.guided-question-title--long,
+  .guided-question-card[data-question-category="actividad"] .guided-question-wrap h1.guided-question-title--long {
     font-size: clamp(1.25rem, 4.4vw, 1.4rem);
   }
 }
