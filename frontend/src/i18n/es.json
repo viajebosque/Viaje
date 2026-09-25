@@ -9,6 +9,7 @@
     }
   },
   "common": {
+    "appTitle": "Un Viaje por el Bosque",
     "loading": "Cargando…",
     "save": "Guardar",
     "saving": "Guardando…",

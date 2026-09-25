@@ -9,6 +9,7 @@
     }
   },
   "common": {
+    "appTitle": "Forest Journey",
     "loading": "Loading…",
     "save": "Save",
     "saving": "Saving…",

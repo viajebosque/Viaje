@@ -28,9 +28,11 @@ i18n.use(initReactI18next).init({
 });
 
 // <html lang="..."> sigue al idioma activo (accesibilidad / lectores de
-// pantalla / traductores del navegador).
+// pantalla / traductores del navegador), y el título de la pestaña también:
+// "Un Viaje por el Bosque" / "Forest Journey" (common.appTitle).
 function syncHtmlLang(lng: string) {
   document.documentElement.lang = isLang(lng) ? lng : DEFAULT_LANG;
+  document.title = i18n.t('common.appTitle');
 }
 syncHtmlLang(i18n.resolvedLanguage ?? i18n.language);
 i18n.on('languageChanged', syncHtmlLang);
