@@ -3385,6 +3385,16 @@ body:has(.guided-mission),
 }
 
 .guided-question-wrap h1 { text-wrap: balance; }
+/* Las preguntas largas NO se balancean: balance iguala el largo de las
+   líneas y, en una pregunta de dos líneas, cortaba a la mitad dejando un
+   hueco grande a la derecha ("…un pequeño paso hacia ⎵⎵⎵ / adelante?").
+   pretty llena cada línea y solo evita dejar una palabra huérfana. */
+.guided-question-wrap h1.guided-question-title--long,
+.guided-question-wrap h1.guided-question-title--very-long,
+.guided-question-card[data-question-category="reflexion"] .guided-question-wrap h1,
+.guided-question-card[data-question-category="actividad"] .guided-question-wrap h1 {
+  text-wrap: pretty;
+}
 
 .guided-question-body {
   min-width: 0;
