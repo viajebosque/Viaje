@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
@@ -11,42 +11,34 @@ type Props = {
   onReset: () => Promise<boolean>;
 };
 
+// Pasos del cierre, en orden: los 9 tokens → video → carta de despedida con
+// contacto y las salidas. 'confirm' es la confirmación antes de reiniciar.
+type View = 'tokens' | 'video' | 'letter' | 'confirm';
+
 const missionNumbers = Array.from({ length: TOTAL_MISSIONS }, (_, index) => index + 1);
+const letterKeys = ['letter1', 'letter2', 'letter3'] as const;
 
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m7 7 10 10M17 7 7 17" />
-    </svg>
-  );
-}
-
-// Cierre del viaje: aparece en el mapa al volver de la última misión. Tiene
-// dos vistas en el mismo modal: la celebración con los 9 tokens y la
-// confirmación antes de reiniciar (borra respuestas y tokens, no el pago).
+// Cierre del viaje: aparece en el mapa al volver de la última misión. No tiene
+// ✕ ni se cierra con el fondo o Escape: se recorre paso a paso y la salida es
+// "Volver al mapa" (o reiniciar) en el último paso.
 export default function JourneyCompleteModal({ forestImage, onClose, onReset }: Props) {
   const { t } = useTranslation();
-  const [view, setView] = useState<'celebrate' | 'confirm'>('celebrate');
+  const [view, setView] = useState<View>('tokens');
   const [resetting, setResetting] = useState(false);
   // Se guarda la clave, no el texto: si cambia el idioma, el aviso también.
   const [errorKey, setErrorKey] = useState<string | null>(null);
-  // Los tokens aparecen de uno en uno solo la primera vez. Si la persona
-  // cancela el reinicio, vuelve a verlos quietos.
-  const playedRef = useRef(false);
-  const animateTokens = !playedRef.current;
-  useEffect(() => {
-    if (view === 'celebrate') playedRef.current = true;
-  }, [view]);
 
+  // Escape solo sirve para salir de la confirmación, de vuelta a la carta.
   useEffect(() => {
+    if (view !== 'confirm') return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || resetting) return;
-      if (view === 'confirm') setView('celebrate');
-      else onClose();
+      setErrorKey(null);
+      setView('letter');
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [view, resetting, onClose]);
+  }, [view, resetting]);
 
   async function confirmReset() {
     setResetting(true);
@@ -64,35 +56,22 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
 
   function cancelReset() {
     setErrorKey(null);
-    setView('celebrate');
+    setView('letter');
   }
 
+  const modalStyle = { '--reminders-forest': `url(${forestImage})` } as React.CSSProperties;
+
   return (
-    <div
-      className="modal-backdrop reminders-backdrop journey-end-backdrop"
-      onClick={() => {
-        if (view === 'celebrate') onClose();
-      }}
-    >
-      {view === 'celebrate' ? (
+    <div className="modal-backdrop reminders-backdrop journey-end-backdrop">
+      {view === 'tokens' && (
         <section
           className="reminders-modal journey-end-modal"
-          style={{ '--reminders-forest': `url(${forestImage})` } as React.CSSProperties}
+          style={modalStyle}
           role="dialog"
           aria-modal="true"
           aria-labelledby="journey-end-title"
           aria-describedby="journey-end-intro"
-          onClick={(event) => event.stopPropagation()}
         >
-          <button
-            className="reminders-close"
-            type="button"
-            aria-label={t('common.close')}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </button>
-
           <header className="reminders-header journey-end-header">
             <p className="reminders-eyebrow">{t('forest.journeyEnd.eyebrow')}</p>
             <h2 id="journey-end-title">{t('forest.journeyEnd.title')}</h2>
@@ -102,7 +81,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           </header>
 
           <ol
-            className={`journey-end-tokens${animateTokens ? ' journey-end-tokens--animate' : ''}`}
+            className="journey-end-tokens journey-end-tokens--animate"
             aria-label={t('forest.journeyEnd.tokensLabel', { total: TOTAL_MISSIONS })}
           >
             {missionNumbers.map((numero, index) => (
@@ -120,35 +99,98 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
             ))}
           </ol>
 
-          <p className="journey-end-closing">{t('forest.journeyEnd.closing')}</p>
+          <div className="journey-end-actions">
+            <button
+              className="reminders-return journey-end-primary"
+              type="button"
+              autoFocus
+              onClick={() => setView('video')}
+            >
+              {t('forest.journeyEnd.continue')}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {view === 'video' && (
+        <section
+          className="reminders-modal journey-end-modal"
+          style={modalStyle}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="journey-end-video-title"
+        >
+          <h2 id="journey-end-video-title" className="sr-only">
+            {t('forest.journeyEnd.eyebrow')}
+          </h2>
+          {/* Pendiente: video de cierre, uno por idioma (como INTRO_VIDEOS). */}
+          <div className="journey-end-video">
+            <p>{t('forest.journeyEnd.videoPlaceholder')}</p>
+          </div>
+
+          <div className="journey-end-actions">
+            <button
+              className="reminders-return journey-end-primary"
+              type="button"
+              autoFocus
+              onClick={() => setView('letter')}
+            >
+              {t('forest.journeyEnd.continue')}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {view === 'letter' && (
+        <section
+          className="reminders-modal journey-end-modal journey-end-letter-modal"
+          style={modalStyle}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="journey-end-letter-title"
+          aria-describedby="journey-end-letter"
+        >
+          <h2 id="journey-end-letter-title" className="sr-only">
+            {t('forest.journeyEnd.eyebrow')}
+          </h2>
+          <div id="journey-end-letter" className="journey-end-letter">
+            {letterKeys.map((key) => (
+              <p key={key}>{t(`forest.journeyEnd.${key}`)}</p>
+            ))}
+            <p className="journey-end-signature">{t('forest.journeyEnd.signature')}</p>
+            <p>{t('forest.journeyEnd.contactHere')}</p>
+          </div>
 
           <div className="journey-end-actions">
             {/* Mismo WhatsApp que el muro de pago; el mensaje sale del
-                idioma activo (forest.journeyEnd.bookMessage). Cerrar el
-                modal queda en la ✕, el fondo y Escape. */}
+                idioma activo (forest.journeyEnd.contactMessage). */}
             <a
               className="reminders-return journey-end-primary"
-              href={whatsappUrl(t('forest.journeyEnd.bookMessage'))}
+              href={whatsappUrl(t('forest.journeyEnd.contactMessage'))}
               target="_blank"
               rel="noreferrer noopener"
               autoFocus
             >
-              {t('forest.journeyEnd.book')}
+              {t('forest.journeyEnd.contact')}
             </a>
+            <button className="journey-end-secondary" type="button" onClick={onClose}>
+              {t('common.backToMap')}
+            </button>
             <button className="journey-end-secondary" type="button" onClick={() => setView('confirm')}>
               {t('forest.journeyEnd.restart')}
             </button>
           </div>
         </section>
-      ) : (
+      )}
+
+      {view === 'confirm' && (
         <section
           className="reminders-modal journey-end-modal journey-end-confirm"
-          style={{ '--reminders-forest': `url(${forestImage})` } as React.CSSProperties}
+          style={modalStyle}
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="journey-end-confirm-title"
           aria-describedby="journey-end-confirm-body"
-          onClick={(event) => event.stopPropagation()}
         >
           <header className="reminders-header journey-end-header">
             <h2 id="journey-end-confirm-title">{t('forest.journeyEnd.confirmTitle')}</h2>

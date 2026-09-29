@@ -1,4 +1,4 @@
-// Botones "Obtener el acceso completo" (muro de pago) y "Agendar una cita"
+// Botones "Obtener el acceso completo" (muro de pago) y "Contactar"
 // (fin del viaje): abren un chat de WhatsApp con el mensaje ya escrito, para
 // que la persona solo tenga que enviarlo.
 //
@@ -7,7 +7,7 @@
 const WHATSAPP_NUMBER = '15712745547'; // +1 (571) 274-5547
 
 // El texto del mensaje NO se arma acá: llega desde i18n
-// (forest.paywallMessage, forest.journeyEnd.bookMessage), así que sale en el
+// (forest.paywallMessage, forest.journeyEnd.contactMessage), así que sale en el
 // idioma que la persona tenga puesto en ese momento. Ver la regla de idiomas en CLAUDE.md 1.3.
 export function whatsappUrl(message: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
