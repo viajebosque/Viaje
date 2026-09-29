@@ -2730,10 +2730,7 @@ button, input { font: inherit; }
   background: rgba(255, 252, 244, 0.65);
   text-align: left;
 }
-.guided-consequence-heading { display: flex; align-items: center; gap: 0.65rem; color: #36583d; }
-.guided-consequence-heading svg { width: 24px; height: 24px; flex-shrink: 0; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.guided-consequence h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.22rem; font-weight: 500; line-height: 1.35; }
-.guided-consequence p { margin: 0.85rem 0 0; color: #525b48; font-size: 1rem; line-height: 1.75; overflow-wrap: break-word; }
+.guided-consequence p { margin: 0; color: #525b48; font-size: 1rem; line-height: 1.75; overflow-wrap: break-word; }
 .token-preview-controls { width: min(620px, 100%); padding: 1.25rem; border: 1px solid #cbb578; border-radius: 20px; background: #fffaf0; }
 .token-preview-controls h2 { margin: 0 0 1rem; font-size: 1.1rem; }
 .token-preview-controls p { font-size: 0.85rem; line-height: 1.5; }

@@ -463,7 +463,6 @@ export default function MissionGuided({
     return (
       <MissionCompletion
         numero={mission.numero}
-        closingText={mission.texto_final}
         onContinue={() => navigate(mapPath, {
           state: { journeyComplete: mission.numero === TOTAL_MISSIONS } satisfies ForestLocationState,
         })}

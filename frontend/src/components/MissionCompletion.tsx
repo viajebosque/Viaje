@@ -8,17 +8,21 @@ import forestMap from '../assets/forest/forest-map.png';
 
 type Props = {
   numero: number;
-  closingText?: string;
   onContinue: () => void;
   replay?: number;
   children?: ReactNode;
 };
 
-export default function MissionCompletion({ numero, closingText, onContinue, replay = 0, children }: Props) {
+export default function MissionCompletion({ numero, onContinue, replay = 0, children }: Props) {
   const { t } = useTranslation();
   const tokenImage = getMissionTokenImage(numero);
   const isFirstMission = numero === 1;
   const isFinalMission = numero === TOTAL_MISSIONS;
+  // Qué representa el token (sección "Lo que representa" de cada misión en
+  // los .docx) y el adelanto de la misión siguiente. Un texto vacío en el
+  // i18n esconde el bloque: así se cargan de a uno sin tocar código.
+  const rewardMeaning = t(`mission.guided.rewardMeanings.${numero}`, { defaultValue: '' });
+  const nextStep = t(`mission.guided.nextSteps.${numero}`, { defaultValue: '' });
 
   return (
     <main
@@ -44,24 +48,13 @@ export default function MissionCompletion({ numero, closingText, onContinue, rep
         <p className="guided-reward">
           {t(isFirstMission ? 'mission.guided.reward' : 'mission.guided.rewardGeneric')}
         </p>
-        {(isFirstMission || closingText) && (
-          <p className="guided-reward-meaning">
-            {isFirstMission ? t('mission.guided.rewardMeaning') : closingText}
-          </p>
-        )}
+        {rewardMeaning && <p className="guided-reward-meaning">{rewardMeaning}</p>}
         <CelebrateButton key={numero} />
-        <section className="guided-consequence" aria-labelledby="guided-consequence-title">
-          <div className="guided-consequence-heading">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-              <path d="M19 4C10 3 4 7 5 13c1 5 8 7 12 2 2-3 2-7 2-11Z" />
-              <path d="M4 21 15 9M8 17v-5M11 14h5" />
-            </svg>
-            <h2 id="guided-consequence-title">
-              {t(isFirstMission ? 'mission.guided.consequence.firstTitle' : 'mission.guided.consequence.title')}
-            </h2>
-          </div>
-          <p>{t(`mission.guided.consequence.texts.${numero}`)}</p>
-        </section>
+        {nextStep && (
+          <section className="guided-consequence">
+            <p>{nextStep}</p>
+          </section>
+        )}
         <button className="guided-primary" type="button" onClick={onContinue}>
           {t(isFinalMission ? 'mission.guided.completionFinish' : 'mission.guided.completionContinue')}
         </button>

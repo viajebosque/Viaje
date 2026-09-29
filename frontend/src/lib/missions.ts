@@ -9,7 +9,6 @@ export type Mission = {
   numero: number;
   titulo: string;
   descripcion: string;
-  texto_final: string;
 };
 
 // Lo que necesita el mapa para pintar los 9 nodos: el título y nada más.
@@ -50,7 +49,6 @@ function toMission(row: Row, lang: Lang): Mission {
     numero: row.numero as number,
     titulo: pick(row, 'titulo', lang),
     descripcion: pick(row, 'descripcion', lang),
-    texto_final: pick(row, 'texto_final', lang),
   };
 }
 
@@ -124,7 +122,6 @@ export async function getMissionWithQuestions(
     'numero',
     ...langCols('titulo', lang),
     ...langCols('descripcion', lang),
-    ...langCols('texto_final', lang),
   ].join(', ');
   const qCols = [
     'id',

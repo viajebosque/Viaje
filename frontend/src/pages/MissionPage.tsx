@@ -57,9 +57,6 @@ function createPreviewMission(missionNumber: number, lang: Lang) {
       : lang === 'es'
         ? 'Contenido de muestra para revisar el diseño guiado de esta misión.'
         : 'Sample content for reviewing this mission’s guided design.',
-    texto_final: lang === 'es'
-      ? 'Cada respuesta es una pequeña huella de tu recorrido.'
-      : 'Each answer is a small footprint along your journey.',
   };
   // Solo se dispone del contenido de la misión 1 en la vista previa sin conexión.
   // Las demás muestran su lateral y un aviso; nunca reutilizan estas preguntas.
