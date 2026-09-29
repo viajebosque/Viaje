@@ -415,6 +415,25 @@ export default function Forest() {
         </div>
         <div className="forest-account">
           <div className="forest-top-actions">
+            {/* Logro: va primero (extremo izquierdo) y en dorado. */}
+            {journeyDone && (
+              <button
+                className="forest-action-button forest-achievement-button"
+                type="button"
+                title={t('forest.journeyEnd.open')}
+                aria-label={t('forest.journeyEnd.open')}
+                aria-haspopup="dialog"
+                aria-expanded={showJourneyEnd}
+                onClick={() => {
+                  setSelected(null);
+                  setShowReminders(false);
+                  setShowJourneyEnd(true);
+                }}
+              >
+                <JourneyIcon />
+                <span className="forest-action-label">{t('forest.journeyEnd.open')}</span>
+              </button>
+            )}
             <button
               className="forest-help-button"
               type="button"
@@ -446,24 +465,6 @@ export default function Forest() {
               <GuideIcon />
               <span className="forest-action-label">{t('missionGuide.open')}</span>
             </button>
-            {journeyDone && (
-              <button
-                className="forest-action-button"
-                type="button"
-                title={t('forest.journeyEnd.open')}
-                aria-label={t('forest.journeyEnd.open')}
-                aria-haspopup="dialog"
-                aria-expanded={showJourneyEnd}
-                onClick={() => {
-                  setSelected(null);
-                  setShowReminders(false);
-                  setShowJourneyEnd(true);
-                }}
-              >
-                <JourneyIcon />
-                <span className="forest-action-label">{t('forest.journeyEnd.open')}</span>
-              </button>
-            )}
             <button
               className="forest-action-button"
               type="button"
