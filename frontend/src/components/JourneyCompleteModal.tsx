@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
@@ -18,6 +18,14 @@ type View = 'tokens' | 'video' | 'letter' | 'confirm';
 const missionNumbers = Array.from({ length: TOTAL_MISSIONS }, (_, index) => index + 1);
 const letterKeys = ['letter1', 'letter2', 'letter3'] as const;
 
+function BackIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M19 12H5m6-6-6 6 6 6" />
+    </svg>
+  );
+}
+
 // Cierre del viaje: aparece en el mapa al volver de la última misión. No tiene
 // ✕ ni se cierra con el fondo o Escape: se recorre paso a paso y la salida es
 // "Volver al mapa" (o reiniciar) en el último paso.
@@ -27,6 +35,15 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
   const [resetting, setResetting] = useState(false);
   // Se guarda la clave, no el texto: si cambia el idioma, el aviso también.
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  // Los tokens aparecen de uno en uno solo la primera vez: si la persona
+  // vuelve con la flecha, los ve quietos.
+  const leftTokensRef = useRef(false);
+  const animateTokens = !leftTokensRef.current;
+
+  function goTo(next: View) {
+    if (view === 'tokens') leftTokensRef.current = true;
+    setView(next);
+  }
 
   // Escape solo sirve para salir de la confirmación, de vuelta a la carta.
   useEffect(() => {
@@ -81,7 +98,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           </header>
 
           <ol
-            className="journey-end-tokens journey-end-tokens--animate"
+            className={`journey-end-tokens${animateTokens ? ' journey-end-tokens--animate' : ''}`}
             aria-label={t('forest.journeyEnd.tokensLabel', { total: TOTAL_MISSIONS })}
           >
             {missionNumbers.map((numero, index) => (
@@ -104,7 +121,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
               className="reminders-return journey-end-primary"
               type="button"
               autoFocus
-              onClick={() => setView('video')}
+              onClick={() => goTo('video')}
             >
               {t('forest.journeyEnd.continue')}
             </button>
@@ -120,6 +137,14 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           aria-modal="true"
           aria-labelledby="journey-end-video-title"
         >
+          <button
+            className="reminders-close journey-end-back"
+            type="button"
+            aria-label={t('forest.journeyEnd.previous')}
+            onClick={() => goTo('tokens')}
+          >
+            <BackIcon />
+          </button>
           <h2 id="journey-end-video-title" className="sr-only">
             {t('forest.journeyEnd.eyebrow')}
           </h2>
@@ -133,7 +158,7 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
               className="reminders-return journey-end-primary"
               type="button"
               autoFocus
-              onClick={() => setView('letter')}
+              onClick={() => goTo('letter')}
             >
               {t('forest.journeyEnd.continue')}
             </button>
@@ -150,6 +175,14 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           aria-labelledby="journey-end-letter-title"
           aria-describedby="journey-end-letter"
         >
+          <button
+            className="reminders-close journey-end-back"
+            type="button"
+            aria-label={t('forest.journeyEnd.previous')}
+            onClick={() => goTo('video')}
+          >
+            <BackIcon />
+          </button>
           <h2 id="journey-end-letter-title" className="sr-only">
             {t('forest.journeyEnd.eyebrow')}
           </h2>

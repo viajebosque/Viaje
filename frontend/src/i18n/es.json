@@ -85,6 +85,7 @@
       "intro": "Recorriste el bosque de principio a fin. Cada token es una huella de lo que te animaste a mirar en el camino.",
       "tokensLabel": "Los {{total}} tokens de tu viaje",
       "continue": "Continuar",
+      "previous": "Volver al paso anterior",
       "videoPlaceholder": "Aquí video",
       "letter1": "Si en algún momento sientes el deseo de compartir lo que este recorrido despertó en ti, puedes comunicarte conmigo. Para mí sería un honor escuchar tus reflexiones, tus descubrimientos o incluso las preguntas que surgieron en el camino. No hay presión ni expectativa — solo una puerta abierta.",
       "letter2": "Si crees que este proceso podría ayudar a alguien más, compártelo. A veces una sola invitación abre un camino que alguien necesitaba.",
