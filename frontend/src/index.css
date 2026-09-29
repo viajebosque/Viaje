@@ -545,7 +545,15 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   overflow-y: auto;
   border: 6px double #49613f;
   border-radius: clamp(1.4rem, 2.5vw, 2.2rem);
+  /* El círculo de la esquina inferior va como capa de fondo y no como
+     ::after: un ::after con bottom negativo cuenta como contenido y el modal
+     mostraba scroll aunque el texto entrara de sobra. "local" lo deja al
+     final del contenido, como antes, cuando sí hay scroll. */
   background:
+    radial-gradient(circle 6rem at calc(100% + 1rem) calc(100% + 1.2rem),
+      rgba(138, 166, 99, 0.08) calc(100% - 1px),
+      rgba(79, 105, 59, 0.16) calc(100% - 1px) 100%,
+      transparent 100%) local,
     linear-gradient(rgba(255, 250, 232, 0.94), rgba(246, 237, 207, 0.96)),
     var(--reminders-forest) center / cover;
   color: #263d2b;
@@ -555,8 +563,7 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   scrollbar-color: #69805c #eee4c5;
   scrollbar-width: thin;
 }
-.reminders-modal::before,
-.reminders-modal::after {
+.reminders-modal::before {
   position: absolute;
   z-index: 0;
   width: 12rem;
@@ -569,7 +576,6 @@ body:has(.forest) .platform-lang-toggle .lang-toggle {
   transform: rotate(32deg);
 }
 .reminders-modal::before { top: -7rem; left: -5rem; }
-.reminders-modal::after { right: -5rem; bottom: -7rem; transform: rotate(210deg); }
 .reminders-modal > * { position: relative; z-index: 1; }
 .reminders-close {
   position: absolute;
