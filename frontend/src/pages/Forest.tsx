@@ -23,6 +23,7 @@ import {
 import { whatsappUrl } from '../lib/payment';
 import { wakeBackend } from '../lib/api';
 import JourneyCompleteModal from '../components/JourneyCompleteModal';
+import MissionGuide from '../components/MissionGuide';
 
 const missionPositions = [
   { left: 5.9, top: 55.2 },
@@ -93,6 +94,15 @@ function CloseIcon() {
   );
 }
 
+function GuideIcon() {
+  return (
+    <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" />
+      <path d="M6.5 8h2M6.5 11h2M15.5 8h2M15.5 11h2" />
+    </svg>
+  );
+}
+
 function JourneyIcon() {
   return (
     <svg className="forest-action-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -155,6 +165,7 @@ export default function Forest() {
   const [completedLoaded, setCompletedLoaded] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
   const [showJourneyEnd, setShowJourneyEnd] = useState(false);
+  const [showMissionGuide, setShowMissionGuide] = useState(false);
   const mapViewportRef = useRef<HTMLDivElement>(null);
   const missionNodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const didPositionMapRef = useRef(false);
@@ -282,16 +293,17 @@ export default function Forest() {
   }, [completed, completedLoaded, isDesignPreview, missions]);
 
   useEffect(() => {
-    if (selected === null && !showReminders) return;
+    if (selected === null && !showReminders && !showMissionGuide) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelected(null);
         setShowReminders(false);
+        setShowMissionGuide(false);
       }
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [selected, showReminders]);
+  }, [selected, showReminders, showMissionGuide]);
 
   // Mapa número -> misión (para saber título / si existe contenido).
   const byNumero = new Map(missions.map((m) => [m.numero, m]));
@@ -417,6 +429,22 @@ export default function Forest() {
             >
               <span className="forest-help-icon" aria-hidden="true">?</span>
               <span className="forest-action-label">{t('forest.reminders.open')}</span>
+            </button>
+            <button
+              className="forest-action-button"
+              type="button"
+              title={t('missionGuide.open')}
+              aria-label={t('missionGuide.open')}
+              aria-haspopup="dialog"
+              aria-expanded={showMissionGuide}
+              onClick={() => {
+                setSelected(null);
+                setShowReminders(false);
+                setShowMissionGuide(true);
+              }}
+            >
+              <GuideIcon />
+              <span className="forest-action-label">{t('missionGuide.open')}</span>
             </button>
             {journeyDone && (
               <button
@@ -549,6 +577,47 @@ export default function Forest() {
           onClose={() => setShowJourneyEnd(false)}
           onReset={handleResetJourney}
         />
+      )}
+
+      {showMissionGuide && (
+        <div
+          className="modal-backdrop reminders-backdrop"
+          onClick={() => setShowMissionGuide(false)}
+        >
+          <section
+            className="reminders-modal mission-guide-modal"
+            style={{ '--reminders-forest': `url(${forestMap})` } as React.CSSProperties}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mission-guide-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="reminders-close"
+              type="button"
+              aria-label={t('common.close')}
+              autoFocus
+              onClick={() => setShowMissionGuide(false)}
+            >
+              <CloseIcon />
+            </button>
+
+            <header className="reminders-header">
+              <p className="reminders-eyebrow">{t('missionGuide.eyebrow')}</p>
+              <h2 id="mission-guide-title">{t('missionGuide.title')}</h2>
+            </header>
+
+            <MissionGuide />
+
+            <button
+              className="reminders-return"
+              type="button"
+              onClick={() => setShowMissionGuide(false)}
+            >
+              {t('missionGuide.return')}
+            </button>
+          </section>
+        </div>
       )}
 
       {showReminders && (

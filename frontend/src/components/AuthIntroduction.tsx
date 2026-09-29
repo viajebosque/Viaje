@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { currentLang, type Lang } from '../i18n';
 import { loadYouTubePlayer } from '../lib/youtubePlayer';
+import MissionGuide from './MissionGuide';
 
 const INTRO_VIDEOS: Record<Lang, string> = {
   es: 'FjlhUuiw07Y',
@@ -82,10 +83,55 @@ function IntroductionVideo({ lang }: { lang: Lang }) {
   );
 }
 
-export default function AuthIntroduction({ onContinue }: { onContinue: () => void }) {
+export type IntroStep = 'video' | 'about' | 'structure';
+type StepperStep = IntroStep | 'access';
+const STEPS: StepperStep[] = ['video', 'about', 'structure', 'access'];
+
+// Los pasos ya vistos se pueden volver a abrir con un click: así, desde el
+// login, la persona puede volver a mirar el video o el texto del viaje.
+export function IntroStepper({
+  current,
+  onSelect,
+}: {
+  current: StepperStep;
+  onSelect: (step: IntroStep) => void;
+}) {
+  const { t } = useTranslation();
+  const currentIndex = STEPS.indexOf(current);
+
+  return (
+    <ol className="auth-intro-steps" aria-label={t('auth.intro.stepsLabel')}>
+      {STEPS.map((item, index) => {
+        const label = (
+          <>
+            <span className="auth-intro-step-num" aria-hidden="true">{index + 1}</span>
+            <span className="auth-intro-step-label">{t(`auth.intro.steps.${item}`)}</span>
+          </>
+        );
+        return (
+          <li key={item} aria-current={current === item ? 'step' : undefined}>
+            {item !== 'access' && index < currentIndex ? (
+              <button type="button" onClick={() => onSelect(item)}>{label}</button>
+            ) : (
+              label
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+export default function AuthIntroduction({
+  initialStep = 'video',
+  onContinue,
+}: {
+  initialStep?: IntroStep;
+  onContinue: () => void;
+}) {
   const { t } = useTranslation();
   const lang = currentLang();
-  const [step, setStep] = useState<'video' | 'about'>('video');
+  const [step, setStep] = useState<IntroStep>(initialStep);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -94,46 +140,54 @@ export default function AuthIntroduction({ onContinue }: { onContinue: () => voi
     headingRef.current?.focus({ preventScroll: true });
   }, [step]);
 
+  const titleKey =
+    step === 'video'
+      ? 'auth.intro.title'
+      : step === 'about'
+        ? 'auth.intro.aboutTitle'
+        : 'missionGuide.title';
+
   return (
     <div className="auth-card-content auth-intro" ref={contentRef}>
-      <ol className="auth-intro-steps" aria-label={t('auth.intro.stepsLabel')}>
-        {(['video', 'about', 'access'] as const).map((item, index) => (
-          <li key={item} aria-current={step === item ? 'step' : undefined}>
-            <span aria-hidden="true">{index + 1}</span>
-            {t(`auth.intro.steps.${item}`)}
-          </li>
-        ))}
-      </ol>
+      <IntroStepper current={step} onSelect={setStep} />
       <header className="auth-heading">
-        <h2 ref={headingRef} tabIndex={-1}>
-          {t(step === 'video' ? 'auth.intro.title' : 'auth.intro.aboutTitle')}
-        </h2>
+        <h2 ref={headingRef} tabIndex={-1}>{t(titleKey)}</h2>
         {step === 'video' && <p>{t('auth.intro.subtitle')}</p>}
       </header>
 
-      {step === 'video' ? (
+      {step === 'video' && (
         <>
           <IntroductionVideo key={lang} lang={lang} />
-          <button
-            className="auth-primary"
-            type="button"
-            onClick={() => setStep('about')}
-          >
+          <button className="auth-primary" type="button" onClick={() => setStep('about')}>
             {t('auth.intro.continue')}
           </button>
         </>
-      ) : (
+      )}
+
+      {step === 'about' && (
         <>
           <div className="auth-intro-copy">
             {(['purpose', 'missions', 'presence', 'calling'] as const).map((paragraph) => (
               <p key={paragraph}>{t(`auth.intro.paragraphs.${paragraph}`)}</p>
             ))}
           </div>
-          <button className="auth-primary" type="button" onClick={onContinue}>
-            {t('auth.intro.enter')}
+          <button className="auth-primary" type="button" onClick={() => setStep('structure')}>
+            {t('auth.intro.continue')}
           </button>
           <button className="auth-secondary-link" type="button" onClick={() => setStep('video')}>
             {t('auth.intro.back')}
+          </button>
+        </>
+      )}
+
+      {step === 'structure' && (
+        <>
+          <MissionGuide />
+          <button className="auth-primary" type="button" onClick={onContinue}>
+            {t('auth.intro.enter')}
+          </button>
+          <button className="auth-secondary-link" type="button" onClick={() => setStep('about')}>
+            {t('auth.intro.backToAbout')}
           </button>
         </>
       )}

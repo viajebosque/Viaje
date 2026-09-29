@@ -8,7 +8,7 @@ import {
   sendPasswordReset,
 } from '../auth/auth';
 import { authErrorKey } from '../auth/authErrors';
-import AuthIntroduction from '../components/AuthIntroduction';
+import AuthIntroduction, { IntroStepper, type IntroStep } from '../components/AuthIntroduction';
 import forestBackground from '../assets/auth/forest-login-v5.png';
 import branchTop from '../assets/auth/branch-top.webp';
 import branchBottom from '../assets/auth/branch-bottom.webp';
@@ -49,6 +49,8 @@ const GoogleIcon = () => (
 export default function AuthPage() {
   const { t } = useTranslation();
   const [introComplete, setIntroComplete] = useState(false);
+  // Paso en el que se reabre la introducción al volver desde el login.
+  const [introStep, setIntroStep] = useState<IntroStep>('video');
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [mode, setMode] = useState<Mode>('login');
   const [fullName, setFullName] = useState('');
@@ -72,6 +74,11 @@ export default function AuthPage() {
     setMode(nextMode);
     setErrorKey(null);
     setNotice(null);
+  }
+
+  function reopenIntro(step: IntroStep) {
+    setIntroStep(step);
+    setIntroComplete(false);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -157,9 +164,14 @@ export default function AuthPage() {
           <img className="auth-branch auth-branch-bottom" src={branchBottom} alt="" aria-hidden="true" />
 
           {!introComplete ? (
-            <AuthIntroduction onContinue={() => setIntroComplete(true)} />
+            <AuthIntroduction
+              key={introStep}
+              initialStep={introStep}
+              onContinue={() => setIntroComplete(true)}
+            />
           ) : (
           <form className="auth-card-content" onSubmit={handleSubmit}>
+            <IntroStepper current="access" onSelect={reopenIntro} />
             <header className="auth-heading">
               <h2 ref={headingRef} tabIndex={-1}>{headingTitle}</h2>
               <p>{headingSubtitle}</p>
@@ -282,6 +294,16 @@ export default function AuthPage() {
 
                 <p className="auth-legal">{t('auth.legal')}</p>
               </>
+            )}
+
+            {!isRecover && (
+              <button
+                type="button"
+                className="auth-secondary-link"
+                onClick={() => reopenIntro('video')}
+              >
+                {t('auth.viewIntro')}
+              </button>
             )}
           </form>
           )}

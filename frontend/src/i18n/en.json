@@ -22,7 +22,7 @@
   "auth": {
     "intro": {
       "stepsLabel": "Before entering the Forest",
-      "steps": { "video": "Introduction", "about": "The journey", "access": "Access" },
+      "steps": { "video": "Introduction", "about": "The journey", "structure": "The missions", "access": "Access" },
       "title": "The Forest welcomes you",
       "subtitle": "Before you begin, discover the journey that awaits you.",
       "videoTitle": "Introduction to Your Forest Transformation Journey in English",
@@ -38,8 +38,10 @@
         "calling": "If you feel even the faintest call, the Forest is already waiting."
       },
       "enter": "Continue to sign in",
-      "back": "← Back to the video"
+      "back": "← Back to the video",
+      "backToAbout": "← Back to The journey"
     },
+    "viewIntro": "← Watch the introduction again",
     "title": "Your Forest Transformation Journey",
     "brandLineOne": "A space to look within and rise again.",
     "brandLineTwo": "Your journey begins here.",
@@ -155,6 +157,47 @@
         "body": "You may write your reflections on the platform or on paper, if you prefer. Reflections saved on the platform are linked to your account and can only be viewed by you throughout your journey. Your privacy is protected."
       },
       "return": "The forest awaits. Back to the map."
+    }
+  },
+  "missionGuide": {
+    "open": "What you’ll find in each mission",
+    "eyebrow": "Before each mission",
+    "title": "What you’ll find inside each mission",
+    "intro": "Each of the 9 Missions in this program follows the same clear and warm structure, designed to take you deep without overwhelming you, and to move you forward without rushing you.",
+    "luz": "Luz will be with you on every one of your missions.",
+    "luzAlt": "Luz, your guide in the forest",
+    "colComponent": "Component",
+    "colWhat": "What it is",
+    "return": "Back to the map",
+    "items": {
+      "initial": {
+        "name": "Opening Question or deep-thought phrases",
+        "body": "Four questions labeled A–D. Read all four and choose the one that resonates most deeply with you right now. There is no right answer — only the most honest one."
+      },
+      "description": {
+        "name": "Mission Description",
+        "body": "A narrative video that sets up the metaphor for this stage of the journey. Take it in slowly. Let it land before you continue."
+      },
+      "miniAction": {
+        "name": "Mini-Action",
+        "body": "A concrete, doable task — designed to take between 15 and 30 minutes. This is not homework. It’s an invitation. Do it when you’re ready, not just when you have time."
+      },
+      "reflection": {
+        "name": "Reflection Question",
+        "body": "Three or four journaling questions that deepen your experience of the mission. You don’t need to answer them all — only the ones that resonate with you most."
+      },
+      "token": {
+        "name": "Reward / Token",
+        "body": "The forest artifact you earn when you complete each mission. Collect them all — they become your raft for Mission 9."
+      },
+      "consequence": {
+        "name": "Gentle Consequence",
+        "body": "A note to remind you that this journey is walked with awareness and patience. You can move forward, go back, or pause whenever you need to. What matters is completing each mission with presence and receiving its teaching. It is not a warning or a punishment — it is an act of care and honesty."
+      },
+      "quote": {
+        "name": "Closing Quote",
+        "body": "A closing line to carry with you as you walk toward the next part of the forest."
+      }
     }
   },
   "profile": {

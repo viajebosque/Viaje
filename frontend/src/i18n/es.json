@@ -22,7 +22,7 @@
   "auth": {
     "intro": {
       "stepsLabel": "Antes de entrar al Bosque",
-      "steps": { "video": "Introducción", "about": "El viaje", "access": "Acceso" },
+      "steps": { "video": "Introducción", "about": "El viaje", "structure": "Las misiones", "access": "Acceso" },
       "title": "El Bosque te da la bienvenida",
       "subtitle": "Antes de comenzar, descubre el viaje que te espera.",
       "videoTitle": "Introducción a Tu viaje de Transformación por el Bosque en español",
@@ -38,8 +38,10 @@
         "calling": "Si sientes, aunque sea un pequeño llamado, el Bosque ya está esperando."
       },
       "enter": "Continuar al inicio de sesión",
-      "back": "← Volver al video"
+      "back": "← Volver al video",
+      "backToAbout": "← Volver a El viaje"
     },
+    "viewIntro": "← Ver de nuevo la introducción",
     "title": "Tu viaje de Transformación por el Bosque",
     "brandLineOne": "Un espacio para mirar hacia adentro y renacer.",
     "brandLineTwo": "Tu recorrido comienza aquí.",
@@ -166,6 +168,47 @@
         "body": "Puedes escribir tus reflexiones en la plataforma o en papel si lo prefieres. Las reflexiones guardadas en la plataforma quedan asociadas a tu cuenta y solo tú puedes consultarlas durante tu recorrido. Tu privacidad está protegida."
       },
       "return": "El bosque espera. Volver al mapa."
+    }
+  },
+  "missionGuide": {
+    "open": "Qué encontrarás en cada misión",
+    "eyebrow": "Antes de cada misión",
+    "title": "Qué es lo que encontrarás dentro de cada misión",
+    "intro": "Cada una de las 9 Misiones de este programa sigue la misma estructura clara y cordial, diseñada para llevarte profundo sin abrumarte, y para moverte hacia adelante sin apresurarte.",
+    "luz": "Luz te acompañará en cada una de tus misiones.",
+    "luzAlt": "Luz, tu guía en el bosque",
+    "colComponent": "Componente",
+    "colWhat": "Qué es",
+    "return": "Volver al mapa",
+    "items": {
+      "initial": {
+        "name": "Pregunta Inicial o frases de pensamiento profundo",
+        "body": "Cuatro preguntas etiquetadas A–D. Lee las cuatro y elige la que resuene más profundamente contigo en este momento. No hay respuesta correcta — solo la más honesta."
+      },
+      "description": {
+        "name": "Descripción de la Misión",
+        "body": "Un video narrativo que establece la metáfora de esta etapa del viaje. Léelo despacio. Deja que aterrice antes de continuar."
+      },
+      "miniAction": {
+        "name": "Mini-Acción",
+        "body": "Una tarea concreta y realizable — diseñada para tomar entre 15 y 30 minutos. Esto no es “homework”. Es una invitación. Hazla cuando estés listo/a, no solo cuando tengas tiempo."
+      },
+      "reflection": {
+        "name": "Pregunta de Reflexión",
+        "body": "Tres o cuatro preguntas para journaling o diario de reflexión que profundizan tu experiencia de la misión. No necesitas responderlas todas — solo las que te resuenen más."
+      },
+      "token": {
+        "name": "Recompensa / Token",
+        "body": "El artefacto del bosque que ganas al completar cada misión. Colecciónalos todos — se convierten en tu balsa para la Misión 9."
+      },
+      "consequence": {
+        "name": "Consecuencia amable",
+        "body": "Una nota para recordarte que este viaje se recorre con conciencia y paciencia. Puedes avanzar, retroceder o pausar cuando lo necesites. Lo esencial es completar cada misión con presencia y recibir su enseñanza. No es una advertencia ni un castigo — es un acto de cuidado y honestidad."
+      },
+      "quote": {
+        "name": "Cita Final",
+        "body": "Una línea de cierre para llevar contigo mientras caminas hacia la siguiente parte del bosque."
+      }
     }
   },
   "profile": {
