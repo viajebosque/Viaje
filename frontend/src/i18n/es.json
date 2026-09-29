@@ -270,6 +270,14 @@
     "next": "Siguientes →"
   },
   "mission": {
+    "introModal": {
+      "8": {
+        "p1": "Ya recorriste siete misiones — siete momentos de honestidad, coraje, claridad y crecimiento. Antes de adentrarte en el siguiente desafío, haz una pausa aquí en el bosque.",
+        "p2": "¿Algo ha cambiado en ti? ¿Sientes un poco más de fuerza, un poco más de claridad, un poco más de arraigo en quien te estás convirtiendo? ¿Hay una nueva sensación de confianza o de empoderamiento que crece en silencio dentro de ti?",
+        "p3": "Permítete notarlo.",
+        "p4": "Desde este lugar, hazte las siguientes preguntas… y deja que la Misión 8 se encuentre con la versión de ti que ya comenzó a cambiar."
+      }
+    },
     "loading": "Cargando misión…",
     "loadingScene": {
       "eyebrow": "Tu viaje por el bosque",

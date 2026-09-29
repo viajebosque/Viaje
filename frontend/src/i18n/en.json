@@ -259,6 +259,14 @@
     "next": "Next →"
   },
   "mission": {
+    "introModal": {
+      "8": {
+        "p1": "You’ve walked through seven missions already — seven moments of honesty, courage, clarity, and growth. Before you step into the next challenge, pause for a moment here in the forest.",
+        "p2": "Has something shifted in you? Do you feel a little stronger, a little clearer, a little more grounded in who you’re becoming? Is there a new sense of confidence or empowerment rising quietly inside you?",
+        "p3": "Let yourself notice it.",
+        "p4": "From this place, ask yourself the following questions… and allow Mission 8 to meet the version of you that has already begun to change."
+      }
+    },
     "loading": "Loading mission…",
     "loadingScene": {
       "eyebrow": "Your forest journey",

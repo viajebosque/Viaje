@@ -2035,6 +2035,19 @@ button, input { font: inherit; }
 .mission-guide-table tbody th { width: 34%; color: #1d4a31; font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
 .mission-guide-table tbody tr:nth-child(odd) { background: rgba(221,205,152,.1); }
 .mission-guide-modal .mission-guide-info { max-width: 50rem; margin: 0 auto; }
+
+/* Pausa antes de una misión (MissionIntroModal). Mismo marco que los
+   recordatorios del mapa, más angosto porque es solo texto. */
+.mission-intro-modal { width: min(94vw, 660px); }
+.mission-intro-modal .reminders-header { margin-bottom: 1.2rem; }
+.mission-intro-copy { max-width: 34rem; margin: 0 auto; color: #304a37; font-size: 1.02rem; line-height: 1.7; }
+.mission-intro-copy p { margin: 0 0 1rem; }
+/* "Permítete notarlo." — la frase corta del medio, destacada. */
+.mission-intro-copy p:nth-child(3) {
+  margin: 1.3rem 0; text-align: center; color: #244d32;
+  font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; font-style: italic;
+}
+.mission-intro-modal .reminders-return { margin-top: 1.4rem; }
 @media (max-width: 560px) {
   /* En angosto la tabla se apila: nombre arriba, explicación abajo. */
   .mission-guide-table thead { display: none; }

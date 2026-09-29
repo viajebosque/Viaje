@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import forestMap from '../assets/forest/forest-map.png';
 import MissionCompletion from '../components/MissionCompletion';
+import MissionIntroModal, { hasMissionIntro } from '../components/MissionIntroModal';
 import type { Lang } from '../i18n';
 import {
   completeMission,
@@ -172,6 +173,8 @@ export default function MissionGuided({
   const [completed, setCompleted] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [exiting, setExiting] = useState(false);
+  // Pausa antes de empezar (hoy solo la Misión 8). Sale en cada entrada.
+  const [showIntro, setShowIntro] = useState(() => hasMissionIntro(mission.numero));
   const collapsibleSidebar = useMatchMedia(SIDEBAR_COLLAPSE_QUERY);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -274,8 +277,9 @@ export default function MissionGuided({
   }, [initialState.hasPendingBackup, scheduleSave]);
 
   useEffect(() => {
-    if (!completed) headingRef.current?.focus();
-  }, [completed, step]);
+    // Con el modal abierto el foco es suyo; al cerrarlo vuelve a la pregunta.
+    if (!completed && !showIntro) headingRef.current?.focus();
+  }, [completed, step, showIntro]);
 
   function updateAnswer(questionId: string, value: string) {
     const next = { ...answersRef.current, [questionId]: value };
@@ -706,6 +710,13 @@ export default function MissionGuided({
           </section>
         </div>
       </div>
+      {showIntro && (
+        <MissionIntroModal
+          numero={mission.numero}
+          titulo={mission.titulo}
+          onClose={() => setShowIntro(false)}
+        />
+      )}
     </main>
   );
 }
