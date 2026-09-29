@@ -3914,6 +3914,8 @@ body:has(.guided-mission),
   margin-top: 1.1rem;
 }
 .journey-end-actions .journey-end-primary { margin: 0; }
+/* "Agendar una cita" es un enlace (abre WhatsApp) con aspecto de botón. */
+a.journey-end-primary { text-align: center; text-decoration: none; }
 .journey-end-secondary {
   border: 0;
   border-bottom: 1px solid currentColor;

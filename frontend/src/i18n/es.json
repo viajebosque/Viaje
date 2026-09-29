@@ -85,6 +85,8 @@
       "intro": "Recorriste el bosque de principio a fin. Cada token es una huella de lo que te animaste a mirar en el camino.",
       "tokensLabel": "Los {{total}} tokens de tu viaje",
       "closing": "Lo que encontraste aquí sigue contigo. Puedes volver a estos senderos cuando lo necesites.",
+      "book": "Agendar una cita",
+      "bookMessage": "¡Hola! Completé mi Viaje por el Bosque y quiero agendar una cita contigo.",
       "restart": "Reiniciar mi viaje",
       "confirmTitle": "¿Reiniciar tu viaje?",
       "confirmBody": "Se eliminarán todas tus respuestas y todos los tokens que ganaste, y volverás a empezar desde la Misión 1. Esta acción no se puede deshacer.",

@@ -85,6 +85,8 @@
       "intro": "You walked the forest from beginning to end. Each token is a footprint of what you dared to look at along the way.",
       "tokensLabel": "The {{total}} tokens of your journey",
       "closing": "What you found here stays with you. You can return to these paths whenever you need to.",
+      "book": "Book an appointment",
+      "bookMessage": "Hi! I completed my Forest Journey and I’d like to book an appointment with you.",
       "restart": "Restart my journey",
       "confirmTitle": "Restart your journey?",
       "confirmBody": "All your answers and all the tokens you earned will be deleted, and you will start again from Mission 1. This cannot be undone.",

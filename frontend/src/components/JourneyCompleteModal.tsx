@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
+import { whatsappUrl } from '../lib/payment';
 
 type Props = {
   forestImage: string;
@@ -122,9 +123,18 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           <p className="journey-end-closing">{t('forest.journeyEnd.closing')}</p>
 
           <div className="journey-end-actions">
-            <button className="reminders-return journey-end-primary" type="button" autoFocus onClick={onClose}>
-              {t('common.backToMap')}
-            </button>
+            {/* Mismo WhatsApp que el muro de pago; el mensaje sale del
+                idioma activo (forest.journeyEnd.bookMessage). Cerrar el
+                modal queda en la ✕, el fondo y Escape. */}
+            <a
+              className="reminders-return journey-end-primary"
+              href={whatsappUrl(t('forest.journeyEnd.bookMessage'))}
+              target="_blank"
+              rel="noreferrer noopener"
+              autoFocus
+            >
+              {t('forest.journeyEnd.book')}
+            </a>
             <button className="journey-end-secondary" type="button" onClick={() => setView('confirm')}>
               {t('forest.journeyEnd.restart')}
             </button>
