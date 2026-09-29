@@ -1959,7 +1959,7 @@ button, input { font: inherit; }
   box-shadow: .16em .06em 0 -.045em #b1ca49;
 }
 .auth-brand p {
-  margin: .18rem 0; max-width: 42rem; font-size: clamp(1rem, 1.25vw, 1.4rem);
+  margin: .18rem auto; max-width: 42rem; font-size: clamp(1rem, 1.25vw, 1.4rem);
   font-weight: 600; line-height: 1.35;
 }
 .auth-panel {
@@ -2183,7 +2183,7 @@ button, input { font: inherit; }
     overflow-wrap: break-word;
   }
   .auth-brand p {
-    margin: .2rem 0;
+    margin: .2rem auto;
     max-width: 23rem;
     font-size: clamp(.85rem, 1.65vw, 1.05rem);
     line-height: 1.35;
