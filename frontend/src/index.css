@@ -3959,21 +3959,19 @@ body:has(.guided-mission),
 }
 /* Flecha al paso anterior: la misma pieza que la ✕ de otros modales, a la izquierda. */
 .journey-end-back { right: auto; left: 1.15rem; }
-/* Paso 2: lugar del video de cierre (por ahora un texto temporal). */
+/* Paso 2: video de cierre (Short, 9:16). Mismo marco que .guided-activity-video;
+   en pantallas bajas se achica para que "Continuar" quede a la vista. */
 .journey-end-video {
-  display: grid;
-  place-items: center;
-  width: min(100%, 640px);
-  aspect-ratio: 16 / 9;
+  width: min(250px, 100%, calc((100svh - 13rem) * 9 / 16));
   margin: 2.8rem auto 0;
-  border-radius: 1rem;
-  background: #142a20;
-  box-shadow: 0 6px 20px rgba(35, 54, 29, 0.16);
-  color: #f4ecd2;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  border: 1px solid #aebda4;
+  border-radius: 20px;
+  background: #0d2017;
+  box-shadow: 0 12px 28px rgba(26, 57, 39, 0.16);
 }
-.journey-end-video p { margin: 0; }
+.journey-end-video iframe { display: block; width: 100%; height: 100%; border: 0; }
 /* Paso 3: la carta de despedida. */
 .journey-end-letter-modal { width: min(94vw, 680px); }
 .journey-end-letter {

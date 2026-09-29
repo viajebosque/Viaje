@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { currentLang, type Lang } from '../i18n';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
 import { whatsappUrl } from '../lib/payment';
@@ -17,6 +18,13 @@ type View = 'tokens' | 'video' | 'letter' | 'confirm';
 
 const missionNumbers = Array.from({ length: TOTAL_MISSIONS }, (_, index) => index + 1);
 const letterKeys = ['letter1', 'letter2', 'letter3'] as const;
+
+// Video de cierre (YouTube Shorts), uno por idioma. Como los de las misiones
+// (lib/missionVideos.ts), están en el código y no en la base.
+const CLOSING_VIDEOS: Record<Lang, string> = {
+  es: 'Rq2ELuRlCUc',
+  en: 'hICALFLF9DE',
+};
 
 function BackIcon() {
   return (
@@ -146,11 +154,17 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
             <BackIcon />
           </button>
           <h2 id="journey-end-video-title" className="sr-only">
-            {t('forest.journeyEnd.eyebrow')}
+            {t('forest.journeyEnd.videoTitle')}
           </h2>
-          {/* Pendiente: video de cierre, uno por idioma (como INTRO_VIDEOS). */}
+          {/* Mismo embed que el video de actividad de las misiones. */}
           <div className="journey-end-video">
-            <p>{t('forest.journeyEnd.videoPlaceholder')}</p>
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${CLOSING_VIDEOS[currentLang()]}`}
+              title={t('forest.journeyEnd.videoTitle')}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
           </div>
 
           <div className="journey-end-actions">
