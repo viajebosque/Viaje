@@ -8,6 +8,12 @@
       "en": "Cambiar a inglés"
     }
   },
+  "contact": {
+    "whatsapp": "Escribir por WhatsApp",
+    "instagram": "Ver Instagram",
+    "linkedin": "Ver LinkedIn",
+    "email": "Escribir por correo"
+  },
   "common": {
     "appTitle": "Un Viaje por el Bosque",
     "loading": "Cargando…",
@@ -92,7 +98,6 @@
       "letter3": "Y si en algún momento deseas profundizar en tu proceso o continuar este trabajo juntas, podemos hacerlo con intención y cuidado.",
       "signature": "Con gran respeto por tu valentía y tu camino, Andrea",
       "contactHere": "Mi información de contacto está aquí.",
-      "contact": "Contactar",
       "contactMessage": "¡Hola! Completé mi Viaje por el Bosque y quiero agendar una cita contigo.",
       "restart": "Reiniciar mi viaje",
       "confirmTitle": "¿Reiniciar tu viaje?",
@@ -146,7 +151,7 @@
     "lockedHint": "Completa la Misión {{numero}} para desbloquear esta.",
     "lockedNode": "bloqueada",
     "paywallHint": "Las primeras {{numero}} misiones son de entrada libre. El resto del bosque se abre con el acceso completo.",
-    "paywallCta": "Obtener el acceso completo",
+    "paywallContact": "Obtén el acceso completo escribiéndome por:",
     "paywallMessage": "Hola! Completé las misiones abiertas del Viaje en el Bosque, quisiera desbloquear las otras misiones",
     "paywallNode": "requiere acceso completo",
     "reminders": {

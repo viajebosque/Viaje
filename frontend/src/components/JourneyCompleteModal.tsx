@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { currentLang, type Lang } from '../i18n';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
-import { whatsappUrl } from '../lib/payment';
+import ContactOptions from './ContactOptions';
 
 type Props = {
   forestImage: string;
@@ -209,17 +209,9 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           </div>
 
           <div className="journey-end-actions">
-            {/* Mismo WhatsApp que el muro de pago; el mensaje sale del
-                idioma activo (forest.journeyEnd.contactMessage). */}
-            <a
-              className="reminders-return journey-end-primary"
-              href={whatsappUrl(t('forest.journeyEnd.contactMessage'))}
-              target="_blank"
-              rel="noreferrer noopener"
-              autoFocus
-            >
-              {t('forest.journeyEnd.contact')}
-            </a>
+            {/* Mismas formas de contacto que el muro de pago; el mensaje de
+                WhatsApp sale del idioma activo (forest.journeyEnd.contactMessage). */}
+            <ContactOptions message={t('forest.journeyEnd.contactMessage')} autoFocus />
             <button className="journey-end-secondary" type="button" onClick={onClose}>
               {t('common.backToMap')}
             </button>

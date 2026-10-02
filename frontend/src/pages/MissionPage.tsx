@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth/AuthContext';
 import type { Lang } from '../i18n';
 import { useLanguage } from '../i18n/useLanguage';
-import { whatsappUrl } from '../lib/payment';
+import ContactOptions from '../components/ContactOptions';
 import {
   FREE_MISSIONS,
   getAnswers,
@@ -219,14 +219,11 @@ export default function MissionPage() {
         <p className="mission-desc">
           {t('mission.paywallBody', { numero: FREE_MISSIONS })}
         </p>
-        <a
-          className="mission-token-btn mission-paywall-cta"
-          href={whatsappUrl(t('forest.paywallMessage'))}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          {t('forest.paywallCta')}
-        </a>
+        <ContactOptions
+          className="mission-paywall-contact"
+          message={t('forest.paywallMessage')}
+          label={t('forest.paywallContact')}
+        />
         <button className="mission-back" onClick={() => navigate(mapPath)}>
           {t('common.backToMapArrow')}
         </button>

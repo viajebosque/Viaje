@@ -20,7 +20,7 @@ import {
   type MissionAccess,
   type MissionSummary,
 } from '../lib/missions';
-import { whatsappUrl } from '../lib/payment';
+import ContactOptions from '../components/ContactOptions';
 import { wakeBackend } from '../lib/api';
 import JourneyCompleteModal from '../components/JourneyCompleteModal';
 import MissionGuide from '../components/MissionGuide';
@@ -758,17 +758,13 @@ export default function Forest() {
 
                 <div className="mission-entry-actions">
                   {/* El aviso de pago es el único cierre con salida: en vez
-                      de un botón muerto, abre WhatsApp con el mensaje ya
-                      escrito en el idioma activo. */}
+                      de un botón muerto, las formas de contacto (WhatsApp
+                      lleva el mensaje ya escrito en el idioma activo). */}
                   {selectedInfo.access === 'paywall' ? (
-                    <a
-                      className="mission-entry-primary"
-                      href={whatsappUrl(t('forest.paywallMessage'))}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      {t('forest.paywallCta')}
-                    </a>
+                    <ContactOptions
+                      message={t('forest.paywallMessage')}
+                      label={t('forest.paywallContact')}
+                    />
                   ) : (
                     <button
                       className="mission-entry-primary"
@@ -800,14 +796,10 @@ export default function Forest() {
               </p>
               <div className="modal-actions">
                 {selectedInfo.access === 'paywall' ? (
-                  <a
-                    className="modal-primary"
-                    href={whatsappUrl(t('forest.paywallMessage'))}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    {t('forest.paywallCta')}
-                  </a>
+                  <ContactOptions
+                    message={t('forest.paywallMessage')}
+                    label={t('forest.paywallContact')}
+                  />
                 ) : (
                   <button
                     className="modal-primary"

@@ -8,6 +8,12 @@
       "en": "Switch to English"
     }
   },
+  "contact": {
+    "whatsapp": "Message on WhatsApp",
+    "instagram": "View Instagram",
+    "linkedin": "View LinkedIn",
+    "email": "Send an email"
+  },
   "common": {
     "appTitle": "Forest Journey",
     "loading": "Loading…",
@@ -92,7 +98,6 @@
       "letter3": "And if at any moment you wish to go deeper into your process or continue this work together, we can do that with intention and care.",
       "signature": "With deep respect for your courage and your path, Andrea",
       "contactHere": "My contact information is here.",
-      "contact": "Contact",
       "contactMessage": "Hi! I completed my Forest Journey and I’d like to book an appointment with you.",
       "restart": "Restart my journey",
       "confirmTitle": "Restart your journey?",
@@ -135,7 +140,7 @@
     "lockedHint": "Complete Mission {{numero}} to unlock this one.",
     "lockedNode": "locked",
     "paywallHint": "The first {{numero}} missions are freely open. The rest of the forest opens with full access.",
-    "paywallCta": "Get full access",
+    "paywallContact": "Get full access by reaching out on:",
     "paywallMessage": "Hi! I completed the open missions of the Journey Through the Forest, I would like to unlock the other missions",
     "paywallNode": "requires full access",
     "reminders": {
