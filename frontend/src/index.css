@@ -1931,6 +1931,7 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
 .admin-question-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
 .admin-question-field { display: grid; gap: 0.35rem; align-content: start; }
 .admin-question-field > span { color: #4e614e; font-size: 0.75rem; font-weight: 750; }
+.admin-question-field input,
 .admin-question-field textarea {
   width: 100%;
   min-height: 3.2rem;
@@ -1944,11 +1945,14 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   line-height: 1.45;
   resize: vertical;
 }
+.admin-question-field input { min-height: 0; }
+.admin-question-field input:focus,
 .admin-question-field textarea:focus {
   border-color: #467750;
   box-shadow: 0 0 0 3px rgba(70, 119, 80, 0.16);
   outline: none;
 }
+.admin-question-field input[aria-invalid="true"],
 .admin-question-field textarea[aria-invalid="true"] { border-color: #a5523f; }
 .admin-question-hint { color: #7b8677; font-size: 0.74rem; }
 .admin-question-hint.is-error { color: #a5523f; font-weight: 700; }

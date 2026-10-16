@@ -279,13 +279,15 @@
       },
       "questions": {
         "title": "Question management",
-        "description": "Edit each mission’s questions, in Spanish and English."
+        "description": "Edit each mission’s title and questions, in Spanish and English."
       }
     },
     "questions": {
       "missionsLabel": "Missions",
       "missionTab": "Mission {{numero}}",
       "order": "Question {{orden}}",
+      "missionTitle": "Mission title",
+      "longTitle": "Over {{count}} characters: the map shows it in a smaller font.",
       "spanish": "Spanish",
       "english": "English",
       "spanishRequired": "Spanish is required.",

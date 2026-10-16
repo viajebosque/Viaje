@@ -290,13 +290,15 @@
       },
       "questions": {
         "title": "Gestión de preguntas",
-        "description": "Edita las preguntas de cada misión, en español e inglés."
+        "description": "Edita el título y las preguntas de cada misión, en español e inglés."
       }
     },
     "questions": {
       "missionsLabel": "Misiones",
       "missionTab": "Misión {{numero}}",
       "order": "Pregunta {{orden}}",
+      "missionTitle": "Título de la misión",
+      "longTitle": "Más de {{count}} caracteres: en el mapa se muestra con letra más chica.",
       "spanish": "Español",
       "english": "Inglés",
       "spanishRequired": "El español es obligatorio.",

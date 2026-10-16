@@ -108,3 +108,16 @@ export async function updateQuestion(
   );
   return question;
 }
+
+// Guarda el título de una misión en los dos idiomas. Es el único texto de
+// `missions` que se ve en pantalla.
+export async function updateMissionTitle(
+  missionId: string,
+  tituloEs: string,
+  tituloEn: string
+): Promise<Pick<AdminMission, 'id' | 'numero' | 'titulo_es' | 'titulo_en'>> {
+  const { mission } = await apiAuthPatch<{
+    mission: Pick<AdminMission, 'id' | 'numero' | 'titulo_es' | 'titulo_en'>;
+  }>(`/api/admin/missions/${missionId}`, { titulo_es: tituloEs, titulo_en: tituloEn });
+  return mission;
+}

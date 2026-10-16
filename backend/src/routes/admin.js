@@ -174,3 +174,40 @@ adminRouter.patch('/questions/:id', handle(async (req, res) => {
   console.log(`[admin] ${req.admin.email} editó la pregunta ${data.id}`);
   res.json({ question: data });
 }));
+
+// Tope del título. Hoy el más largo tiene 26 caracteres.
+const MAX_TITULO = 120;
+
+// PATCH /api/admin/missions/:id   body: { titulo_es, titulo_en }
+// Solo el título: es el único texto de `missions` que hoy se ve en pantalla
+// (la descripción del modal del mapa sale de es/en.json, y texto_final no se
+// muestra). Misma regla que las preguntas: español obligatorio, inglés vacío
+// = NULL.
+adminRouter.patch('/missions/:id', handle(async (req, res) => {
+  const { titulo_es, titulo_en } = req.body ?? {};
+
+  if (typeof titulo_es !== 'string' || !titulo_es.trim()) {
+    return res.status(400).json({ error: 'titulo_es es obligatorio' });
+  }
+  if (titulo_en != null && typeof titulo_en !== 'string') {
+    return res.status(400).json({ error: 'titulo_en debe ser texto o null' });
+  }
+  const es = titulo_es.trim();
+  const en = titulo_en?.trim() || null;
+  if (es.length > MAX_TITULO || (en?.length ?? 0) > MAX_TITULO) {
+    return res.status(400).json({ error: `Máximo ${MAX_TITULO} caracteres` });
+  }
+
+  const { data, error } = await supabase
+    .from('missions')
+    .update({ titulo_es: es, titulo_en: en })
+    .eq('id', req.params.id)
+    .select('id, numero, titulo_es, titulo_en')
+    .maybeSingle();
+
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Misión no encontrada' });
+
+  console.log(`[admin] ${req.admin.email} editó el título de la misión ${data.numero}`);
+  res.json({ mission: data });
+}));

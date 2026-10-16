@@ -4,13 +4,23 @@ import { useLanguage } from '../../i18n/useLanguage';
 import {
   listQuestions,
   updateQuestion,
+  updateMissionTitle,
   QUESTION_CATEGORIES,
   type AdminMission,
   type AdminQuestion,
 } from '../../lib/admin';
 
+// Todo lo editable acá es un par es/en: el título de cada misión y el
+// enunciado de cada pregunta. Se distinguen por la clave: `m:<id>` o `q:<id>`.
 type Draft = { es: string; en: string };
 type SaveState = 'saving' | 'saved';
+
+const missionKey = (id: string) => `m:${id}`;
+const questionKey = (id: string) => `q:${id}`;
+
+// El modal de entrada del mapa (Forest.tsx) cambia a letra más chica cuando el
+// título pasa de este largo.
+const LONG_TITLE = 17;
 
 // Los textos se cargaron con saltos CRLF. El <textarea> los devuelve como LF,
 // así que sin normalizar cada pregunta multilínea aparecería "modificada" sin
@@ -27,14 +37,17 @@ function normalizeQuestion(q: AdminQuestion): AdminQuestion {
   };
 }
 
-function serverDraft(q: AdminQuestion): Draft {
-  return { es: q.enunciado_es, en: q.enunciado_en ?? '' };
-}
-
 // Alto del textarea según el texto, para que se lea entero sin scroll interno.
 function rowsFor(text: string): number {
   const lines = text.split('\n').reduce((n, line) => n + Math.max(1, Math.ceil(line.length / 72)), 0);
   return Math.min(16, Math.max(2, lines));
+}
+
+function without<T>(record: Record<string, T>, key: string): Record<string, T> {
+  if (!(key in record)) return record;
+  const next = { ...record };
+  delete next[key];
+  return next;
 }
 
 type Props = {
@@ -42,8 +55,8 @@ type Props = {
   canLeaveRef: MutableRefObject<() => boolean>;
 };
 
-// Módulo "Gestión de preguntas": las preguntas de cada misión, en orden y
-// separadas por categoría, editables en español e inglés.
+// Módulo "Gestión de preguntas": el título de cada misión y sus preguntas, en
+// orden y separadas por categoría, editables en español e inglés.
 export default function AdminQuestions({ canLeaveRef }: Props) {
   const { t } = useTranslation();
   const { lang } = useLanguage();
@@ -54,7 +67,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   const [loadErr, setLoadErr] = useState<string | null>(null);
   const [numero, setNumero] = useState(1);
 
-  // Solo las preguntas tocadas tienen borrador; el resto se lee del servidor.
+  // Solo lo tocado tiene borrador; el resto se lee del servidor.
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [saveState, setSaveState] = useState<Record<string, SaveState>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -80,22 +93,31 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     };
   }, []);
 
-  const questionsById = useMemo(() => {
-    const map = new Map<string, AdminQuestion>();
-    for (const m of missions) for (const q of m.questions) map.set(q.id, q);
+  // Valor guardado de cada clave editable.
+  const server = useMemo(() => {
+    const map = new Map<string, Draft>();
+    for (const m of missions) {
+      map.set(missionKey(m.id), { es: m.titulo_es, en: m.titulo_en ?? '' });
+      for (const q of m.questions) {
+        map.set(questionKey(q.id), { es: q.enunciado_es, en: q.enunciado_en ?? '' });
+      }
+    }
     return map;
   }, [missions]);
 
-  function isDirty(id: string): boolean {
-    const draft = drafts[id];
-    const q = questionsById.get(id);
-    if (!draft || !q) return false;
-    const server = serverDraft(q);
-    return draft.es !== server.es || draft.en !== server.en;
+  function valueOf(key: string): Draft {
+    return drafts[key] ?? server.get(key) ?? { es: '', en: '' };
   }
 
-  const dirtyIds = Object.keys(drafts).filter(isDirty);
-  const dirtyCount = dirtyIds.length;
+  function isDirty(key: string): boolean {
+    const draft = drafts[key];
+    const saved = server.get(key);
+    if (!draft || !saved) return false;
+    return draft.es !== saved.es || draft.en !== saved.en;
+  }
+
+  const dirtyKeys = Object.keys(drafts).filter(isDirty);
+  const dirtyCount = dirtyKeys.length;
 
   // Aviso al salir con cambios sin guardar: flecha del panel y cierre/recarga
   // de la pestaña.
@@ -110,59 +132,90 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     return () => window.removeEventListener('beforeunload', warn);
   }, [dirtyCount, canLeaveRef, t]);
 
-  function edit(q: AdminQuestion, field: keyof Draft, value: string) {
+  function edit(key: string, field: keyof Draft, value: string) {
     setDrafts((prev) => ({
       ...prev,
-      [q.id]: { ...(prev[q.id] ?? serverDraft(q)), [field]: value },
+      [key]: { ...(prev[key] ?? server.get(key) ?? { es: '', en: '' }), [field]: value },
     }));
-    setSaveState((prev) => {
-      if (prev[q.id] !== 'saved') return prev;
-      const next = { ...prev };
-      delete next[q.id];
-      return next;
-    });
+    setSaveState((prev) => (prev[key] === 'saved' ? without(prev, key) : prev));
   }
 
-  function discard(id: string) {
-    setDrafts((prev) => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
+  function discard(key: string) {
+    setDrafts((prev) => without(prev, key));
+    setErrors((prev) => without(prev, key));
   }
 
-  async function save(q: AdminQuestion) {
-    const draft = drafts[q.id];
-    if (!draft || !draft.es.trim()) return;
-    setSaveState((prev) => ({ ...prev, [q.id]: 'saving' }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[q.id];
-      return next;
-    });
-    try {
-      const updated = normalizeQuestion(await updateQuestion(q.id, draft.es, draft.en));
+  async function persist(key: string, draft: Draft) {
+    const id = key.slice(2);
+    if (key.startsWith('m:')) {
+      const updated = await updateMissionTitle(id, draft.es, draft.en);
+      setMissions((prev) =>
+        prev.map((m) =>
+          m.id === updated.id
+            ? { ...m, titulo_es: updated.titulo_es, titulo_en: updated.titulo_en }
+            : m
+        )
+      );
+    } else {
+      const updated = normalizeQuestion(await updateQuestion(id, draft.es, draft.en));
       setMissions((prev) =>
         prev.map((m) => ({
           ...m,
           questions: m.questions.map((x) => (x.id === updated.id ? updated : x)),
         }))
       );
-      discard(q.id);
-      setSaveState((prev) => ({ ...prev, [q.id]: 'saved' }));
-    } catch (e) {
-      setErrors((prev) => ({ ...prev, [q.id]: e instanceof Error ? e.message : String(e) }));
-      setSaveState((prev) => {
-        const next = { ...prev };
-        delete next[q.id];
-        return next;
-      });
     }
+  }
+
+  async function save(key: string) {
+    const draft = drafts[key];
+    if (!draft || !draft.es.trim()) return;
+    setSaveState((prev) => ({ ...prev, [key]: 'saving' }));
+    setErrors((prev) => without(prev, key));
+    try {
+      await persist(key, draft);
+      discard(key);
+      setSaveState((prev) => ({ ...prev, [key]: 'saved' }));
+    } catch (e) {
+      setErrors((prev) => ({ ...prev, [key]: e instanceof Error ? e.message : String(e) }));
+      setSaveState((prev) => without(prev, key));
+    }
+  }
+
+  // Guardado, descartar y error: igual para título y preguntas.
+  function renderActions(key: string, esEmpty: boolean) {
+    const dirty = isDirty(key);
+    const state = saveState[key];
+    return (
+      <>
+        {errors[key] && <p className="auth-error">{errors[key]}</p>}
+        <div className="admin-question-actions">
+          {state === 'saved' && !dirty && (
+            <span className="admin-question-saved" role="status">
+              {t('common.saved')}
+            </span>
+          )}
+          {dirty && (
+            <button
+              type="button"
+              className="admin-unpay"
+              onClick={() => discard(key)}
+              disabled={state === 'saving'}
+            >
+              {t('admin.questions.discard')}
+            </button>
+          )}
+          <button
+            type="button"
+            className="admin-pay"
+            onClick={() => save(key)}
+            disabled={!dirty || esEmpty || state === 'saving'}
+          >
+            {state === 'saving' ? t('common.saving') : t('common.save')}
+          </button>
+        </div>
+      </>
+    );
   }
 
   if (loading) return <p className="admin-empty">{t('common.loading')}</p>;
@@ -173,9 +226,14 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
   const mission = missions.find((m) => m.numero === numero) ?? missions[0];
   const missionTitle = (lang === 'en' && mission.titulo_en) || mission.titulo_es;
+  const titleKey = missionKey(mission.id);
+  const title = valueOf(titleKey);
 
   function missionHasDirty(m: AdminMission) {
-    return m.questions.some((q) => dirtyIds.includes(q.id));
+    return (
+      dirtyKeys.includes(missionKey(m.id)) ||
+      m.questions.some((q) => dirtyKeys.includes(questionKey(q.id)))
+    );
   }
 
   return (
@@ -219,6 +277,41 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
           {t('mission.heading', { numero: mission.numero, titulo: missionTitle })}
         </h3>
 
+        <section className="admin-question-block">
+          <h4 className="admin-question-block-title">{t('admin.questions.missionTitle')}</h4>
+          <div className={`admin-question${isDirty(titleKey) ? ' is-dirty' : ''}`}>
+            <div className="admin-question-fields">
+              {(['es', 'en'] as const).map((field) => (
+                <label key={field} className="admin-question-field">
+                  <span>
+                    {t(field === 'es' ? 'admin.questions.spanish' : 'admin.questions.english')}
+                  </span>
+                  <input
+                    type="text"
+                    value={title[field]}
+                    onChange={(e) => edit(titleKey, field, e.target.value)}
+                    aria-invalid={field === 'es' && !title.es.trim()}
+                  />
+                  {field === 'es' && !title.es.trim() ? (
+                    <small className="admin-question-hint is-error">
+                      {t('admin.questions.spanishRequired')}
+                    </small>
+                  ) : field === 'en' && !title.en.trim() ? (
+                    <small className="admin-question-hint">
+                      {t('admin.questions.englishMissing')}
+                    </small>
+                  ) : title[field].trim().length > LONG_TITLE ? (
+                    <small className="admin-question-hint">
+                      {t('admin.questions.longTitle', { count: LONG_TITLE })}
+                    </small>
+                  ) : null}
+                </label>
+              ))}
+            </div>
+            {renderActions(titleKey, !title.es.trim())}
+          </div>
+        </section>
+
         {QUESTION_CATEGORIES.map((categoria) => {
           const questions = mission.questions.filter((q) => q.categoria === categoria);
           if (questions.length === 0) return null;
@@ -231,14 +324,13 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
               <ol className="admin-question-list">
                 {questions.map((q) => {
-                  const draft = drafts[q.id] ?? serverDraft(q);
-                  const dirty = isDirty(q.id);
-                  const state = saveState[q.id];
+                  const key = questionKey(q.id);
+                  const draft = valueOf(key);
                   const esEmpty = !draft.es.trim();
                   return (
                     <li
                       key={q.id}
-                      className={`admin-question${dirty ? ' is-dirty' : ''}`}
+                      className={`admin-question${isDirty(key) ? ' is-dirty' : ''}`}
                     >
                       <span className="admin-question-order">
                         {t('admin.questions.order', { orden: q.orden })}
@@ -250,7 +342,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
                           <textarea
                             value={draft.es}
                             rows={rowsFor(draft.es)}
-                            onChange={(e) => edit(q, 'es', e.target.value)}
+                            onChange={(e) => edit(key, 'es', e.target.value)}
                             aria-invalid={esEmpty}
                           />
                           {esEmpty && (
@@ -264,7 +356,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
                           <textarea
                             value={draft.en}
                             rows={rowsFor(draft.en)}
-                            onChange={(e) => edit(q, 'en', e.target.value)}
+                            onChange={(e) => edit(key, 'en', e.target.value)}
                           />
                           {!draft.en.trim() && (
                             <small className="admin-question-hint">
@@ -274,33 +366,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
                         </label>
                       </div>
 
-                      {errors[q.id] && <p className="auth-error">{errors[q.id]}</p>}
-
-                      <div className="admin-question-actions">
-                        {state === 'saved' && !dirty && (
-                          <span className="admin-question-saved" role="status">
-                            {t('common.saved')}
-                          </span>
-                        )}
-                        {dirty && (
-                          <button
-                            type="button"
-                            className="admin-unpay"
-                            onClick={() => discard(q.id)}
-                            disabled={state === 'saving'}
-                          >
-                            {t('admin.questions.discard')}
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          className="admin-pay"
-                          onClick={() => save(q)}
-                          disabled={!dirty || esEmpty || state === 'saving'}
-                        >
-                          {state === 'saving' ? t('common.saving') : t('common.save')}
-                        </button>
-                      </div>
+                      {renderActions(key, esEmpty)}
                     </li>
                   );
                 })}
