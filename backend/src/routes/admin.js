@@ -116,3 +116,61 @@ adminRouter.patch('/users/:id/paid', handle(async (req, res) => {
   );
   res.json({ user: data });
 }));
+
+// ---------------------------------------------------------------------------
+// Gestión de preguntas
+//
+// Va por el backend porque con la anon key `questions` es solo lectura (y
+// encima solo de las misiones desbloqueadas): no hay policy de UPDATE.
+
+// Tope de largo por enunciado. El más largo cargado hoy ronda los 700
+// caracteres; esto solo evita que un pegado accidental llene la fila.
+const MAX_ENUNCIADO = 6000;
+
+// GET /api/admin/questions
+// Las 9 misiones, en orden, cada una con sus preguntas ordenadas.
+adminRouter.get('/questions', handle(async (req, res) => {
+  const { data, error } = await supabase
+    .from('missions')
+    .select(
+      'id, numero, titulo_es, titulo_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
+    )
+    .order('numero', { ascending: true })
+    .order('orden', { referencedTable: 'questions', ascending: true });
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ missions: data ?? [] });
+}));
+
+// PATCH /api/admin/questions/:id   body: { enunciado_es, enunciado_en }
+// El español es obligatorio (es el idioma al que cae el fallback). El inglés
+// vacío se guarda como NULL: así el frontend muestra el español en vez de un
+// texto en blanco.
+adminRouter.patch('/questions/:id', handle(async (req, res) => {
+  const { enunciado_es, enunciado_en } = req.body ?? {};
+
+  if (typeof enunciado_es !== 'string' || !enunciado_es.trim()) {
+    return res.status(400).json({ error: 'enunciado_es es obligatorio' });
+  }
+  if (enunciado_en != null && typeof enunciado_en !== 'string') {
+    return res.status(400).json({ error: 'enunciado_en debe ser texto o null' });
+  }
+  const es = enunciado_es.trim();
+  const en = enunciado_en?.trim() || null;
+  if (es.length > MAX_ENUNCIADO || (en?.length ?? 0) > MAX_ENUNCIADO) {
+    return res.status(400).json({ error: `Máximo ${MAX_ENUNCIADO} caracteres` });
+  }
+
+  const { data, error } = await supabase
+    .from('questions')
+    .update({ enunciado_es: es, enunciado_en: en })
+    .eq('id', req.params.id)
+    .select('id, categoria, orden, enunciado_es, enunciado_en')
+    .maybeSingle();
+
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Pregunta no encontrada' });
+
+  console.log(`[admin] ${req.admin.email} editó la pregunta ${data.id}`);
+  res.json({ question: data });
+}));

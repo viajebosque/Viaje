@@ -258,7 +258,7 @@
     "link": "Panel admin",
     "eyebrow": "Guardia del recorrido",
     "title": "Panel de administración",
-    "subtitle": "Marca quién pagó y quién no.",
+    "subtitle": "Elige qué quieres gestionar.",
     "searchPlaceholder": "Buscar por nombre o correo…",
     "sortLabel": "Ordenar por",
     "sort": {
@@ -281,7 +281,33 @@
     "pagination": "Paginación",
     "pageOf": "Página {{page}} de {{totalPages}}",
     "prev": "← Anteriores",
-    "next": "Siguientes →"
+    "next": "Siguientes →",
+    "backToModules": "Volver a los módulos",
+    "modules": {
+      "users": {
+        "title": "Gestión de usuarios",
+        "description": "Busca usuarios y marca quién pagó y quién no."
+      },
+      "questions": {
+        "title": "Gestión de preguntas",
+        "description": "Edita las preguntas de cada misión, en español e inglés."
+      }
+    },
+    "questions": {
+      "missionsLabel": "Misiones",
+      "missionTab": "Misión {{numero}}",
+      "order": "Pregunta {{orden}}",
+      "spanish": "Español",
+      "english": "Inglés",
+      "spanishRequired": "El español es obligatorio.",
+      "englishMissing": "Sin traducir: se mostrará el texto en español.",
+      "discard": "Descartar cambios",
+      "unsavedMark": "Cambios sin guardar",
+      "unsavedCount_one": "{{count}} pregunta con cambios sin guardar",
+      "unsavedCount_other": "{{count}} preguntas con cambios sin guardar",
+      "confirmLeave": "Hay cambios sin guardar. ¿Salir igual y perderlos?",
+      "empty": "No hay misiones cargadas."
+    }
   },
   "mission": {
     "introModal": {

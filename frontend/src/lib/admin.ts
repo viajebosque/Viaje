@@ -60,3 +60,51 @@ export async function setUserPaid(
   );
   return user;
 }
+
+// ---------------------------------------------------------------------------
+// Gestión de preguntas
+//
+// También por el backend: con la anon key `questions` es de solo lectura (y
+// solo las de misiones desbloqueadas), así que no hay forma de editarlas
+// desde el navegador.
+
+export const QUESTION_CATEGORIES = ['iniciacion', 'actividad', 'reflexion'] as const;
+export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
+
+export type AdminQuestion = {
+  id: string;
+  categoria: QuestionCategory;
+  orden: number;
+  enunciado_es: string;
+  enunciado_en: string | null;
+};
+
+export type AdminMission = {
+  id: string;
+  numero: number;
+  titulo_es: string;
+  titulo_en: string | null;
+  questions: AdminQuestion[];
+};
+
+// Las 9 misiones, ordenadas, con sus preguntas ordenadas.
+export async function listQuestions(): Promise<AdminMission[]> {
+  const { missions } = await apiAuthGet<{ missions: AdminMission[] }>(
+    '/api/admin/questions'
+  );
+  return missions;
+}
+
+// Guarda el enunciado en los dos idiomas. El inglés vacío queda NULL
+// (el frontend cae al español).
+export async function updateQuestion(
+  questionId: string,
+  enunciadoEs: string,
+  enunciadoEn: string
+): Promise<AdminQuestion> {
+  const { question } = await apiAuthPatch<{ question: AdminQuestion }>(
+    `/api/admin/questions/${questionId}`,
+    { enunciado_es: enunciadoEs, enunciado_en: enunciadoEn }
+  );
+  return question;
+}

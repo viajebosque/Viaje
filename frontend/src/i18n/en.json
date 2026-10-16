@@ -247,7 +247,7 @@
     "link": "Admin panel",
     "eyebrow": "Keeper of the journey",
     "title": "Admin panel",
-    "subtitle": "Mark who has paid and who hasn't.",
+    "subtitle": "Choose what you want to manage.",
     "searchPlaceholder": "Search by name or email…",
     "sortLabel": "Sort by",
     "sort": {
@@ -270,7 +270,33 @@
     "pagination": "Pagination",
     "pageOf": "Page {{page}} of {{totalPages}}",
     "prev": "← Previous",
-    "next": "Next →"
+    "next": "Next →",
+    "backToModules": "Back to modules",
+    "modules": {
+      "users": {
+        "title": "User management",
+        "description": "Search users and mark who has paid and who hasn’t."
+      },
+      "questions": {
+        "title": "Question management",
+        "description": "Edit each mission’s questions, in Spanish and English."
+      }
+    },
+    "questions": {
+      "missionsLabel": "Missions",
+      "missionTab": "Mission {{numero}}",
+      "order": "Question {{orden}}",
+      "spanish": "Spanish",
+      "english": "English",
+      "spanishRequired": "Spanish is required.",
+      "englishMissing": "Not translated: the Spanish text will be shown.",
+      "discard": "Discard changes",
+      "unsavedMark": "Unsaved changes",
+      "unsavedCount_one": "{{count}} question with unsaved changes",
+      "unsavedCount_other": "{{count}} questions with unsaved changes",
+      "confirmLeave": "You have unsaved changes. Leave anyway and lose them?",
+      "empty": "No missions loaded."
+    }
   },
   "mission": {
     "introModal": {
