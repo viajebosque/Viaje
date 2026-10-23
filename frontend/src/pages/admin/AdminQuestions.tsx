@@ -4,18 +4,21 @@ import { useLanguage } from '../../i18n/useLanguage';
 import {
   listQuestions,
   updateQuestion,
-  updateMissionTitle,
+  updateMissionText,
   QUESTION_CATEGORIES,
   type AdminMission,
   type AdminQuestion,
+  type MissionTextField,
 } from '../../lib/admin';
 
-// Todo lo editable acá es un par es/en: el título de cada misión y el
-// enunciado de cada pregunta. Se distinguen por la clave: `m:<id>` o `q:<id>`.
+// Todo lo editable acá es un par es/en: el título y la consecuencia amable de
+// cada misión, y el enunciado de cada pregunta. Se distinguen por la clave:
+// `m:<id>` (título), `c:<id>` (consecuencia) o `q:<id>`.
 type Draft = { es: string; en: string };
 type SaveState = 'saving' | 'saved';
 
 const missionKey = (id: string) => `m:${id}`;
+const consequenceKey = (id: string) => `c:${id}`;
 const questionKey = (id: string) => `q:${id}`;
 
 // El modal de entrada del mapa (Forest.tsx) cambia a letra más chica cuando el
@@ -27,6 +30,17 @@ const LONG_TITLE = 17;
 // que nadie la tocara.
 function normalize(text: string | null): string {
   return (text ?? '').replace(/\r\n?/g, '\n');
+}
+
+function normalizeMission<T extends Pick<AdminMission, 'consecuencia_amable_es' | 'consecuencia_amable_en'>>(
+  m: T
+): T {
+  return {
+    ...m,
+    consecuencia_amable_es: normalize(m.consecuencia_amable_es),
+    consecuencia_amable_en:
+      m.consecuencia_amable_en == null ? null : normalize(m.consecuencia_amable_en),
+  };
 }
 
 function normalizeQuestion(q: AdminQuestion): AdminQuestion {
@@ -55,7 +69,7 @@ type Props = {
   canLeaveRef: MutableRefObject<() => boolean>;
 };
 
-// Módulo "Gestión de preguntas": el título de cada misión y sus preguntas, en
+// Módulo "Gestión de misiones": el título, la consecuencia amable y las preguntas de cada misión, en
 // orden y separadas por categoría, editables en español e inglés.
 export default function AdminQuestions({ canLeaveRef }: Props) {
   const { t } = useTranslation();
@@ -78,7 +92,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
       .then((data) => {
         if (cancelled) return;
         setMissions(
-          data.map((m) => ({ ...m, questions: m.questions.map(normalizeQuestion) }))
+          data.map((m) => ({ ...normalizeMission(m), questions: m.questions.map(normalizeQuestion) }))
         );
         setLoadErr(null);
       })
@@ -98,6 +112,10 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     const map = new Map<string, Draft>();
     for (const m of missions) {
       map.set(missionKey(m.id), { es: m.titulo_es, en: m.titulo_en ?? '' });
+      map.set(consequenceKey(m.id), {
+        es: m.consecuencia_amable_es,
+        en: m.consecuencia_amable_en ?? '',
+      });
       for (const q of m.questions) {
         map.set(questionKey(q.id), { es: q.enunciado_es, en: q.enunciado_en ?? '' });
       }
@@ -147,12 +165,17 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
   async function persist(key: string, draft: Draft) {
     const id = key.slice(2);
-    if (key.startsWith('m:')) {
-      const updated = await updateMissionTitle(id, draft.es, draft.en);
+    if (key.startsWith('m:') || key.startsWith('c:')) {
+      const field: MissionTextField = key.startsWith('m:') ? 'titulo' : 'consecuencia_amable';
+      const updated = normalizeMission(await updateMissionText(id, field, draft.es, draft.en));
       setMissions((prev) =>
         prev.map((m) =>
           m.id === updated.id
-            ? { ...m, titulo_es: updated.titulo_es, titulo_en: updated.titulo_en }
+            ? {
+                ...m,
+                [`${field}_es`]: updated[`${field}_es`],
+                [`${field}_en`]: updated[`${field}_en`],
+              }
             : m
         )
       );
@@ -182,7 +205,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     }
   }
 
-  // Guardado, descartar y error: igual para título y preguntas.
+  // Guardado, descartar y error: igual para título, consecuencia y preguntas.
   function renderActions(key: string, esEmpty: boolean) {
     const dirty = isDirty(key);
     const state = saveState[key];
@@ -228,10 +251,13 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   const missionTitle = (lang === 'en' && mission.titulo_en) || mission.titulo_es;
   const titleKey = missionKey(mission.id);
   const title = valueOf(titleKey);
+  const consKey = consequenceKey(mission.id);
+  const consequence = valueOf(consKey);
 
   function missionHasDirty(m: AdminMission) {
     return (
       dirtyKeys.includes(missionKey(m.id)) ||
+      dirtyKeys.includes(consequenceKey(m.id)) ||
       m.questions.some((q) => dirtyKeys.includes(questionKey(q.id)))
     );
   }
@@ -309,6 +335,38 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
               ))}
             </div>
             {renderActions(titleKey, !title.es.trim())}
+          </div>
+        </section>
+
+        <section className="admin-question-block">
+          <h4 className="admin-question-block-title">{t('admin.questions.consequence')}</h4>
+          <div className={`admin-question${isDirty(consKey) ? ' is-dirty' : ''}`}>
+            <span className="admin-question-order">{t('admin.questions.consequenceHint')}</span>
+            <div className="admin-question-fields">
+              {(['es', 'en'] as const).map((field) => (
+                <label key={field} className="admin-question-field">
+                  <span>
+                    {t(field === 'es' ? 'admin.questions.spanish' : 'admin.questions.english')}
+                  </span>
+                  <textarea
+                    value={consequence[field]}
+                    rows={rowsFor(consequence[field])}
+                    onChange={(e) => edit(consKey, field, e.target.value)}
+                    aria-invalid={field === 'es' && !consequence.es.trim()}
+                  />
+                  {field === 'es' && !consequence.es.trim() ? (
+                    <small className="admin-question-hint is-error">
+                      {t('admin.questions.spanishRequired')}
+                    </small>
+                  ) : field === 'en' && !consequence.en.trim() ? (
+                    <small className="admin-question-hint">
+                      {t('admin.questions.englishMissing')}
+                    </small>
+                  ) : null}
+                </label>
+              ))}
+            </div>
+            {renderActions(consKey, !consequence.es.trim())}
           </div>
         </section>
 

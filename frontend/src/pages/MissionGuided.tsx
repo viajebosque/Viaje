@@ -428,8 +428,9 @@ export default function MissionGuided({
         : undefined;
   const missionPanel = getMissionPanelImage(mission.numero) ?? forestMap;
   const isFirstMission = mission.numero === 1;
-  // Textos definitivos del cliente para el lateral, independientes del cierre.
-  const sidebarImportance = t(`mission.guided.sidebarImportance.${mission.numero}`);
+  // Consecuencia amable del lateral: sale de la base (SQL/022) y se edita
+  // desde /admin -> Gestión de misiones.
+  const sidebarImportance = mission.consecuencia;
 
   // Mismo contenido en las dos variantes del lateral (desktop y desplegable).
   const illustrationCopy = (

@@ -10,6 +10,9 @@ export type Mission = {
   numero: number;
   titulo: string;
   descripcion: string;
+  // Tarjeta del panel lateral ("Es importante atravesar esta misión
+  // porque…"). Columna consecuencia_amable_es / _en (SQL/022).
+  consecuencia: string;
   // ID de YouTube del video del paso 2 (tabla `videos`, SQL/021), en el idioma
   // activo. null = la misión no tiene video y el paso se salta.
   videoId: string | null;
@@ -57,6 +60,7 @@ function toMission(row: Row, lang: Lang): Mission {
     numero: row.numero as number,
     titulo: pick(row, 'titulo', lang),
     descripcion: pick(row, 'descripcion', lang),
+    consecuencia: pick(row, 'consecuencia_amable', lang),
     videoId: video ? youtubeId(pick(video, 'url', lang)) : null,
   };
 }
@@ -132,6 +136,7 @@ export async function getMissionWithQuestions(
     'numero',
     ...langCols('titulo', lang),
     ...langCols('descripcion', lang),
+    ...langCols('consecuencia_amable', lang),
   ].join(', ');
   const qCols = [
     'id',

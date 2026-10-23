@@ -84,8 +84,13 @@ export type AdminMission = {
   numero: number;
   titulo_es: string;
   titulo_en: string | null;
+  consecuencia_amable_es: string;
+  consecuencia_amable_en: string | null;
   questions: AdminQuestion[];
 };
+
+// Lo que devuelve el backend al guardar una misión.
+export type AdminMissionTexts = Omit<AdminMission, 'questions'>;
 
 // Las 9 misiones, ordenadas, con sus preguntas ordenadas.
 export async function listQuestions(): Promise<AdminMission[]> {
@@ -109,16 +114,21 @@ export async function updateQuestion(
   return question;
 }
 
-// Guarda el título de una misión en los dos idiomas. Es el único texto de
-// `missions` que se ve en pantalla.
-export async function updateMissionTitle(
+// Textos de `missions` que se ven en pantalla y se editan desde el panel.
+export type MissionTextField = 'titulo' | 'consecuencia_amable';
+
+// Guarda un texto de la misión (título o consecuencia amable) en los dos
+// idiomas. El inglés vacío queda NULL (el frontend cae al español).
+export async function updateMissionText(
   missionId: string,
-  tituloEs: string,
-  tituloEn: string
-): Promise<Pick<AdminMission, 'id' | 'numero' | 'titulo_es' | 'titulo_en'>> {
-  const { mission } = await apiAuthPatch<{
-    mission: Pick<AdminMission, 'id' | 'numero' | 'titulo_es' | 'titulo_en'>;
-  }>(`/api/admin/missions/${missionId}`, { titulo_es: tituloEs, titulo_en: tituloEn });
+  field: MissionTextField,
+  es: string,
+  en: string
+): Promise<AdminMissionTexts> {
+  const { mission } = await apiAuthPatch<{ mission: AdminMissionTexts }>(
+    `/api/admin/missions/${missionId}`,
+    { [`${field}_es`]: es, [`${field}_en`]: en }
+  );
   return mission;
 }
 

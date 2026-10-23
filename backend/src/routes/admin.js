@@ -134,7 +134,7 @@ adminRouter.get('/questions', handle(async (req, res) => {
   const { data, error } = await supabase
     .from('missions')
     .select(
-      'id, numero, titulo_es, titulo_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
+      'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
     )
     .order('numero', { ascending: true })
     .order('orden', { referencedTable: 'questions', ascending: true });
@@ -176,40 +176,60 @@ adminRouter.patch('/questions/:id', handle(async (req, res) => {
   res.json({ question: data });
 }));
 
-// Tope del título. Hoy el más largo tiene 26 caracteres.
-const MAX_TITULO = 120;
+// Textos editables de `missions`, con su tope de largo. Son los únicos que se
+// ven en pantalla: la descripción del modal del mapa sale de es/en.json y
+// texto_final no se muestra.
+//   titulo               hoy el más largo tiene 26 caracteres
+//   consecuencia_amable  la tarjeta del panel lateral (SQL/022), ~400
+const MISSION_TEXTS = { titulo: 120, consecuencia_amable: 2000 };
+const MISSION_COLUMNS =
+  'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en';
 
-// PATCH /api/admin/missions/:id   body: { titulo_es, titulo_en }
-// Solo el título: es el único texto de `missions` que hoy se ve en pantalla
-// (la descripción del modal del mapa sale de es/en.json, y texto_final no se
-// muestra). Misma regla que las preguntas: español obligatorio, inglés vacío
-// = NULL.
+// PATCH /api/admin/missions/:id
+//   body: { titulo_es, titulo_en } y/o { consecuencia_amable_es, consecuencia_amable_en }
+// Cada texto va en par: si viene el _es, el _en también se guarda. Misma regla
+// que las preguntas: español obligatorio, inglés vacío = NULL.
 adminRouter.patch('/missions/:id', handle(async (req, res) => {
-  const { titulo_es, titulo_en } = req.body ?? {};
+  const body = req.body ?? {};
+  const update = {};
 
-  if (typeof titulo_es !== 'string' || !titulo_es.trim()) {
-    return res.status(400).json({ error: 'titulo_es es obligatorio' });
+  for (const [field, max] of Object.entries(MISSION_TEXTS)) {
+    const rawEs = body[`${field}_es`];
+    const rawEn = body[`${field}_en`];
+    if (rawEs === undefined && rawEn === undefined) continue;
+
+    if (typeof rawEs !== 'string' || !rawEs.trim()) {
+      return res.status(400).json({ error: `${field}_es es obligatorio` });
+    }
+    if (rawEn != null && typeof rawEn !== 'string') {
+      return res.status(400).json({ error: `${field}_en debe ser texto o null` });
+    }
+    const es = rawEs.trim();
+    const en = rawEn?.trim() || null;
+    if (es.length > max || (en?.length ?? 0) > max) {
+      return res.status(400).json({ error: `${field}: máximo ${max} caracteres` });
+    }
+    update[`${field}_es`] = es;
+    update[`${field}_en`] = en;
   }
-  if (titulo_en != null && typeof titulo_en !== 'string') {
-    return res.status(400).json({ error: 'titulo_en debe ser texto o null' });
-  }
-  const es = titulo_es.trim();
-  const en = titulo_en?.trim() || null;
-  if (es.length > MAX_TITULO || (en?.length ?? 0) > MAX_TITULO) {
-    return res.status(400).json({ error: `Máximo ${MAX_TITULO} caracteres` });
+
+  if (Object.keys(update).length === 0) {
+    return res.status(400).json({ error: 'Nada para guardar' });
   }
 
   const { data, error } = await supabase
     .from('missions')
-    .update({ titulo_es: es, titulo_en: en })
+    .update(update)
     .eq('id', req.params.id)
-    .select('id, numero, titulo_es, titulo_en')
+    .select(MISSION_COLUMNS)
     .maybeSingle();
 
   if (error) return res.status(500).json({ error: error.message });
   if (!data) return res.status(404).json({ error: 'Misión no encontrada' });
 
-  console.log(`[admin] ${req.admin.email} editó el título de la misión ${data.numero}`);
+  console.log(
+    `[admin] ${req.admin.email} editó ${Object.keys(update).join(', ')} de la misión ${data.numero}`
+  );
   res.json({ mission: data });
 }));
 

@@ -287,8 +287,8 @@
         "description": "Busca usuarios y marca quién pagó y quién no."
       },
       "questions": {
-        "title": "Gestión de preguntas",
-        "description": "Edita el título y las preguntas de cada misión, en español e inglés."
+        "title": "Gestión de misiones",
+        "description": "Edita el título, la consecuencia amable y las preguntas de cada misión, en español e inglés."
       },
       "videos": {
         "title": "Gestión de videos",
@@ -300,6 +300,8 @@
       "missionTab": "Misión {{numero}}",
       "order": "Pregunta {{orden}}",
       "missionTitle": "Título de la misión",
+      "consequence": "Consecuencia amable",
+      "consequenceHint": "La tarjeta del panel lateral de la misión.",
       "longTitle": "Más de {{count}} caracteres: en el mapa se muestra con letra más chica.",
       "spanish": "Español",
       "english": "Inglés",
@@ -307,8 +309,8 @@
       "englishMissing": "Sin traducir: se mostrará el texto en español.",
       "discard": "Descartar cambios",
       "unsavedMark": "Cambios sin guardar",
-      "unsavedCount_one": "{{count}} pregunta con cambios sin guardar",
-      "unsavedCount_other": "{{count}} preguntas con cambios sin guardar",
+      "unsavedCount_one": "{{count}} texto con cambios sin guardar",
+      "unsavedCount_other": "{{count}} textos con cambios sin guardar",
       "confirmLeave": "Hay cambios sin guardar. ¿Salir igual y perderlos?",
       "empty": "No hay misiones cargadas."
     },
@@ -375,17 +377,6 @@
       "detailsLabel": "Detalles de la misión",
       "aboutMission": "Sobre esta misión",
       "duration": "8–10 minutos",
-      "sidebarImportance": {
-        "1": "Es importante atravesar esta misión porque, sin este paso, el bosque permanece imaginario — un miedo en lugar de un lugar que puedes navegar. El estancamiento sigue siendo teórico, lo que significa que permanece para siempre. El borde solo asusta hasta que lo cruzas.",
-        "2": "Es importante atravesar esta misión porque las raíces no examinadas dirigen silenciosamente nuestras elecciones — seguimos rodeando los mismos árboles, tomando los mismos caminos, llegando al mismo claro y preguntándonos por qué siempre se ve familiar. Entender las raíces no cambia de dónde vienes. Cambia adónde vas.",
-        "3": "Es importante atravesar esta misión porque quedarse demasiado tiempo en la niebla convierte la confusión en parálisis — el bosque comienza a sentirse interminable, y las opciones que alguna vez tuviste se cierran silenciosamente. La niebla es temporal. El hábito de esperar a que se levante por sí sola puede volverse permanente.",
-        "4": "Es importante atravesar esta misión porque los ríos suprimidos encuentran otras salidas — ansiedad, tensión, inundaciones repentinas en momentos inesperados y con personas inesperadas. Lo que nos negamos a nombrar amablemente eventualmente se nombrará a sí mismo en voz alta. Es mejor elegir el momento que dejar que te sorprenda.",
-        "5": "Es importante atravesar esta misión porque, sin una meta, el esfuerzo se convierte en movimiento sin dirección — ocupado, sincero y agotador, pero sin construir hacia nada. Podemos hacer muchísimo en el bosque y nunca encontrar nuestro camino al claro, si nunca nos detenemos a preguntar adónde estamos realmente intentando ir.",
-        "6": "Es importante atravesar esta misión porque las tormentas no procesadas dejan heridas invisibles — empezamos a evitar el tiempo en general, eligiendo vidas más pequeñas con la esperanza de evitar futuras disrupciones. Pero la evasión tiene su propio costo: una vida vivida bajo refugio constante es una vida nunca completamente vivida al aire libre.",
-        "7": "Es importante atravesar esta misión porque lo que vive en la cueva eventualmente encontrará su camino afuera — a menudo en momentos que menos esperamos y con personas que menos pretendemos. La sombra que nos negamos a poseer comienza a poseernos. Encontrarla conscientemente siempre es más gentil que dejar que nos sorprenda.",
-        "8": "Es importante atravesar esta misión porque quedarse a nivel del suelo en el bosque significa nunca ver qué tan lejos has llegado realmente. El progreso es real, incluso cuando es invisible desde donde estás. Sin perspectiva, el coraje se vuelve más difícil de sostener — porque no puedes ver para qué has estado construyendo con tanto esfuerzo.",
-        "9": "Es importante atravesar esta misión porque, sin completar el cruce, el bosque se convierte en un hogar en lugar de un pasaje — y algunas personas se quedan perdidas no porque no puedan encontrar la salida, sino porque nunca creyeron que había una. Has hecho el trabajo. La orilla está detrás de ti. El río espera. Lo único que queda es alejarte."
-      },
       "consequence": {
         "previewTitle": "Vista previa de las recompensas",
         "previewMission": "Elige una misión"
