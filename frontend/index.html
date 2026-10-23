@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- La app es solo clara. Sin esto, los navegadores con "modo oscuro para
+         sitios web" (Chrome en Android, Samsung Internet, Opera…) la oscurecen
+         por su cuenta y la pantalla se ve apagada. "only light" les pide que no
+         lo hagan. Va repetido en index.css (:root) por si el meta no alcanza. -->
+    <meta name="color-scheme" content="only light" />
+    <!-- Color de la barra del navegador en el celular: el verde claro del fondo. -->
+    <meta name="theme-color" content="#e8f3e6" />
     <title>Un Viaje por el Bosque</title>
 
     <!-- Icono de la pestaña: la cara de Luz (recortada de assets/auth/forest-guide.webp). -->

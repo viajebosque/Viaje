@@ -1,4 +1,7 @@
 :root {
+  /* Solo modo claro: evita que el navegador del celular oscurezca la app por
+     su cuenta (ver el meta color-scheme en index.html). */
+  color-scheme: only light;
   font-family: system-ui, -apple-system, sans-serif;
   color: #1b2a1b;
 }
