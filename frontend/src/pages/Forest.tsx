@@ -180,7 +180,7 @@ export default function Forest() {
   // Re-lee las misiones al cambiar el idioma: los títulos vienen de la BD.
   useEffect(() => {
     let active = true;
-    getMissions(lang)
+    getMissions(lang, true)
       .then((rows) => {
         if (active) setMissions(rows);
       })
@@ -378,8 +378,9 @@ export default function Forest() {
             (isDesignPreview && selected === 1
               ? t('forest.missionOnePreviewTitle')
               : ''),
-          descripcion:
-            t(`forest.missionPanelDescriptions.${selected}`),
+          // Frases de portada (SQL/026), se editan en /admin.
+          descripcion: selectedMission?.frase1 ?? '',
+          frase2: selectedMission?.frase2 ?? '',
           isDone: selectedMission ? completed.has(selectedMission.id) : false,
           access: accessOf(selected),
           // Qué misión hay que terminar para abrir esta.
@@ -394,7 +395,7 @@ export default function Forest() {
       : selectedInfo.access === 'paywall'
         ? t('forest.paywallHint', { numero: FREE_MISSIONS })
         : selectedInfo.access === 'open'
-          ? t(lang === 'es' ? `forest.missionPanelHints.${selectedInfo.numero}` : 'forest.modalHint')
+          ? selectedInfo.frase2 || t('forest.modalHint')
           : t('forest.lockedHint', { numero: selectedInfo.requiredNumero });
 
   const primaryText =

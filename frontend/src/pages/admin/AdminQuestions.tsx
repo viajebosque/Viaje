@@ -4,7 +4,7 @@ import { useLanguage } from '../../i18n/useLanguage';
 import {
   listQuestions,
   updateQuestion,
-  updateMissionText,
+  updateMissionTexts,
   QUESTION_CATEGORIES,
   type AdminMission,
   type AdminQuestion,
@@ -14,18 +14,22 @@ import { TOTAL_MISSIONS } from '../../lib/missions';
 
 // Todo lo editable acá es un par es/en: el título y la consecuencia amable de
 // cada misión, su frase final y el enunciado de cada pregunta. Se distinguen
-// por la clave: `m:<id>` (título), `c:<id>` (consecuencia), `f:<id>` (frase
-// final) o `q:<id>`.
+// por la clave: `m:<id>` (título), `a:<id>` / `b:<id>` (frases de portada 1
+// y 2), `c:<id>` (consecuencia), `f:<id>` (frase final) o `q:<id>`.
 type Draft = { es: string; en: string };
 type SaveState = 'saving' | 'saved';
 
 const missionKey = (id: string) => `m:${id}`;
 const consequenceKey = (id: string) => `c:${id}`;
 const finalKey = (id: string) => `f:${id}`;
+const portada1Key = (id: string) => `a:${id}`;
+const portada2Key = (id: string) => `b:${id}`;
 
 // Prefijo de la clave -> texto de `missions` que edita.
 const MISSION_KEY_FIELDS: Record<string, MissionTextField> = {
   'm:': 'titulo',
+  'a:': 'frase1_portada',
+  'b:': 'frase2_portada',
   'c:': 'consecuencia_amable',
   'f:': 'frase_final',
 };
@@ -42,14 +46,26 @@ function normalize(text: string | null): string {
   return (text ?? '').replace(/\r\n?/g, '\n');
 }
 
+// Los textos multilínea de `missions` que el panel edita en <textarea>.
 function normalizeMission<
   T extends Pick<
     AdminMission,
-    'consecuencia_amable_es' | 'consecuencia_amable_en' | 'frase_final_es' | 'frase_final_en'
+    | 'frase1_portada_es'
+    | 'frase1_portada_en'
+    | 'frase2_portada_es'
+    | 'frase2_portada_en'
+    | 'consecuencia_amable_es'
+    | 'consecuencia_amable_en'
+    | 'frase_final_es'
+    | 'frase_final_en'
   >,
 >(m: T): T {
   return {
     ...m,
+    frase1_portada_es: normalize(m.frase1_portada_es),
+    frase1_portada_en: m.frase1_portada_en == null ? null : normalize(m.frase1_portada_en),
+    frase2_portada_es: normalize(m.frase2_portada_es),
+    frase2_portada_en: m.frase2_portada_en == null ? null : normalize(m.frase2_portada_en),
     consecuencia_amable_es: normalize(m.consecuencia_amable_es),
     consecuencia_amable_en:
       m.consecuencia_amable_en == null ? null : normalize(m.consecuencia_amable_en),
@@ -132,6 +148,8 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
         en: m.consecuencia_amable_en ?? '',
       });
       map.set(finalKey(m.id), { es: m.frase_final_es, en: m.frase_final_en ?? '' });
+      map.set(portada1Key(m.id), { es: m.frase1_portada_es, en: m.frase1_portada_en ?? '' });
+      map.set(portada2Key(m.id), { es: m.frase2_portada_es, en: m.frase2_portada_en ?? '' });
       for (const q of m.questions) {
         map.set(questionKey(q.id), { es: q.enunciado_es, en: q.enunciado_en ?? '' });
       }
@@ -171,7 +189,8 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
       ...prev,
       [key]: { ...(prev[key] ?? server.get(key) ?? { es: '', en: '' }), [field]: value },
     }));
-    setSaveState((prev) => (prev[key] === 'saved' ? without(prev, key) : prev));
+    const stateKey = key.startsWith('b:') ? portada1Key(key.slice(2)) : key;
+    setSaveState((prev) => (prev[stateKey] === 'saved' ? without(prev, stateKey) : prev));
   }
 
   function discard(key: string) {
@@ -179,24 +198,31 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     setErrors((prev) => without(prev, key));
   }
 
-  async function persist(key: string, draft: Draft) {
-    const id = key.slice(2);
-    const field = MISSION_KEY_FIELDS[key.slice(0, 2)];
-    if (field) {
-      const updated = normalizeMission(await updateMissionText(id, field, draft.es, draft.en));
+  // Guarda las claves pedidas. Las de `missions` de una misma misión van en un
+  // solo request (así las dos frases de portada se guardan juntas); una
+  // pregunta va sola.
+  async function persist(keys: string[]) {
+    const first = keys[0];
+    const id = first.slice(2);
+    if (MISSION_KEY_FIELDS[first.slice(0, 2)]) {
+      const texts: Partial<Record<MissionTextField, Draft>> = {};
+      for (const key of keys) texts[MISSION_KEY_FIELDS[key.slice(0, 2)]] = drafts[key];
+      const updated = normalizeMission(await updateMissionTexts(id, texts));
       setMissions((prev) =>
-        prev.map((m) =>
-          m.id === updated.id
-            ? {
-                ...m,
-                [`${field}_es`]: updated[`${field}_es`],
-                [`${field}_en`]: updated[`${field}_en`],
-              }
-            : m
-        )
+        prev.map((m) => {
+          if (m.id !== updated.id) return m;
+          const next = { ...m };
+          for (const field of Object.keys(texts) as MissionTextField[]) {
+            Object.assign(next, {
+              [`${field}_es`]: updated[`${field}_es`],
+              [`${field}_en`]: updated[`${field}_en`],
+            });
+          }
+          return next;
+        })
       );
     } else {
-      const updated = normalizeQuestion(await updateQuestion(id, draft.es, draft.en));
+      const updated = normalizeQuestion(await updateQuestion(id, drafts[first].es, drafts[first].en));
       setMissions((prev) =>
         prev.map((m) => ({
           ...m,
@@ -206,25 +232,31 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
     }
   }
 
-  async function save(key: string) {
-    const draft = drafts[key];
+  // `keys` comparten un botón Guardar: se guardan las que tienen cambios.
+  // El estado (guardando / guardado / error) se anota en la primera.
+  async function save(keys: string[]) {
+    const pending = keys.filter((key) => drafts[key]);
     // La frase final es el único texto con el español opcional.
-    if (!draft || (!key.startsWith('f:') && !draft.es.trim())) return;
-    setSaveState((prev) => ({ ...prev, [key]: 'saving' }));
-    setErrors((prev) => without(prev, key));
+    if (pending.length === 0) return;
+    if (pending.some((key) => !key.startsWith('f:') && !drafts[key].es.trim())) return;
+    const stateKey = keys[0];
+    setSaveState((prev) => ({ ...prev, [stateKey]: 'saving' }));
+    setErrors((prev) => without(prev, stateKey));
     try {
-      await persist(key, draft);
-      discard(key);
-      setSaveState((prev) => ({ ...prev, [key]: 'saved' }));
+      await persist(pending);
+      for (const key of keys) discard(key);
+      setSaveState((prev) => ({ ...prev, [stateKey]: 'saved' }));
     } catch (e) {
-      setErrors((prev) => ({ ...prev, [key]: e instanceof Error ? e.message : String(e) }));
-      setSaveState((prev) => without(prev, key));
+      setErrors((prev) => ({ ...prev, [stateKey]: e instanceof Error ? e.message : String(e) }));
+      setSaveState((prev) => without(prev, stateKey));
     }
   }
 
   // Guardado, descartar y error: igual para título, consecuencia y preguntas.
-  function renderActions(key: string, esEmpty: boolean) {
-    const dirty = isDirty(key);
+  function renderActions(keyOrKeys: string | string[], esEmpty: boolean) {
+    const keys = Array.isArray(keyOrKeys) ? keyOrKeys : [keyOrKeys];
+    const key = keys[0];
+    const dirty = keys.some(isDirty);
     const state = saveState[key];
     return (
       <>
@@ -239,7 +271,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
             <button
               type="button"
               className="admin-unpay"
-              onClick={() => discard(key)}
+              onClick={() => keys.forEach(discard)}
               disabled={state === 'saving'}
             >
               {t('admin.questions.discard')}
@@ -248,7 +280,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
           <button
             type="button"
             className="admin-pay"
-            onClick={() => save(key)}
+            onClick={() => save(keys)}
             disabled={!dirty || esEmpty || state === 'saving'}
           >
             {state === 'saving' ? t('common.saving') : t('common.save')}
@@ -270,6 +302,13 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   const title = valueOf(titleKey);
   const consKey = consequenceKey(mission.id);
   const consequence = valueOf(consKey);
+  const p1Key = portada1Key(mission.id);
+  const p2Key = portada2Key(mission.id);
+  const portadas = [
+    { key: p1Key, label: 'admin.questions.portada1', value: valueOf(p1Key) },
+    { key: p2Key, label: 'admin.questions.portada2', value: valueOf(p2Key) },
+  ];
+  const portadaEsEmpty = portadas.some((p) => !p.value.es.trim());
   const fraseKey = finalKey(mission.id);
   const frase = valueOf(fraseKey);
   // La última misión no tiene siguiente: su frase final no se muestra nunca
@@ -279,6 +318,8 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   function missionHasDirty(m: AdminMission) {
     return (
       dirtyKeys.includes(missionKey(m.id)) ||
+      dirtyKeys.includes(portada1Key(m.id)) ||
+      dirtyKeys.includes(portada2Key(m.id)) ||
       dirtyKeys.includes(consequenceKey(m.id)) ||
       dirtyKeys.includes(finalKey(m.id)) ||
       m.questions.some((q) => dirtyKeys.includes(questionKey(q.id)))
@@ -358,6 +399,49 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
               ))}
             </div>
             {renderActions(titleKey, !title.es.trim())}
+          </div>
+        </section>
+
+        <section className="admin-question-block">
+          <h4 className="admin-question-block-title">{t('admin.questions.portada')}</h4>
+          <div
+            className={`admin-question${isDirty(p1Key) || isDirty(p2Key) ? ' is-dirty' : ''}`}
+          >
+            <span className="admin-question-order">{t('admin.questions.portadaHint')}</span>
+            {portadas.map(({ key, label, value }) => (
+              <div key={key} className="admin-portada-group">
+                <h5 className="admin-portada-label">{t(label)}</h5>
+                <div className="admin-question-fields">
+                  {(['es', 'en'] as const).map((field) => (
+                    <label key={field} className="admin-question-field">
+                      <span>
+                        {t(field === 'es' ? 'admin.questions.spanish' : 'admin.questions.english')}
+                      </span>
+                      <textarea
+                        value={value[field]}
+                        rows={rowsFor(value[field])}
+                        onChange={(e) => edit(key, field, e.target.value)}
+                        aria-invalid={field === 'es' && !value.es.trim()}
+                      />
+                      {field === 'es' && !value.es.trim() ? (
+                        <small className="admin-question-hint is-error">
+                          {t('admin.questions.spanishRequired')}
+                        </small>
+                      ) : field === 'en' && !value.en.trim() ? (
+                        <small className="admin-question-hint">
+                          {t(
+                            key === p2Key
+                              ? 'admin.questions.portada2EnglishMissing'
+                              : 'admin.questions.englishMissing'
+                          )}
+                        </small>
+                      ) : null}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {renderActions([p1Key, p2Key], portadaEsEmpty)}
           </div>
         </section>
 

@@ -1927,6 +1927,10 @@ body:has(.journey-page) .platform-lang-toggle .lang-toggle {
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.72);
 }
 .admin-question.is-dirty { border-color: #c48a1d; box-shadow: 0 0 0 2px rgba(196, 138, 29, 0.14); }
+/* Frases de portada: dos pares es/en dentro de la misma card. */
+.admin-portada-group { display: grid; gap: 0.45rem; }
+.admin-portada-group + .admin-portada-group { padding-top: 0.75rem; border-top: 1px dashed rgba(86, 107, 69, 0.25); }
+.admin-portada-label { margin: 0; color: #345a3d; font-size: 0.8rem; font-weight: 800; }
 /* Bloque que no se puede editar (frase final de la última misión). */
 .admin-question.is-locked { opacity: 0.7; }
 .admin-question-field textarea:disabled { background: rgba(236, 234, 222, 0.7); cursor: not-allowed; resize: none; }

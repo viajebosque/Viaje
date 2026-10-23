@@ -134,7 +134,7 @@ adminRouter.get('/questions', handle(async (req, res) => {
   const { data, error } = await supabase
     .from('missions')
     .select(
-      'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
+      'id, numero, titulo_es, titulo_en, frase1_portada_es, frase1_portada_en, frase2_portada_es, frase2_portada_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
     )
     .order('numero', { ascending: true })
     .order('orden', { referencedTable: 'questions', ascending: true });
@@ -179,21 +179,25 @@ adminRouter.patch('/questions/:id', handle(async (req, res) => {
 // Textos editables de `missions`, con su tope de largo. Son los únicos que se
 // ven en pantalla (la descripción del modal del mapa sale de es/en.json).
 //   titulo               hoy el más largo tiene 26 caracteres
+//   frase1_portada /     las dos frases de la ventana de entrada del mapa
+//   frase2_portada       (SQL/026): la principal y la del recuadro verde
 //   consecuencia_amable  la tarjeta del panel lateral (SQL/022), ~400
 //   frase_final          el adelanto de la siguiente al completar (SQL/024).
 //                        Es el único con el español OPCIONAL: vacío = la
 //                        tarjeta no se muestra (la Misión 9 no tiene siguiente)
 const MISSION_TEXTS = {
   titulo: { max: 120, esRequired: true },
+  frase1_portada: { max: 500, esRequired: true },
+  frase2_portada: { max: 500, esRequired: true },
   consecuencia_amable: { max: 2000, esRequired: true },
   frase_final: { max: 1000, esRequired: false },
 };
 const MISSION_COLUMNS =
-  'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en';
+  'id, numero, titulo_es, titulo_en, frase1_portada_es, frase1_portada_en, frase2_portada_es, frase2_portada_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en';
 
 // PATCH /api/admin/missions/:id
-//   body: { titulo_es, titulo_en }, { consecuencia_amable_es, consecuencia_amable_en }
-//         y/o { frase_final_es, frase_final_en }
+//   body: uno o más pares { <campo>_es, <campo>_en }, con <campo> de
+//         MISSION_TEXTS. Las dos frases de portada van juntas en un request.
 // Cada texto va en par: si viene el _es, el _en también se guarda. Misma regla
 // que las preguntas: español obligatorio (salvo frase_final, ver arriba),
 // inglés vacío = NULL.

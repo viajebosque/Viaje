@@ -124,30 +124,8 @@
     "modalHonesty": "Honestidad",
     "modalSteps": "{{current}} de {{total}} pasos",
     "modalHint": "No hay respuestas correctas. Avanza a tu propio ritmo.",
-    "missionPanelHints": {
-      "1": "No tienes que ver todo el camino.\nSolo da un paso hacia los árboles.",
-      "2": "Conocer tus raíces es elegir tus ramas.",
-      "3": "No necesitas el sol para dar un paso adelante.\nLa niebla también es parte del camino.",
-      "4": "Deja que lo que te mueve, te mueva.\nDeja que lo que necesita fluir, fluya.",
-      "5": "Este claro se abre para ti. No necesitas permiso para entrar.",
-      "6": "Has sobrevivido cada tormenta que pensaste que te acabaría.\nEso no es suerte. Esa es fortaleza.",
-      "7": "No hay nada roto en ti. Eres un todo —\ny la totalidad incluye la oscuridad.",
-      "8": "Da un paso atrás. Respira.\nEl bosque no es tan oscuro como se ve desde dentro.",
-      "9": "Nunca te perdiste. Estabas transformándote.\nAhora — zarpa."
-    },
     "missionOnePreviewTitle": "Entrada al bosque",
     "missionOnePreviewDescription": "Da el primer paso hacia este recorrido. Respira con calma, observa el sendero y elige una intención para comenzar.",
-    "missionPanelDescriptions": {
-      "1": "🌲 La frontera entre lo conocido y lo desconocido",
-      "2": "🪵 Las Raíces de los Árboles — lo que yace debajo: creencias, patrones, orígenes",
-      "3": "🫧 La Niebla Matutina — confusión, incertidumbre, el camino poco claro",
-      "4": "💧 Un Río del Bosque — flujo, emoción, lo que resistimos y lo que nos lleva",
-      "5": "☀️ Un Claro Iluminado por el Sol — visión, posibilidad, el yo sin su armadura",
-      "6": "⚡ Una Tormenta en el Bosque — crisis, disrupción, las cosas que no podemos controlar",
-      "7": "🕯️ Una Cueva Oculta — la sombra del yo, lo que ocultamos, nuestro interior inexplorado",
-      "8": "🦅 La copa del árbol — perspectiva, ver el panorama más amplio, elevarse por encima del ruido",
-      "9": "🛶 La Orilla del Río y la Balsa — finalización, integración, partida hacia el nuevo mundo"
-    },
     "enter": "Comenzar misión",
     "locked": "Bloqueado",
     "lockedHint": "Completa la Misión {{numero}} para desbloquear esta.",
@@ -288,7 +266,7 @@
       },
       "questions": {
         "title": "Gestión de misiones",
-        "description": "Edita el título, la consecuencia amable, las preguntas y la frase final de cada misión, en español e inglés."
+        "description": "Edita el título, las frases de portada, la consecuencia amable, las preguntas y la frase final de cada misión, en español e inglés."
       },
       "videos": {
         "title": "Gestión de videos",
@@ -300,6 +278,11 @@
       "missionTab": "Misión {{numero}}",
       "order": "Pregunta {{orden}}",
       "missionTitle": "Título de la misión",
+      "portada": "Frases de portada",
+      "portadaHint": "La ventana que se abre al hacer click en la misión, en el mapa.",
+      "portada1": "Frase principal (debajo del título)",
+      "portada2": "Frase del recuadro verde",
+      "portada2EnglishMissing": "Sin traducir: en inglés se mostrará la frase genérica “There are no right answers. Move forward at your own pace.”",
       "consequence": "Consecuencia amable",
       "consequenceHint": "La tarjeta del panel lateral de la misión.",
       "finalPhrase": "Frase final",

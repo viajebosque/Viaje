@@ -20,11 +20,19 @@ export type Mission = {
   videoId: string | null;
 };
 
-// Lo que necesita el mapa para pintar los 9 nodos: el título y nada más.
+// Lo que necesita el mapa para pintar los 9 nodos y su ventana de entrada.
 export type MissionSummary = {
   id: string;
   numero: number;
   titulo: string;
+  // Frases de la ventana de entrada del mapa (SQL/026). Solo las pide el mapa
+  // (getMissions con withPortada); en el resto llegan vacías.
+  //   frase1: la frase principal, debajo del título
+  //   frase2: la del recuadro verde. En inglés NO cae al español: vacía, el
+  //           mapa muestra la genérica forest.modalHint, como antes de que
+  //           existiera la columna (ninguna está traducida todavía)
+  frase1: string;
+  frase2: string;
 };
 
 export type Question = {
@@ -85,10 +93,19 @@ export function langCols(base: string, lang: Lang): string[] {
 // Títulos de las 9 misiones, para el mapa y para la lista de amuletos del
 // perfil. Antes esto era select('*'): bajaba las 9 descripciones y los 9 textos
 // finales en los dos idiomas (27 kB) para mostrar títulos (220 bytes).
-export async function getMissions(lang: Lang): Promise<MissionSummary[]> {
+// withPortada suma las dos frases de la ventana de entrada: solo el mapa las
+// usa, el perfil no las baja.
+export async function getMissions(
+  lang: Lang,
+  withPortada = false
+): Promise<MissionSummary[]> {
+  const cols = ['id', 'numero', ...langCols('titulo', lang)];
+  if (withPortada) {
+    cols.push(...langCols('frase1_portada', lang), `frase2_portada_${lang}`);
+  }
   const { data, error } = (await supabase
     .from('missions')
-    .select(['id', 'numero', ...langCols('titulo', lang)].join(', '))
+    .select(cols.join(', '))
     .order('numero')) as unknown as {
     data: Row[] | null;
     error: { message: string } | null;
@@ -98,6 +115,8 @@ export async function getMissions(lang: Lang): Promise<MissionSummary[]> {
     id: row.id as string,
     numero: row.numero as number,
     titulo: pick(row, 'titulo', lang),
+    frase1: withPortada ? pick(row, 'frase1_portada', lang) : '',
+    frase2: withPortada ? ((row[`frase2_portada_${lang}`] as string | null) ?? '') : '',
   }));
 }
 

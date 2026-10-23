@@ -84,6 +84,11 @@ export type AdminMission = {
   numero: number;
   titulo_es: string;
   titulo_en: string | null;
+  // Ventana de entrada del mapa: frase principal y recuadro verde (SQL/026).
+  frase1_portada_es: string;
+  frase1_portada_en: string | null;
+  frase2_portada_es: string;
+  frase2_portada_en: string | null;
   consecuencia_amable_es: string;
   consecuencia_amable_en: string | null;
   // Vacío = la tarjeta no se muestra (la Misión 9 no tiene siguiente).
@@ -118,19 +123,28 @@ export async function updateQuestion(
 }
 
 // Textos de `missions` que se ven en pantalla y se editan desde el panel.
-export type MissionTextField = 'titulo' | 'consecuencia_amable' | 'frase_final';
+export type MissionTextField =
+  | 'titulo'
+  | 'frase1_portada'
+  | 'frase2_portada'
+  | 'consecuencia_amable'
+  | 'frase_final';
 
-// Guarda un texto de la misión (título, consecuencia amable o frase final) en los dos
-// idiomas. El inglés vacío queda NULL (el frontend cae al español).
-export async function updateMissionText(
+// Guarda uno o más textos de la misión, cada uno en los dos idiomas, en un solo
+// request (las dos frases de portada se guardan juntas). El inglés vacío queda
+// NULL (el frontend cae al español).
+export async function updateMissionTexts(
   missionId: string,
-  field: MissionTextField,
-  es: string,
-  en: string
+  texts: Partial<Record<MissionTextField, { es: string; en: string }>>
 ): Promise<AdminMissionTexts> {
+  const body: Record<string, string> = {};
+  for (const [field, value] of Object.entries(texts)) {
+    body[`${field}_es`] = value.es;
+    body[`${field}_en`] = value.en;
+  }
   const { mission } = await apiAuthPatch<{ mission: AdminMissionTexts }>(
     `/api/admin/missions/${missionId}`,
-    { [`${field}_es`]: es, [`${field}_en`]: en }
+    body
   );
   return mission;
 }
