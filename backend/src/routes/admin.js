@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../supabase.js';
 import { requireAdmin } from '../middleware/requireAdmin.js';
+import { youtubeId } from '../youtube.js';
 
 // Rutas del panel de administración. Todas exigen role='admin'.
 //
@@ -210,4 +211,73 @@ adminRouter.patch('/missions/:id', handle(async (req, res) => {
 
   console.log(`[admin] ${req.admin.email} editó el título de la misión ${data.numero}`);
   res.json({ mission: data });
+}));
+
+// ---------------------------------------------------------------------------
+// Gestión de videos
+//
+// Los links de YouTube de la plataforma (SQL/021): bienvenida, el paso 2 de
+// cada misión y el cierre del viaje. Con la anon key `videos` es solo lectura.
+
+const VIDEO_COLUMNS = 'id, tipo, mission_id, url_es, url_en, updated_at, missions(numero)';
+
+// Orden del panel: bienvenida, misiones 1–9, cierre.
+const TIPO_ORDER = { bienvenida: 0, mision: 1, cierre: 2 };
+
+function toVideo(row) {
+  const { missions, ...rest } = row;
+  return { ...rest, numero: missions?.numero ?? null };
+}
+
+// GET /api/admin/videos
+adminRouter.get('/videos', handle(async (req, res) => {
+  const { data, error } = await supabase.from('videos').select(VIDEO_COLUMNS);
+  if (error) return res.status(500).json({ error: error.message });
+
+  const videos = (data ?? [])
+    .map(toVideo)
+    .sort(
+      (a, b) =>
+        TIPO_ORDER[a.tipo] - TIPO_ORDER[b.tipo] || (a.numero ?? 0) - (b.numero ?? 0)
+    );
+  res.json({ videos });
+}));
+
+// PATCH /api/admin/videos/:id   body: { url_es, url_en }
+// Acepta cualquier link de YouTube (shorts/, watch?v=, youtu.be/…) y lo guarda
+// tal cual se pegó. Español obligatorio; inglés vacío = NULL (se muestra el
+// español). Un link que no es de YouTube no se guarda.
+adminRouter.patch('/videos/:id', handle(async (req, res) => {
+  const { url_es, url_en } = req.body ?? {};
+
+  if (typeof url_es !== 'string' || !url_es.trim()) {
+    return res.status(400).json({ error: 'url_es es obligatorio' });
+  }
+  if (url_en != null && typeof url_en !== 'string') {
+    return res.status(400).json({ error: 'url_en debe ser texto o null' });
+  }
+  const es = url_es.trim();
+  const en = url_en?.trim() || null;
+  if (!youtubeId(es)) {
+    return res.status(400).json({ error: 'url_es no es un link de YouTube válido' });
+  }
+  if (en && !youtubeId(en)) {
+    return res.status(400).json({ error: 'url_en no es un link de YouTube válido' });
+  }
+
+  const { data, error } = await supabase
+    .from('videos')
+    .update({ url_es: es, url_en: en })
+    .eq('id', req.params.id)
+    .select(VIDEO_COLUMNS)
+    .maybeSingle();
+
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Video no encontrado' });
+
+  const video = toVideo(data);
+  console.log(
+    `[admin] ${req.admin.email} cambió el video ${video.tipo}${video.numero ? ` ${video.numero}` : ''}`
+  );
+  res.json({ video });
 }));

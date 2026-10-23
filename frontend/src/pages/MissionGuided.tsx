@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import forestMap from '../assets/forest/forest-map.png';
 import MissionCompletion from '../components/MissionCompletion';
 import MissionIntroModal, { hasMissionIntro } from '../components/MissionIntroModal';
+import YouTubeVideo from '../components/YouTubeVideo';
 import type { Lang } from '../i18n';
 import {
   completeMission,
@@ -20,7 +21,6 @@ import {
   type Question,
 } from '../lib/missions';
 import { getMissionPanelImage } from '../lib/missionPanels';
-import { getMissionActivityVideoId } from '../lib/missionVideos';
 import { editPaperAnswer, isPaperAnswer, paperAnswerText, setPaperAnswer } from '../lib/paperAnswer';
 import {
   buildGuidedSteps, initialQuestions, initialChoiceIsValid, initialOptionText,
@@ -113,7 +113,8 @@ export default function MissionGuided({
   // El prefijo v2 separa los borradores del formato anterior: aquellos
   // guardaban las 4 preguntas iniciales y ya no se pueden interpretar.
   const storageKey = `mission-guided:v2:${mission.id}:${userId ?? 'preview'}`;
-  const activityVideoId = getMissionActivityVideoId(mission.numero, lang);
+  const activityVideoId = mission.videoId;
+  const loadActivityVideo = useCallback(() => Promise.resolve(activityVideoId), [activityVideoId]);
   const activityQuestionIndex = activityVideoId
     ? questions.findIndex((question) => question.categoria === 'actividad')
     : -1;
@@ -619,15 +620,12 @@ export default function MissionGuided({
                     <h1 ref={headingRef} id="guided-question-title" className="sr-only" tabIndex={-1}>
                       {t('mission.guided.activityVideoTitle', { numero: mission.numero })}
                     </h1>
-                  <div className="guided-activity-video">
-                    <iframe
-                      src={`https://www.youtube-nocookie.com/embed/${activityVideoId}`}
-                      title={t('mission.guided.activityVideoTitle', { numero: mission.numero })}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    />
-                  </div>
+                  <YouTubeVideo
+                    className="guided-activity-video"
+                    load={loadActivityVideo}
+                    lang={lang}
+                    title={t('mission.guided.activityVideoTitle', { numero: mission.numero })}
+                  />
                   </>
                 ) : (
                   <div className="guided-question-body">

@@ -57,6 +57,8 @@ function createPreviewMission(missionNumber: number, lang: Lang) {
       : lang === 'es'
         ? 'Contenido de muestra para revisar el diseño guiado de esta misión.'
         : 'Sample content for reviewing this mission’s guided design.',
+    // La vista previa no lee la base: sin video, el paso 2 no aparece.
+    videoId: null,
   };
   // Solo se dispone del contenido de la misión 1 en la vista previa sin conexión.
   // Las demás muestran su lateral y un aviso; nunca reutilizan estas preguntas.

@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import JourneyPageShell from './JourneyPageShell';
 import AdminUsers from './admin/AdminUsers';
 import AdminQuestions from './admin/AdminQuestions';
+import AdminVideos from './admin/AdminVideos';
 
 // Módulos del panel. El abierto va en la URL (?module=users): recargar o usar
 // "atrás" del navegador lo respeta, y se puede compartir el enlace directo.
-const MODULES = ['users', 'questions'] as const;
+const MODULES = ['users', 'questions', 'videos'] as const;
 type AdminModule = (typeof MODULES)[number];
 
 function isModule(value: string | null): value is AdminModule {
@@ -35,6 +36,14 @@ function ModuleIcon({ module }: { module: AdminModule }) {
       </svg>
     );
   }
+  if (module === 'videos') {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="3.5" y="7" width="25" height="18" rx="4" />
+        <path d="M13.5 12.2v7.6l6.4-3.8z" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true">
       <path d="M7 4.5h13l5 5v18H7z" />
@@ -51,7 +60,7 @@ export default function AdminPage() {
   const rawModule = params.get('module');
   const active = isModule(rawModule) ? rawModule : null;
 
-  // Un módulo puede tener cambios sin guardar (preguntas): antes de volver a
+  // Un módulo puede tener cambios sin guardar (preguntas, videos): antes de volver a
   // las cards le pregunta a ese módulo si se puede salir.
   const canLeaveRef = useRef<() => boolean>(() => true);
 
@@ -93,6 +102,8 @@ export default function AdminPage() {
 
           {active === 'users' ? (
             <AdminUsers />
+          ) : active === 'videos' ? (
+            <AdminVideos canLeaveRef={canLeaveRef} />
           ) : (
             <AdminQuestions canLeaveRef={canLeaveRef} />
           )}

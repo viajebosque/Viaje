@@ -121,3 +121,41 @@ export async function updateMissionTitle(
   }>(`/api/admin/missions/${missionId}`, { titulo_es: tituloEs, titulo_en: tituloEn });
   return mission;
 }
+
+// ---------------------------------------------------------------------------
+// Gestión de videos
+//
+// Los links de YouTube de la plataforma (tabla `videos`, SQL/021). Con la anon
+// key la tabla es solo lectura, así que se guarda por el backend.
+
+export type VideoTipo = 'bienvenida' | 'mision' | 'cierre';
+
+export type AdminVideo = {
+  id: string;
+  tipo: VideoTipo;
+  // Número de la misión; null en bienvenida y cierre.
+  numero: number | null;
+  url_es: string;
+  url_en: string | null;
+};
+
+// Las 11 filas, en el orden en que aparecen en el viaje: bienvenida, misiones
+// 1–9, cierre.
+export async function listVideos(): Promise<AdminVideo[]> {
+  const { videos } = await apiAuthGet<{ videos: AdminVideo[] }>('/api/admin/videos');
+  return videos;
+}
+
+// Guarda los dos links. El backend rechaza lo que no sea un link de YouTube;
+// el inglés vacío queda NULL (se muestra el video en español).
+export async function updateVideo(
+  videoId: string,
+  urlEs: string,
+  urlEn: string
+): Promise<AdminVideo> {
+  const { video } = await apiAuthPatch<{ video: AdminVideo }>(
+    `/api/admin/videos/${videoId}`,
+    { url_es: urlEs, url_en: urlEn }
+  );
+  return video;
+}

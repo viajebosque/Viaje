@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { currentLang, type Lang } from '../i18n';
 import { getMissionTokenImage } from '../lib/missionTokens';
 import { TOTAL_MISSIONS } from '../lib/missions';
+import { getClosingVideoId } from '../lib/videos';
+import { useLanguage } from '../i18n/useLanguage';
+import YouTubeVideo from './YouTubeVideo';
 import ContactOptions from './ContactOptions';
 
 type Props = {
@@ -19,13 +21,6 @@ type View = 'tokens' | 'video' | 'letter' | 'confirm';
 const missionNumbers = Array.from({ length: TOTAL_MISSIONS }, (_, index) => index + 1);
 const letterKeys = ['letter1', 'letter2', 'letter3'] as const;
 
-// Video de cierre (YouTube Shorts), uno por idioma. Como los de las misiones
-// (lib/missionVideos.ts), están en el código y no en la base.
-const CLOSING_VIDEOS: Record<Lang, string> = {
-  es: 'Rq2ELuRlCUc',
-  en: 'hICALFLF9DE',
-};
-
 function BackIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -39,6 +34,9 @@ function BackIcon() {
 // "Volver al mapa" (o reiniciar) en el último paso.
 export default function JourneyCompleteModal({ forestImage, onClose, onReset }: Props) {
   const { t } = useTranslation();
+  const { lang } = useLanguage();
+  // Video de cierre: sale de la tabla `videos` (SQL/021), uno por idioma.
+  const loadClosingVideo = useCallback(() => getClosingVideoId(lang), [lang]);
   const [view, setView] = useState<View>('tokens');
   const [resetting, setResetting] = useState(false);
   // Se guarda la clave, no el texto: si cambia el idioma, el aviso también.
@@ -156,16 +154,13 @@ export default function JourneyCompleteModal({ forestImage, onClose, onReset }: 
           <h2 id="journey-end-video-title" className="sr-only">
             {t('forest.journeyEnd.videoTitle')}
           </h2>
-          {/* Mismo embed que el video de actividad de las misiones. */}
-          <div className="journey-end-video">
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${CLOSING_VIDEOS[currentLang()]}`}
-              title={t('forest.journeyEnd.videoTitle')}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          </div>
+          {/* Mismo reproductor que el video de actividad de las misiones. */}
+          <YouTubeVideo
+            className="journey-end-video"
+            load={loadClosingVideo}
+            lang={lang}
+            title={t('forest.journeyEnd.videoTitle')}
+          />
 
           <div className="journey-end-actions">
             <button

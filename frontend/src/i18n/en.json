@@ -25,6 +25,11 @@
     "or": "or",
     "close": "Close"
   },
+  "video": {
+    "loading": "Loading the video…",
+    "error": "We couldn't load the video. Check your connection and try again.",
+    "retry": "Try loading the video again"
+  },
   "auth": {
     "intro": {
       "stepsLabel": "Before entering the Forest",
@@ -32,9 +37,6 @@
       "title": "The Forest welcomes you",
       "subtitle": "Before you begin, discover the journey that awaits you.",
       "videoTitle": "Introduction to Your Forest Transformation Journey in English",
-      "loading": "Loading the video…",
-      "videoError": "We couldn't play the video. Check your connection and try again.",
-      "retry": "Reload the video",
       "continue": "Continue",
       "aboutTitle": "Who Should Take This Journey?",
       "paragraphs": {
@@ -280,6 +282,10 @@
       "questions": {
         "title": "Question management",
         "description": "Edit each mission’s title and questions, in Spanish and English."
+      },
+      "videos": {
+        "title": "Video management",
+        "description": "Change the YouTube videos for the welcome, each mission, and the journey’s closing."
       }
     },
     "questions": {
@@ -298,6 +304,21 @@
       "unsavedCount_other": "{{count}} questions with unsaved changes",
       "confirmLeave": "You have unsaved changes. Leave anyway and lose them?",
       "empty": "No missions loaded."
+    },
+    "videos": {
+      "welcome": "Welcome video",
+      "welcomeHint": "Step 1 of the introduction, before signing in.",
+      "mission": "Mission {{numero}}",
+      "missionHint": "Step 2 of the mission (the activity).",
+      "closing": "Closing video",
+      "closingHint": "When the journey is complete, on the map.",
+      "urlPlaceholder": "https://youtube.com/shorts/…",
+      "invalidUrl": "This isn’t a valid YouTube link.",
+      "englishMissing": "No English video: the Spanish one will be shown.",
+      "preview": "Open the video on YouTube",
+      "unsavedCount_one": "{{count}} video with unsaved changes",
+      "unsavedCount_other": "{{count}} videos with unsaved changes",
+      "empty": "No videos loaded. SQL/021 still needs to be run."
     }
   },
   "mission": {

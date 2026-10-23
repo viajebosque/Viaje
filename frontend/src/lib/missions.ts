@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { DEFAULT_LANG, type Lang } from '../i18n';
+import { youtubeId } from './youtube';
 
 export type Categoria = 'iniciacion' | 'actividad' | 'reflexion';
 
@@ -9,6 +10,9 @@ export type Mission = {
   numero: number;
   titulo: string;
   descripcion: string;
+  // ID de YouTube del video del paso 2 (tabla `videos`, SQL/021), en el idioma
+  // activo. null = la misión no tiene video y el paso se salta.
+  videoId: string | null;
 };
 
 // Lo que necesita el mapa para pintar los 9 nodos: el título y nada más.
@@ -34,7 +38,7 @@ export type Question = {
 // cae al español, que es obligatorio en la BD.
 type Row = Record<string, unknown>;
 
-function pick(row: Row, base: string, lang: Lang): string {
+export function pick(row: Row, base: string, lang: Lang): string {
   const candidates = [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`];
   for (const key of candidates) {
     const v = row[key];
@@ -44,11 +48,16 @@ function pick(row: Row, base: string, lang: Lang): string {
 }
 
 function toMission(row: Row, lang: Lang): Mission {
+  // mission_id es único en `videos`, así que PostgREST lo anida como objeto
+  // (o null si no hay fila). Se acepta también la forma de lista por las dudas.
+  const nested = Array.isArray(row.videos) ? row.videos[0] : row.videos;
+  const video = nested && typeof nested === 'object' ? (nested as Row) : null;
   return {
     id: row.id as string,
     numero: row.numero as number,
     titulo: pick(row, 'titulo', lang),
     descripcion: pick(row, 'descripcion', lang),
+    videoId: video ? youtubeId(pick(video, 'url', lang)) : null,
   };
 }
 
@@ -64,7 +73,7 @@ function toQuestion(row: Row, lang: Lang): Question {
 
 // Columnas de texto que hay que pedir para un idioma: la del idioma activo más
 // la española, que es a la que cae el fallback. En español es una sola.
-function langCols(base: string, lang: Lang): string[] {
+export function langCols(base: string, lang: Lang): string[] {
   return lang === DEFAULT_LANG
     ? [`${base}_${DEFAULT_LANG}`]
     : [`${base}_${lang}`, `${base}_${DEFAULT_LANG}`];
@@ -110,9 +119,10 @@ export async function getMissionDescriptions(
   return map;
 }
 
-// Una misión con sus preguntas, en UNA sola consulta: PostgREST las anida por
-// la foreign key questions.mission_id -> missions.id. Antes eran dos viajes
-// encadenados, porque no se podían pedir las preguntas sin saber el id.
+// Una misión con sus preguntas y su video, en UNA sola consulta: PostgREST los
+// anida por las foreign keys questions.mission_id y videos.mission_id ->
+// missions.id. Antes eran dos viajes encadenados, porque no se podían pedir las
+// preguntas sin saber el id.
 export async function getMissionWithQuestions(
   numero: number,
   lang: Lang
@@ -136,7 +146,7 @@ export async function getMissionWithQuestions(
   // tipea acá, en el borde, y de ahí para adentro es Row como el resto.
   const { data, error } = (await supabase
     .from('missions')
-    .select(`${misCols}, questions(${qCols})`)
+    .select(`${misCols}, questions(${qCols}), videos(${langCols('url', lang).join(', ')})`)
     .eq('numero', numero)
     .order('orden', { referencedTable: 'questions' })
     .maybeSingle()) as unknown as {

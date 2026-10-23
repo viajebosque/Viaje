@@ -25,6 +25,11 @@
     "or": "o",
     "close": "Cerrar"
   },
+  "video": {
+    "loading": "Cargando el video…",
+    "error": "No pudimos cargar el video. Revisa tu conexión y vuelve a intentarlo.",
+    "retry": "Reintentar cargar el video"
+  },
   "auth": {
     "intro": {
       "stepsLabel": "Antes de entrar al Bosque",
@@ -32,9 +37,6 @@
       "title": "El Bosque te da la bienvenida",
       "subtitle": "Antes de comenzar, descubre el viaje que te espera.",
       "videoTitle": "Introducción a Tu viaje de Transformación por el Bosque en español",
-      "loading": "Cargando el video…",
-      "videoError": "No pudimos reproducir el video. Revisa tu conexión y vuelve a intentarlo.",
-      "retry": "Volver a cargar el video",
       "continue": "Continuar",
       "aboutTitle": "¿Quién Debería Realizar Este Viaje?",
       "paragraphs": {
@@ -291,6 +293,10 @@
       "questions": {
         "title": "Gestión de preguntas",
         "description": "Edita el título y las preguntas de cada misión, en español e inglés."
+      },
+      "videos": {
+        "title": "Gestión de videos",
+        "description": "Cambia los videos de YouTube de la bienvenida, de cada misión y del cierre del viaje."
       }
     },
     "questions": {
@@ -309,6 +315,21 @@
       "unsavedCount_other": "{{count}} preguntas con cambios sin guardar",
       "confirmLeave": "Hay cambios sin guardar. ¿Salir igual y perderlos?",
       "empty": "No hay misiones cargadas."
+    },
+    "videos": {
+      "welcome": "Video de bienvenida",
+      "welcomeHint": "Paso 1 de la introducción, antes de iniciar sesión.",
+      "mission": "Misión {{numero}}",
+      "missionHint": "Paso 2 de la misión (la actividad).",
+      "closing": "Video de cierre",
+      "closingHint": "Al completar el viaje, en el mapa.",
+      "urlPlaceholder": "https://youtube.com/shorts/…",
+      "invalidUrl": "No es un link de YouTube válido.",
+      "englishMissing": "Sin video en inglés: se mostrará el de español.",
+      "preview": "Abrir el video en YouTube",
+      "unsavedCount_one": "{{count}} video con cambios sin guardar",
+      "unsavedCount_other": "{{count}} videos con cambios sin guardar",
+      "empty": "No hay videos cargados. Falta correr SQL/021."
     }
   },
   "mission": {
