@@ -11,7 +11,6 @@ const ITEMS = [
   'reflection',
   'token',
   'consequence',
-  'quote',
 ] as const;
 
 export default function MissionGuide() {

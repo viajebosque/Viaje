@@ -51,7 +51,7 @@
     },
     "viewIntro": "← Watch the introduction again",
     "title": "Your Forest Transformation Journey",
-    "brandLineOne": "A space to look within and rise again.",
+    "brandLineOne": "A path to look within and rise again.",
     "brandLineTwo": "Your journey begins here.",
     "guideAlt": "The forest's glowing guide welcomes you",
     "accessArea": "Access Your Forest Transformation Journey",
@@ -200,7 +200,7 @@
       },
       "reflection": {
         "name": "Reflection Question",
-        "body": "Three or four journaling questions that deepen your experience of the mission. You don’t need to answer them all — only the ones that resonate with you most."
+        "body": "Three or four journaling questions that deepen your experience of the mission."
       },
       "token": {
         "name": "Reward / Token",
@@ -209,10 +209,6 @@
       "consequence": {
         "name": "Gentle Consequence",
         "body": "A note to remind you that this journey is walked with awareness and patience. You can move forward, go back, or pause whenever you need to. What matters is completing each mission with presence and receiving its teaching. It is not a warning or a punishment — it is an act of care and honesty."
-      },
-      "quote": {
-        "name": "Closing Quote",
-        "body": "A closing line to carry with you as you walk toward the next part of the forest."
       }
     }
   },

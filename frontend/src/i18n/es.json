@@ -36,7 +36,7 @@
       "steps": { "video": "Introducción", "about": "El viaje", "structure": "Las misiones", "access": "Acceso" },
       "title": "El Bosque te da la bienvenida",
       "subtitle": "Antes de comenzar, descubre el viaje que te espera.",
-      "videoTitle": "Introducción a Tu viaje de Transformación por el Bosque en español",
+      "videoTitle": "Introducción a Tu Viaje de Transformación por el Bosque en español",
       "continue": "Continuar",
       "aboutTitle": "¿Quién Debería Realizar Este Viaje?",
       "paragraphs": {
@@ -50,11 +50,11 @@
       "backToAbout": "← Volver a El viaje"
     },
     "viewIntro": "← Ver de nuevo la introducción",
-    "title": "Tu viaje de Transformación por el Bosque",
+    "title": "Tu Viaje de Transformación por el Bosque",
     "brandLineOne": "Un espacio para mirar hacia adentro y renacer.",
     "brandLineTwo": "Tu recorrido comienza aquí.",
     "guideAlt": "El guía luminoso del bosque te da la bienvenida",
-    "accessArea": "Acceso a Tu viaje de Transformación por el Bosque",
+    "accessArea": "Acceso a Tu Viaje de Transformación por el Bosque",
     "welcome": "Bienvenido/a",
     "subtitle": "Ingresa para continuar tu recorrido.",
     "signupWelcome": "Comienza tu viaje",
@@ -203,7 +203,7 @@
       },
       "description": {
         "name": "Descripción de la Misión",
-        "body": "Un video narrativo que establece la metáfora de esta etapa del viaje. Léelo despacio. Deja que aterrice antes de continuar."
+        "body": "Un video narrativo que establece la metáfora de esta etapa del viaje. Tómalo despacio. Deja que aterrice antes de continuar."
       },
       "miniAction": {
         "name": "Mini-Acción",
@@ -211,7 +211,7 @@
       },
       "reflection": {
         "name": "Pregunta de Reflexión",
-        "body": "Tres o cuatro preguntas para journaling o diario de reflexión que profundizan tu experiencia de la misión. No necesitas responderlas todas — solo las que te resuenen más."
+        "body": "Tres o cuatro preguntas para journaling o diario de reflexión que profundizan tu experiencia de la misión."
       },
       "token": {
         "name": "Recompensa / Token",
@@ -220,10 +220,6 @@
       "consequence": {
         "name": "Consecuencia amable",
         "body": "Una nota para recordarte que este viaje se recorre con conciencia y paciencia. Puedes avanzar, retroceder o pausar cuando lo necesites. Lo esencial es completar cada misión con presencia y recibir su enseñanza. No es una advertencia ni un castigo — es un acto de cuidado y honestidad."
-      },
-      "quote": {
-        "name": "Cita Final",
-        "body": "Una línea de cierre para llevar contigo mientras caminas hacia la siguiente parte del bosque."
       }
     }
   },

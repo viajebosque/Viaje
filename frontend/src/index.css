@@ -2417,13 +2417,24 @@ button, input { font: inherit; }
   background: #142a20; box-shadow: 0 6px 20px rgba(35,54,29,.16);
 }
 .auth-intro-video iframe { display: block; width: 100%; height: 100%; border: 0; }
-.auth-intro-copy { color: #304a37; font-size: .96rem; line-height: 1.75; }
+/* container: la última frase mide su letra contra el ancho de este bloque. */
+.auth-intro-copy { container-type: inline-size; color: #304a37; font-size: .96rem; line-height: 1.75; }
 .auth-intro-copy p { margin: 0 0 1.15rem; }
 .auth-intro-copy p:last-child {
   margin-bottom: 0; padding: .9rem 1rem; border-left: 2px solid #b3974f;
   background: rgba(221,205,152,.15); font-family: Georgia, "Times New Roman", serif;
   font-size: 1.1rem; line-height: 1.55; color: #244d32;
 }
+/* "Si sientes… / If you feel…": siempre en una línea. La letra se achica con el
+   ancho: (ancho del bloque − padding y borde) / largo de la frase en em
+   (medido en Georgia: es 31.9em, en 26.9em, con margen). Si se cambia la
+   frase, hay que volver a medir. */
+.auth-intro-copy p:last-child {
+  --calling-em: 33;
+  white-space: nowrap;
+  font-size: min(1.1rem, calc((100cqi - 2.4rem) / var(--calling-em)));
+}
+:root:lang(en) .auth-intro-copy p:last-child { --calling-em: 28; }
 .auth-intro .auth-secondary-link { margin: 0; }
 .auth-intro .auth-primary { margin-top: .15rem; }
 .auth-branch { position: absolute; z-index: 1; width: clamp(7.4rem, 11vw, 11.5rem); pointer-events: none; opacity: .95; }
