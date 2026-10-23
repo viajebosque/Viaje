@@ -6,8 +6,8 @@
 const WHATSAPP_NUMBER = '15712745547'; // +1 (571) 274-5547
 export const INSTAGRAM_URL = 'https://www.instagram.com/andrearobles_coach/';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/roblesandrea';
-// Vacío = todavía no hay correo: el botón se muestra pero no hace nada.
-export const CONTACT_EMAIL = '';
+// Vacío = no hay correo: el botón se muestra pero no hace nada.
+export const CONTACT_EMAIL = 'andreitarobles@hotmail.com';
 
 // El texto del mensaje NO se arma acá: llega desde i18n
 // (forest.paywallMessage, forest.journeyEnd.contactMessage), así que sale en el
