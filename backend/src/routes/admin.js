@@ -177,8 +177,7 @@ adminRouter.patch('/questions/:id', handle(async (req, res) => {
 }));
 
 // Textos editables de `missions`, con su tope de largo. Son los únicos que se
-// ven en pantalla: la descripción del modal del mapa sale de es/en.json y
-// texto_final no se muestra.
+// ven en pantalla (la descripción del modal del mapa sale de es/en.json).
 //   titulo               hoy el más largo tiene 26 caracteres
 //   consecuencia_amable  la tarjeta del panel lateral (SQL/022), ~400
 const MISSION_TEXTS = { titulo: 120, consecuencia_amable: 2000 };
