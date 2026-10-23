@@ -10,6 +10,7 @@ import {
   type AdminQuestion,
   type MissionTextField,
 } from '../../lib/admin';
+import { TOTAL_MISSIONS } from '../../lib/missions';
 
 // Todo lo editable acá es un par es/en: el título y la consecuencia amable de
 // cada misión, su frase final y el enunciado de cada pregunta. Se distinguen
@@ -271,6 +272,9 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   const consequence = valueOf(consKey);
   const fraseKey = finalKey(mission.id);
   const frase = valueOf(fraseKey);
+  // La última misión no tiene siguiente: su frase final no se muestra nunca
+  // (MissionCompletion la ignora), así que el bloque queda bloqueado.
+  const fraseLocked = mission.numero === TOTAL_MISSIONS;
 
   function missionHasDirty(m: AdminMission) {
     return (
@@ -454,8 +458,13 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
         <section className="admin-question-block">
           <h4 className="admin-question-block-title">{t('admin.questions.finalPhrase')}</h4>
-          <div className={`admin-question${isDirty(fraseKey) ? ' is-dirty' : ''}`}>
+          <div
+            className={`admin-question${isDirty(fraseKey) ? ' is-dirty' : ''}${fraseLocked ? ' is-locked' : ''}`}
+          >
             <span className="admin-question-order">{t('admin.questions.finalPhraseHint')}</span>
+            {fraseLocked && (
+              <p className="admin-question-hint">{t('admin.questions.finalPhraseLastMission')}</p>
+            )}
             <div className="admin-question-fields">
               {(['es', 'en'] as const).map((field) => (
                 <label key={field} className="admin-question-field">
@@ -466,8 +475,9 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
                     value={frase[field]}
                     rows={rowsFor(frase[field])}
                     onChange={(e) => edit(fraseKey, field, e.target.value)}
+                    disabled={fraseLocked}
                   />
-                  {field === 'es' && !frase.es.trim() ? (
+                  {fraseLocked ? null : field === 'es' && !frase.es.trim() ? (
                     <small className="admin-question-hint">
                       {t('admin.questions.finalPhraseEmpty')}
                     </small>
@@ -479,7 +489,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
                 </label>
               ))}
             </div>
-            {renderActions(fraseKey, false)}
+            {!fraseLocked && renderActions(fraseKey, false)}
           </div>
         </section>
       </div>

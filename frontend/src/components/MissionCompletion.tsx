@@ -51,7 +51,8 @@ export default function MissionCompletion({ numero, nextStep = '', onContinue, r
         </p>
         {rewardMeaning && <p className="guided-reward-meaning">{rewardMeaning}</p>}
         <CelebrateButton key={numero} />
-        {nextStep && (
+        {/* La última misión no tiene siguiente: nunca lleva adelanto. */}
+        {nextStep && !isFinalMission && (
           <section className="guided-consequence">
             <p>{nextStep}</p>
           </section>

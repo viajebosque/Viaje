@@ -305,6 +305,7 @@
       "finalPhrase": "Frase final",
       "finalPhraseHint": "La tarjeta del modal al completar la misión: adelanta lo que viene en la siguiente.",
       "finalPhraseEmpty": "Vacía: la tarjeta no se muestra.",
+      "finalPhraseLastMission": "La última misión no tiene una siguiente: esta tarjeta no se muestra nunca, por eso no se puede editar.",
       "longTitle": "Más de {{count}} caracteres: en el mapa se muestra con letra más chica.",
       "spanish": "Español",
       "english": "Inglés",
@@ -339,7 +340,7 @@
         "p1": "Ya recorriste siete misiones — siete momentos de honestidad, coraje, claridad y crecimiento. Antes de adentrarte en el siguiente desafío, haz una pausa aquí en el bosque.",
         "p2": "¿Algo ha cambiado en ti? ¿Sientes un poco más de fuerza, un poco más de claridad, un poco más de arraigo en quien te estás convirtiendo? ¿Hay una nueva sensación de confianza o de empoderamiento que crece en silencio dentro de ti?",
         "p3": "Permítete notarlo.",
-        "p4": "Desde este lugar, hazte las siguientes preguntas… y deja que la Misión 8 se encuentre con la versión de ti que ya comenzó a cambiar."
+        "p4": "Antes de comenzar la Misión 8, pregúntate: ¿ha cambiado algo en mí? Si tu respuesta es “no realmente”, esta es tu invitación a volver a cualquier misión anterior y recorrerla nuevamente con un poco más de honestidad y curiosidad. No hay fracaso en regresar; el crecimiento muchas veces requiere una segunda mirada. Y cuando estés lista/o, permite que la Misión 8 se encuentre con la versión de ti que ya ha comenzado a transformarse."
       }
     },
     "loading": "Cargando misión…",

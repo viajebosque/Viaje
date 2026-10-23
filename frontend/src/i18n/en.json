@@ -294,6 +294,7 @@
       "finalPhrase": "Closing phrase",
       "finalPhraseHint": "The card in the mission-complete modal: a preview of what comes in the next one.",
       "finalPhraseEmpty": "Empty: the card isn’t shown.",
+      "finalPhraseLastMission": "The last mission has no next one: this card is never shown, so it can’t be edited.",
       "longTitle": "Over {{count}} characters: the map shows it in a smaller font.",
       "spanish": "Spanish",
       "english": "English",
@@ -328,7 +329,7 @@
         "p1": "You’ve walked through seven missions already — seven moments of honesty, courage, clarity, and growth. Before you step into the next challenge, pause for a moment here in the forest.",
         "p2": "Has something shifted in you? Do you feel a little stronger, a little clearer, a little more grounded in who you’re becoming? Is there a new sense of confidence or empowerment rising quietly inside you?",
         "p3": "Let yourself notice it.",
-        "p4": "From this place, ask yourself the following questions… and allow Mission 8 to meet the version of you that has already begun to change."
+        "p4": "Before you begin Mission 8, ask yourself: Has anything changed in me? If your answer is \"not really,\" this is your invitation to revisit any previous mission and explore it again with a little more honesty and self-reflection. There is no failure in going back — growth often requires a second look. Then, when you're ready, allow Mission 8 to meet the version of you that has already begun to change."
       }
     },
     "loading": "Loading mission…",
