@@ -134,7 +134,7 @@ adminRouter.get('/questions', handle(async (req, res) => {
   const { data, error } = await supabase
     .from('missions')
     .select(
-      'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
+      'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en, questions(id, categoria, orden, enunciado_es, enunciado_en)'
     )
     .order('numero', { ascending: true })
     .order('orden', { referencedTable: 'questions', ascending: true });
@@ -180,24 +180,33 @@ adminRouter.patch('/questions/:id', handle(async (req, res) => {
 // ven en pantalla (la descripción del modal del mapa sale de es/en.json).
 //   titulo               hoy el más largo tiene 26 caracteres
 //   consecuencia_amable  la tarjeta del panel lateral (SQL/022), ~400
-const MISSION_TEXTS = { titulo: 120, consecuencia_amable: 2000 };
+//   frase_final          el adelanto de la siguiente al completar (SQL/024).
+//                        Es el único con el español OPCIONAL: vacío = la
+//                        tarjeta no se muestra (la Misión 9 no tiene siguiente)
+const MISSION_TEXTS = {
+  titulo: { max: 120, esRequired: true },
+  consecuencia_amable: { max: 2000, esRequired: true },
+  frase_final: { max: 1000, esRequired: false },
+};
 const MISSION_COLUMNS =
-  'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en';
+  'id, numero, titulo_es, titulo_en, consecuencia_amable_es, consecuencia_amable_en, frase_final_es, frase_final_en';
 
 // PATCH /api/admin/missions/:id
-//   body: { titulo_es, titulo_en } y/o { consecuencia_amable_es, consecuencia_amable_en }
+//   body: { titulo_es, titulo_en }, { consecuencia_amable_es, consecuencia_amable_en }
+//         y/o { frase_final_es, frase_final_en }
 // Cada texto va en par: si viene el _es, el _en también se guarda. Misma regla
-// que las preguntas: español obligatorio, inglés vacío = NULL.
+// que las preguntas: español obligatorio (salvo frase_final, ver arriba),
+// inglés vacío = NULL.
 adminRouter.patch('/missions/:id', handle(async (req, res) => {
   const body = req.body ?? {};
   const update = {};
 
-  for (const [field, max] of Object.entries(MISSION_TEXTS)) {
+  for (const [field, { max, esRequired }] of Object.entries(MISSION_TEXTS)) {
     const rawEs = body[`${field}_es`];
     const rawEn = body[`${field}_en`];
     if (rawEs === undefined && rawEn === undefined) continue;
 
-    if (typeof rawEs !== 'string' || !rawEs.trim()) {
+    if (typeof rawEs !== 'string' || (esRequired && !rawEs.trim())) {
       return res.status(400).json({ error: `${field}_es es obligatorio` });
     }
     if (rawEn != null && typeof rawEn !== 'string') {

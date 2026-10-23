@@ -8,21 +8,22 @@ import forestMap from '../assets/forest/forest-map.png';
 
 type Props = {
   numero: number;
+  // Adelanto de la misión siguiente (missions.frase_final_es / _en, SQL/024),
+  // ya en el idioma activo. Vacío o sin pasar = la tarjeta no se muestra.
+  nextStep?: string;
   onContinue: () => void;
   replay?: number;
   children?: ReactNode;
 };
 
-export default function MissionCompletion({ numero, onContinue, replay = 0, children }: Props) {
+export default function MissionCompletion({ numero, nextStep = '', onContinue, replay = 0, children }: Props) {
   const { t } = useTranslation();
   const tokenImage = getMissionTokenImage(numero);
   const isFirstMission = numero === 1;
   const isFinalMission = numero === TOTAL_MISSIONS;
   // Qué representa el token (sección "Lo que representa" de cada misión en
-  // los .docx) y el adelanto de la misión siguiente. Un texto vacío en el
-  // i18n esconde el bloque: así se cargan de a uno sin tocar código.
+  // los .docx). Un texto vacío en el i18n esconde el bloque.
   const rewardMeaning = t(`mission.guided.rewardMeanings.${numero}`, { defaultValue: '' });
-  const nextStep = t(`mission.guided.nextSteps.${numero}`, { defaultValue: '' });
 
   return (
     <main

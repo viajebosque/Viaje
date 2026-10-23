@@ -86,6 +86,9 @@ export type AdminMission = {
   titulo_en: string | null;
   consecuencia_amable_es: string;
   consecuencia_amable_en: string | null;
+  // Vacío = la tarjeta no se muestra (la Misión 9 no tiene siguiente).
+  frase_final_es: string;
+  frase_final_en: string | null;
   questions: AdminQuestion[];
 };
 
@@ -115,9 +118,9 @@ export async function updateQuestion(
 }
 
 // Textos de `missions` que se ven en pantalla y se editan desde el panel.
-export type MissionTextField = 'titulo' | 'consecuencia_amable';
+export type MissionTextField = 'titulo' | 'consecuencia_amable' | 'frase_final';
 
-// Guarda un texto de la misión (título o consecuencia amable) en los dos
+// Guarda un texto de la misión (título, consecuencia amable o frase final) en los dos
 // idiomas. El inglés vacío queda NULL (el frontend cae al español).
 export async function updateMissionText(
   missionId: string,

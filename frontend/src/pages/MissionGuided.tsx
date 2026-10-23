@@ -410,7 +410,7 @@ export default function MissionGuided({
   const isInitialStep = steps[step]?.kind === 'initial';
   const initialAnswerText = selectedInitial ? answers[selectedInitial] ?? '' : '';
   const hasPhraseHeading = /Frase Inicial de Pensamiento Profundo|Initial Deep Thought Phrase/i.test(
-    [mission.descripcion, ...initialOptions.map((q) => q.enunciado)].join('\n')
+    initialOptions.map((q) => q.enunciado).join('\n')
   );
   const initialTitle = t(hasPhraseHeading ? 'mission.guided.initialPhraseTitle' : 'mission.guided.initialTitle');
   const currentAnswer = currentQuestion
@@ -469,6 +469,7 @@ export default function MissionGuided({
     return (
       <MissionCompletion
         numero={mission.numero}
+        nextStep={mission.fraseFinal}
         onContinue={() => navigate(mapPath, {
           state: { journeyComplete: mission.numero === TOTAL_MISSIONS } satisfies ForestLocationState,
         })}

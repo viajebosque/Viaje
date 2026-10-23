@@ -288,7 +288,7 @@
       },
       "questions": {
         "title": "Gestión de misiones",
-        "description": "Edita el título, la consecuencia amable y las preguntas de cada misión, en español e inglés."
+        "description": "Edita el título, la consecuencia amable, las preguntas y la frase final de cada misión, en español e inglés."
       },
       "videos": {
         "title": "Gestión de videos",
@@ -302,6 +302,9 @@
       "missionTitle": "Título de la misión",
       "consequence": "Consecuencia amable",
       "consequenceHint": "La tarjeta del panel lateral de la misión.",
+      "finalPhrase": "Frase final",
+      "finalPhraseHint": "La tarjeta del modal al completar la misión: adelanta lo que viene en la siguiente.",
+      "finalPhraseEmpty": "Vacía: la tarjeta no se muestra.",
       "longTitle": "Más de {{count}} caracteres: en el mapa se muestra con letra más chica.",
       "spanish": "Español",
       "english": "Inglés",
@@ -481,17 +484,6 @@
         "7": "Representa integración de la sombra y autocompasión",
         "8": "Representa perspectiva elevada y libertad",
         "9": "Representa la integración de cada token, cada misión, cada paso honesto"
-      },
-      "nextSteps": {
-        "1": "En la misión 2 profundizarás en tus raíces, tus creencias limitantes, tus patrones y tus hábitos.",
-        "2": "En la misión 3 comenzarás a ver con claridad lo que realmente necesitas y lo que estás lista/o para soltar.",
-        "3": "En la misión 4 explorarás tus emociones con más honestidad, para entender qué te están mostrando y hacia dónde te quieren guiar.",
-        "4": "En la misión 5 aprenderás a sostenerte en momentos de duda, y a reconocer tu propia fortaleza interna.",
-        "5": "En la misión 6 descubrirás nuevas perspectivas y abrirás espacio para posibilidades que antes no podías ver.",
-        "6": "En la misión 7 conectarás con tu intuición y con la parte de ti que sabe más de lo que imaginas.",
-        "7": "En la misión 8 integrarás lo aprendido y comenzarás a construir desde tu nueva claridad.",
-        "8": "En la misión 9 reconocerás tu transformación y darás el paso final hacia una versión más consciente y más auténtica de ti.",
-        "9": ""
       },
       "celebrate": "Celebrar con confeti",
       "completionContinue": "Felicidades!! La siguiente misión te espera.",

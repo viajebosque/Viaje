@@ -5,6 +5,8 @@ import MissionCompletion from '../components/MissionCompletion';
 import LangToggle from '../i18n/LangToggle';
 
 // Vista de prueba sin escrituras: no entrega tokens ni modifica respuestas.
+// Es pública y no lee la base, así que no muestra la frase final (el adelanto
+// de la misión siguiente): esa sale de missions.frase_final_* (SQL/024).
 export default function TokenPreview() {
   const { t } = useTranslation();
   const navigate = useNavigate();

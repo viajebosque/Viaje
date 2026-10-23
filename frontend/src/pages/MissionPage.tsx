@@ -50,16 +50,10 @@ function createPreviewMission(missionNumber: number, lang: Lang) {
     titulo: isFirstMission
       ? lang === 'es' ? 'La entrada al bosque' : 'The entrance to the forest'
       : lang === 'es' ? `Vista de la Misión ${missionNumber}` : `Mission ${missionNumber} preview`,
-    descripcion: isFirstMission
-      ? lang === 'es'
-        ? 'Un espacio para soltar, escuchar y elegir cómo quieres comenzar.'
-        : 'A space to let go, listen, and choose how you want to begin.'
-      : lang === 'es'
-        ? 'Contenido de muestra para revisar el diseño guiado de esta misión.'
-        : 'Sample content for reviewing this mission’s guided design.',
     // La vista previa no lee la base: sin video el paso 2 no aparece, y sin
-    // consecuencia el lateral no muestra la tarjeta.
+    // consecuencia ni frase final no se muestran sus tarjetas.
     consecuencia: '',
+    fraseFinal: '',
     videoId: null,
   };
   // Solo se dispone del contenido de la misión 1 en la vista previa sin conexión.

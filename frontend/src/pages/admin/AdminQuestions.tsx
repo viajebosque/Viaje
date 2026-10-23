@@ -12,13 +12,22 @@ import {
 } from '../../lib/admin';
 
 // Todo lo editable acá es un par es/en: el título y la consecuencia amable de
-// cada misión, y el enunciado de cada pregunta. Se distinguen por la clave:
-// `m:<id>` (título), `c:<id>` (consecuencia) o `q:<id>`.
+// cada misión, su frase final y el enunciado de cada pregunta. Se distinguen
+// por la clave: `m:<id>` (título), `c:<id>` (consecuencia), `f:<id>` (frase
+// final) o `q:<id>`.
 type Draft = { es: string; en: string };
 type SaveState = 'saving' | 'saved';
 
 const missionKey = (id: string) => `m:${id}`;
 const consequenceKey = (id: string) => `c:${id}`;
+const finalKey = (id: string) => `f:${id}`;
+
+// Prefijo de la clave -> texto de `missions` que edita.
+const MISSION_KEY_FIELDS: Record<string, MissionTextField> = {
+  'm:': 'titulo',
+  'c:': 'consecuencia_amable',
+  'f:': 'frase_final',
+};
 const questionKey = (id: string) => `q:${id}`;
 
 // El modal de entrada del mapa (Forest.tsx) cambia a letra más chica cuando el
@@ -32,14 +41,19 @@ function normalize(text: string | null): string {
   return (text ?? '').replace(/\r\n?/g, '\n');
 }
 
-function normalizeMission<T extends Pick<AdminMission, 'consecuencia_amable_es' | 'consecuencia_amable_en'>>(
-  m: T
-): T {
+function normalizeMission<
+  T extends Pick<
+    AdminMission,
+    'consecuencia_amable_es' | 'consecuencia_amable_en' | 'frase_final_es' | 'frase_final_en'
+  >,
+>(m: T): T {
   return {
     ...m,
     consecuencia_amable_es: normalize(m.consecuencia_amable_es),
     consecuencia_amable_en:
       m.consecuencia_amable_en == null ? null : normalize(m.consecuencia_amable_en),
+    frase_final_es: normalize(m.frase_final_es),
+    frase_final_en: m.frase_final_en == null ? null : normalize(m.frase_final_en),
   };
 }
 
@@ -116,6 +130,7 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
         es: m.consecuencia_amable_es,
         en: m.consecuencia_amable_en ?? '',
       });
+      map.set(finalKey(m.id), { es: m.frase_final_es, en: m.frase_final_en ?? '' });
       for (const q of m.questions) {
         map.set(questionKey(q.id), { es: q.enunciado_es, en: q.enunciado_en ?? '' });
       }
@@ -165,8 +180,8 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
   async function persist(key: string, draft: Draft) {
     const id = key.slice(2);
-    if (key.startsWith('m:') || key.startsWith('c:')) {
-      const field: MissionTextField = key.startsWith('m:') ? 'titulo' : 'consecuencia_amable';
+    const field = MISSION_KEY_FIELDS[key.slice(0, 2)];
+    if (field) {
       const updated = normalizeMission(await updateMissionText(id, field, draft.es, draft.en));
       setMissions((prev) =>
         prev.map((m) =>
@@ -192,7 +207,8 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
 
   async function save(key: string) {
     const draft = drafts[key];
-    if (!draft || !draft.es.trim()) return;
+    // La frase final es el único texto con el español opcional.
+    if (!draft || (!key.startsWith('f:') && !draft.es.trim())) return;
     setSaveState((prev) => ({ ...prev, [key]: 'saving' }));
     setErrors((prev) => without(prev, key));
     try {
@@ -253,11 +269,14 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
   const title = valueOf(titleKey);
   const consKey = consequenceKey(mission.id);
   const consequence = valueOf(consKey);
+  const fraseKey = finalKey(mission.id);
+  const frase = valueOf(fraseKey);
 
   function missionHasDirty(m: AdminMission) {
     return (
       dirtyKeys.includes(missionKey(m.id)) ||
       dirtyKeys.includes(consequenceKey(m.id)) ||
+      dirtyKeys.includes(finalKey(m.id)) ||
       m.questions.some((q) => dirtyKeys.includes(questionKey(q.id)))
     );
   }
@@ -432,6 +451,37 @@ export default function AdminQuestions({ canLeaveRef }: Props) {
             </section>
           );
         })}
+
+        <section className="admin-question-block">
+          <h4 className="admin-question-block-title">{t('admin.questions.finalPhrase')}</h4>
+          <div className={`admin-question${isDirty(fraseKey) ? ' is-dirty' : ''}`}>
+            <span className="admin-question-order">{t('admin.questions.finalPhraseHint')}</span>
+            <div className="admin-question-fields">
+              {(['es', 'en'] as const).map((field) => (
+                <label key={field} className="admin-question-field">
+                  <span>
+                    {t(field === 'es' ? 'admin.questions.spanish' : 'admin.questions.english')}
+                  </span>
+                  <textarea
+                    value={frase[field]}
+                    rows={rowsFor(frase[field])}
+                    onChange={(e) => edit(fraseKey, field, e.target.value)}
+                  />
+                  {field === 'es' && !frase.es.trim() ? (
+                    <small className="admin-question-hint">
+                      {t('admin.questions.finalPhraseEmpty')}
+                    </small>
+                  ) : field === 'en' && !frase.en.trim() ? (
+                    <small className="admin-question-hint">
+                      {t('admin.questions.englishMissing')}
+                    </small>
+                  ) : null}
+                </label>
+              ))}
+            </div>
+            {renderActions(fraseKey, false)}
+          </div>
+        </section>
       </div>
     </div>
   );

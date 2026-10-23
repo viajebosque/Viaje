@@ -9,19 +9,18 @@ export type Mission = {
   id: string;
   numero: number;
   titulo: string;
-  descripcion: string;
   // Tarjeta del panel lateral ("Es importante atravesar esta misión
   // porque…"). Columna consecuencia_amable_es / _en (SQL/022).
   consecuencia: string;
+  // Tarjeta del modal "Has completado la Misión N" que adelanta la siguiente.
+  // Columna frase_final_es / _en (SQL/024). Vacía = la tarjeta no se muestra.
+  fraseFinal: string;
   // ID de YouTube del video del paso 2 (tabla `videos`, SQL/021), en el idioma
   // activo. null = la misión no tiene video y el paso se salta.
   videoId: string | null;
 };
 
 // Lo que necesita el mapa para pintar los 9 nodos: el título y nada más.
-// La descripción se pide aparte (getMissionDescriptions) porque solo la usa el
-// modal, y es el campo pesado: 12 kB entre las 9 misiones contra 220 bytes de
-// títulos.
 export type MissionSummary = {
   id: string;
   numero: number;
@@ -59,8 +58,8 @@ function toMission(row: Row, lang: Lang): Mission {
     id: row.id as string,
     numero: row.numero as number,
     titulo: pick(row, 'titulo', lang),
-    descripcion: pick(row, 'descripcion', lang),
     consecuencia: pick(row, 'consecuencia_amable', lang),
+    fraseFinal: pick(row, 'frase_final', lang),
     videoId: video ? youtubeId(pick(video, 'url', lang)) : null,
   };
 }
@@ -102,27 +101,6 @@ export async function getMissions(lang: Lang): Promise<MissionSummary[]> {
   }));
 }
 
-// Descripciones por numero de misión. Va aparte del mapa a propósito: los nodos
-// se pintan con los títulos y esto llega detrás, sin frenar el primer dibujo.
-// El modal ya tiene fallback (forest.modalAsk) para el instante en que todavía
-// no llegó.
-export async function getMissionDescriptions(
-  lang: Lang
-): Promise<Map<number, string>> {
-  const { data, error } = (await supabase
-    .from('missions')
-    .select(['numero', ...langCols('descripcion', lang)].join(', '))) as unknown as {
-    data: Row[] | null;
-    error: { message: string } | null;
-  };
-  if (error) throw new Error(error.message);
-  const map = new Map<number, string>();
-  for (const row of data ?? []) {
-    map.set(row.numero as number, pick(row, 'descripcion', lang));
-  }
-  return map;
-}
-
 // Una misión con sus preguntas y su video, en UNA sola consulta: PostgREST los
 // anida por las foreign keys questions.mission_id y videos.mission_id ->
 // missions.id. Antes eran dos viajes encadenados, porque no se podían pedir las
@@ -135,8 +113,8 @@ export async function getMissionWithQuestions(
     'id',
     'numero',
     ...langCols('titulo', lang),
-    ...langCols('descripcion', lang),
     ...langCols('consecuencia_amable', lang),
+    ...langCols('frase_final', lang),
   ].join(', ');
   const qCols = [
     'id',
