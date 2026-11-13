@@ -60,13 +60,26 @@ export function initialChoiceIsValid(
   return initial.length === 0 || initial.some((q) => Boolean((answers[q.id] ?? '').trim()));
 }
 
-// Se escriben las 8 filas, también las 3 iniciales vacías: es lo que borra la
-// opción anterior cuando la persona cambia de pregunta.
-export function guidedEntries(questions: Question[], answers: Record<string, string>) {
-  return questions.map((q) => ({
-    question_id: q.id,
-    respuesta: answers[q.id] ?? '',
-  }));
+// Filas a guardar: SOLO las preguntas que la persona tocó en esta pantalla.
+//
+// Antes se escribían las 8 filas en cada guardado, con lo que esta pantalla
+// tuviera en memoria. Una pestaña vieja (o un borrador local de otro día)
+// pisaba con vacíos lo que la persona ya había respondido en otro dispositivo.
+//
+// Cambiar de opción inicial marca las 4 iniciales como tocadas (ver
+// MissionGuided.selectInitialQuestion): así se siguen escribiendo vacías las
+// otras 3 y entre las iniciales queda una sola respuesta.
+export function guidedEntries(
+  questions: Question[],
+  answers: Record<string, string>,
+  editedIds: ReadonlySet<string>
+) {
+  return questions
+    .filter((q) => editedIds.has(q.id))
+    .map((q) => ({
+      question_id: q.id,
+      respuesta: answers[q.id] ?? '',
+    }));
 }
 
 export function initialOptionText(text: string): string {
