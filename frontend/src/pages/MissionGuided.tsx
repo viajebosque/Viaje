@@ -110,9 +110,11 @@ export default function MissionGuided({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  // El prefijo v2 separa los borradores del formato anterior: aquellos
-  // guardaban las 4 preguntas iniciales y ya no se pueden interpretar.
-  const storageKey = `mission-guided:v2:${mission.id}:${userId ?? 'preview'}`;
+  // v3: el borrador guarda SOLO las respuestas editadas y sin guardar. Los v2
+  // guardaban las 8, vacías incluidas, y al restaurarse pisaban en la base lo
+  // respondido desde otro dispositivo. No se migran: se descartan.
+  const storageKey = `mission-guided:v3:${mission.id}:${userId ?? 'preview'}`;
+  const legacyStorageKey = `mission-guided:v2:${mission.id}:${userId ?? 'preview'}`;
   const activityVideoId = mission.videoId;
   const loadActivityVideo = useCallback(() => Promise.resolve(activityVideoId), [activityVideoId]);
   const activityQuestionIndex = activityVideoId
@@ -141,10 +143,17 @@ export default function MissionGuided({
         )
       : backendAnswers;
     const backupStep = Math.max(0, backup?.step ?? 0);
+    // Lo que el borrador trae sin guardar: es lo único que se reenvía.
+    const editedIds = new Set(
+      backup?.pending && !isPreview
+        ? questions.map((q) => q.id).filter((id) => id in backup.answers)
+        : []
+    );
     return {
       answers: backup && (backup.pending || isPreview) ? backupAnswers : backendAnswers,
       step: Math.min(backupStep, Math.max(totalSteps - 1, 0)),
       hasPendingBackup: Boolean(backup?.pending),
+      editedIds,
     };
   }, [
     activityQuestionIndex,
@@ -183,6 +192,9 @@ export default function MissionGuided({
   const stepRef = useRef(step);
   const dirtyVersionRef = useRef(initialState.hasPendingBackup ? 1 : 0);
   const savedVersionRef = useRef(0);
+  // Preguntas que la persona editó en esta pantalla y todavía no llegaron a la
+  // base. Solo esas se guardan y solo esas van al borrador local.
+  const editedIdsRef = useRef<Set<string>>(initialState.editedIds);
   const saveTimerRef = useRef<number | null>(null);
   const saveInFlightRef = useRef<Promise<boolean> | null>(null);
 
@@ -201,6 +213,27 @@ export default function MissionGuided({
     [questionForStep, steps, questions]
   );
 
+  // Lo que va al borrador local. En la vista previa no hay base: el borrador
+  // es lo único que hay y lleva todo. Con cuenta, solo lo editado sin guardar,
+  // para que restaurarlo nunca reemplace respuestas de la base por vacíos.
+  const draftAnswers = useCallback(
+    (source: GuidedAnswers): GuidedAnswers =>
+      isPreview
+        ? source
+        : Object.fromEntries(
+            [...editedIdsRef.current].map((id) => [id, source[id] ?? ''])
+          ),
+    [isPreview]
+  );
+
+  useEffect(() => {
+    try {
+      window.localStorage.removeItem(legacyStorageKey);
+    } catch {
+      // Sin storage no hay borrador viejo que limpiar.
+    }
+  }, [legacyStorageKey]);
+
   const performSave = useCallback(async (): Promise<boolean> => {
     if (saveInFlightRef.current) return saveInFlightRef.current;
 
@@ -208,6 +241,7 @@ export default function MissionGuided({
       while (savedVersionRef.current < dirtyVersionRef.current) {
         const targetVersion = dirtyVersionRef.current;
         const snapshot = answersRef.current;
+        const editedIds = new Set(editedIdsRef.current);
         setSaveStatus('saving');
         setSaveError('');
 
@@ -222,7 +256,12 @@ export default function MissionGuided({
             if (questions.length === 0) {
               throw new Error('mission-content-incomplete');
             }
-            await saveAnswers(userId, guidedEntries(questions, snapshot));
+            await saveAnswers(userId, guidedEntries(questions, snapshot, editedIds));
+            // Ya están en la base. Si alguna cambió mientras se guardaba, queda
+            // marcada y sale en la próxima vuelta del while.
+            for (const id of editedIds) {
+              if (answersRef.current[id] === snapshot[id]) editedIdsRef.current.delete(id);
+            }
           }
           savedVersionRef.current = targetVersion;
 
@@ -236,7 +275,7 @@ export default function MissionGuided({
           }
         } catch {
           writeBackup(storageKey, {
-            answers: snapshot,
+            answers: draftAnswers(snapshot),
             pending: true,
             step: stepRef.current,
           });
@@ -252,7 +291,7 @@ export default function MissionGuided({
     const result = await operation;
     if (saveInFlightRef.current === operation) saveInFlightRef.current = null;
     return result;
-  }, [isPreview, questions, storageKey, t, userId]);
+  }, [draftAnswers, isPreview, questions, storageKey, t, userId]);
 
   const scheduleSave = useCallback(() => {
     if (saveTimerRef.current !== null) window.clearTimeout(saveTimerRef.current);
@@ -286,9 +325,10 @@ export default function MissionGuided({
     const next = { ...answersRef.current, [questionId]: value };
     answersRef.current = next;
     setAnswers(next);
+    editedIdsRef.current.add(questionId);
     dirtyVersionRef.current += 1;
     writeBackup(storageKey, {
-      answers: next,
+      answers: draftAnswers(next),
       pending: true,
       step: stepRef.current,
     });
@@ -306,8 +346,10 @@ export default function MissionGuided({
     const next = chooseInitialQuestion(questions, answersRef.current, questionId);
     answersRef.current = next;
     setAnswers(next);
+    // Las 4 iniciales cuentan como editadas: las otras 3 se guardan vacías.
+    for (const q of initialOptions) editedIdsRef.current.add(q.id);
     dirtyVersionRef.current += 1;
-    writeBackup(storageKey, { answers: next, pending: true, step: stepRef.current });
+    writeBackup(storageKey, { answers: draftAnswers(next), pending: true, step: stepRef.current });
     setSaveStatus('saving');
     setSaveError('');
     setValidation('');
@@ -336,7 +378,7 @@ export default function MissionGuided({
     setStep(bounded);
     setValidation('');
     writeBackup(storageKey, {
-      answers: hasPendingChanges || isPreview ? answersRef.current : {},
+      answers: hasPendingChanges || isPreview ? draftAnswers(answersRef.current) : {},
       pending: hasPendingChanges,
       step: bounded,
     });
